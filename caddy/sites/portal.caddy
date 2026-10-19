@@ -1,0 +1,5 @@
+# Arkitekturportalen.
+{$PORTAL_HOST} {
+	import tls-{$TLS_MODE}
+	reverse_proxy web:80
+}

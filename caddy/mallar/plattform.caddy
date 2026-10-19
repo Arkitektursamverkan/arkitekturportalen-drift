@@ -1,0 +1,7 @@
+# Integrationsplattformens webb. Slås på genom att kopiera filen till sites/
+# (installationsguiden gör det när plattformen väljs):
+#   cp caddy/mallar/plattform.caddy caddy/sites/
+{$PLATFORM_HOST} {
+	import tls-{$TLS_MODE}
+	reverse_proxy plattform-web:80
+}

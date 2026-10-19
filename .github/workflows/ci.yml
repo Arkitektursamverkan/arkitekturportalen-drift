@@ -1,0 +1,61 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  config:
+    name: Compose och Caddy är giltiga
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Exempelinställningar med ifyllda hemligheter
+        run: |
+          cp .env.example .env
+          for k in API_KEY LOCAL_AUTH_SECRET POSTGRES_PASSWORD; do
+            sed -i "s/^$k=.*/$k=$(openssl rand -hex 32)/" .env
+          done
+
+      - name: Compose utan och med plattformen
+        run: |
+          docker compose config --quiet
+          test "$(docker compose config --services | sort | tr '\n' ' ')" = "api caddy db web "
+          COMPOSE_PROFILES=plattform docker compose config --services | grep -qx plattform-web
+
+      - name: Saknad hemlighet stoppar
+        run: |
+          sed -i 's/^API_KEY=.*/API_KEY=/' .env
+          ! docker compose config --quiet 2>err.txt
+          grep -q "Sätt API_KEY" err.txt
+
+      - name: Caddy förstår alla TLS-lägen
+        run: |
+          cp caddy/mallar/plattform.caddy caddy/sites/
+          for mode in auto egen intern; do
+            docker run --rm -v "$PWD/caddy:/etc/caddy:ro" \
+              -e TLS_MODE=$mode -e ACME_EMAIL=drift@example.org \
+              -e TLS_CERT_FILE=fullchain.pem -e TLS_KEY_FILE=privkey.pem \
+              -e PORTAL_HOST=portal.example.org -e PLATFORM_HOST=plattform.example.org \
+              caddy:2.8-alpine caddy adapt --config /etc/caddy/Caddyfile > /dev/null
+            echo "$mode ok"
+          done
+
+  skript:
+    name: Skripten (shellcheck)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: shellcheck
+        run: |
+          docker run --rm -v "$PWD:/mnt:ro" -w /mnt koalaman/shellcheck:v0.10.0 -x -S warning \
+            installera.sh uppgradera.sh backup.sh aterstall.sh
+      - name: Hjälptexterna
+        run: |
+          ./installera.sh --help | grep -q "Installationsguide"
+          ./uppgradera.sh --help | grep -q "Uppgraderar"
+          ./backup.sh --help | grep -q "Backup av installationen"
+          ./aterstall.sh --help | grep -q "Återställer installationen"

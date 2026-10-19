@@ -1,0 +1,6 @@
+# Installationens egna filer – aldrig i git.
+.env
+certs/*
+!certs/.gitkeep
+caddy/sites/plattform.caddy
+backups/

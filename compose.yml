@@ -1,0 +1,172 @@
+# Arkitekturportalen – installation från färdiga avbilder.
+#
+# Allt som är installationsspecifikt kommer från .env (se .env.example).
+# Integrationsplattformen är valfri och startas med profilen "plattform"
+# (COMPOSE_PROFILES=plattform i .env). Caddy tar emot HTTPS och skickar vidare
+# till portalens och plattformens webbcontainrar; inga andra portar publiceras.
+
+name: arkitekturportalen
+
+x-restart: &restart
+  restart: unless-stopped
+
+services:
+  # ── Arkitekturportalen ──────────────────────────────────────────────────────
+  db:
+    <<: *restart
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ea_db
+      POSTGRES_USER: ea_user
+      # Läses bara när databasvolymen skapas första gången.
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Sätt POSTGRES_PASSWORD i .env}
+    volumes:
+      - portal_db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ea_user -d ea_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # Kör databasmigreringarna när den startar.
+  api:
+    <<: *restart
+    image: ${REGISTRY:-ghcr.io/arkitektursamverkan}/arkitekturportalen-api:${PORTAL_VERSION:?Sätt PORTAL_VERSION i .env}
+    environment:
+      EA_DB_ENGINE: postgres
+      DATABASE_URL: postgresql+asyncpg://ea_user:${POSTGRES_PASSWORD}@db:5432/ea_db
+      APP_ENV: production
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+      API_KEY: ${API_KEY:?Sätt API_KEY i .env}
+      LOCAL_AUTH_SECRET: ${LOCAL_AUTH_SECRET:?Sätt LOCAL_AUTH_SECRET i .env}
+      LOCAL_TOKEN_TTL_HOURS: ${LOCAL_TOKEN_TTL_HOURS:-12}
+      ENTRA_TENANT_ID: ${ENTRA_TENANT_ID:-}
+      ENTRA_CLIENT_ID: ${ENTRA_CLIENT_ID:-}
+      ALLOWED_EMAIL_DOMAINS: ${ALLOWED_EMAIL_DOMAINS:-}
+      BOOTSTRAP_ADMIN_EMAILS: ${BOOTSTRAP_ADMIN_EMAILS:-}
+      CHANGE_LOG_DEPARTMENTS: ${CHANGE_LOG_DEPARTMENTS:-}
+      ANONYMOUS_READ: ${ANONYMOUS_READ:-false}
+      MODULES: ${MODULES:-}
+      CORS_ORIGINS: https://${PORTAL_HOST:?Sätt PORTAL_HOST i .env}
+      PDF_ORG_NAME: ${PDF_ORG_NAME:-}
+      PDF_APP_BASE_URL: https://${PORTAL_HOST}
+      PDF_RESPONSIBLE: ${PDF_RESPONSIBLE:-Enterprise Architect}
+      PDF_DEPARTMENT: ${PDF_DEPARTMENT:-IT}
+      PDF_DOCUMENT_CATEGORY: ${PDF_DOCUMENT_CATEGORY:-Rutiner}
+      # Tomt = plattformsfunktionerna är avstängda och säger det.
+      # Med plattformen: http://plattform-api:8000/api/v1
+      INTEGRATION_PLATFORM_URL: ${INTEGRATION_PLATFORM_URL:-}
+      INTEGRATION_PLATFORM_API_KEY: ${INTEGRATION_PLATFORM_API_KEY:-}
+      INTEGRATION_PLATFORM_ADMIN_KEY: ${PLATFORM_ADMIN_API_KEY:-}
+      SYNC_WEBHOOK_SECRET: ${SYNC_WEBHOOK_SECRET:-}
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - portal_snapshots:/app/snapshots
+      - portal_sync:/app/sync_data
+
+  web:
+    <<: *restart
+    image: ${REGISTRY:-ghcr.io/arkitektursamverkan}/arkitekturportalen-web:${PORTAL_VERSION}
+    environment:
+      ENTRA_TENANT_ID: ${ENTRA_TENANT_ID:-}
+      ENTRA_CLIENT_ID: ${ENTRA_CLIENT_ID:-}
+      ENTRA_API_SCOPE: ${ENTRA_API_SCOPE:-}
+    depends_on:
+      - api
+
+  # ── TLS ─────────────────────────────────────────────────────────────────────
+  caddy:
+    <<: *restart
+    image: caddy:2.8-alpine
+    ports:
+      - "${HTTP_PORT:-80}:80"
+      - "${HTTPS_PORT:-443}:443"
+    environment:
+      PORTAL_HOST: ${PORTAL_HOST}
+      PLATFORM_HOST: ${PLATFORM_HOST:-}
+      # auto (Let's Encrypt) | egen (certifikatfiler i certs/) | intern (Caddys egen CA)
+      TLS_MODE: ${TLS_MODE:?Sätt TLS_MODE i .env}
+      ACME_EMAIL: ${ACME_EMAIL:-}
+      TLS_CERT_FILE: ${TLS_CERT_FILE:-fullchain.pem}
+      TLS_KEY_FILE: ${TLS_KEY_FILE:-privkey.pem}
+    volumes:
+      - ./caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./caddy/sites:/etc/caddy/sites:ro
+      - ./certs:/certs:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - web
+
+  # ── Integrationsplattformen (profil "plattform") ────────────────────────────
+  plattform-db:
+    <<: *restart
+    image: postgres:16-alpine
+    profiles: ["plattform"]
+    environment:
+      POSTGRES_DB: integration_db
+      POSTGRES_USER: integration_user
+      POSTGRES_PASSWORD: ${PLATFORM_POSTGRES_PASSWORD:-}
+    volumes:
+      - plattform_db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U integration_user -d integration_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  plattform-redis:
+    <<: *restart
+    image: redis:7-alpine
+    profiles: ["plattform"]
+    volumes:
+      - plattform_redis:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  plattform-api:
+    <<: *restart
+    image: ${REGISTRY:-ghcr.io/arkitektursamverkan}/integrationsplattformen-api:${PLATFORM_VERSION:-}
+    profiles: ["plattform"]
+    environment:
+      DATABASE_URL: postgresql+asyncpg://integration_user:${PLATFORM_POSTGRES_PASSWORD:-}@plattform-db:5432/integration_db
+      REDIS_URL: redis://plattform-redis:6379/0
+      APP_ENV: production
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+      ENCRYPTION_KEY: ${PLATFORM_ENCRYPTION_KEY:-}
+      ADMIN_API_KEY: ${PLATFORM_ADMIN_API_KEY:-}
+      JWT_SECRET: ${PLATFORM_JWT_SECRET:-}
+      CORS_ORIGINS: https://${PLATFORM_HOST:-}
+      EXECUTION_LOG_RETENTION_DAYS: ${EXECUTION_LOG_RETENTION_DAYS:-30}
+      ALERT_WEBHOOK_URL: ${ALERT_WEBHOOK_URL:-}
+      # Ett flödes webhook "efter körning" till portalen:
+      #   http://api:8000/api/v1/sync/webhook
+      POST_EXEC_WEBHOOK_SECRET: ${SYNC_WEBHOOK_SECRET:-}
+    depends_on:
+      plattform-db:
+        condition: service_healthy
+      plattform-redis:
+        condition: service_healthy
+
+  plattform-web:
+    <<: *restart
+    image: ${REGISTRY:-ghcr.io/arkitektursamverkan}/integrationsplattformen-web:${PLATFORM_VERSION:-}
+    profiles: ["plattform"]
+    environment:
+      API_UPSTREAM: plattform-api:8000
+    depends_on:
+      - plattform-api
+
+volumes:
+  portal_db:
+  portal_snapshots:
+  portal_sync:
+  plattform_db:
+  plattform_redis:
+  caddy_data:
+  caddy_config:

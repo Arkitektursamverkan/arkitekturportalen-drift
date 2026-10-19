@@ -1,0 +1,24 @@
+# Caddy tar emot HTTP och HTTPS för hela installationen. HTTP skickas vidare
+# till HTTPS. Webbplatserna ligger i sites/; mallar/ har de valfria.
+#
+# TLS_MODE i .env väljer hur certifikaten ordnas:
+#   auto    Let's Encrypt. Servern måste nås från internet på port 80 och 443,
+#           och ACME_EMAIL behövs (varningar om certifikat som går ut).
+#   egen    Organisationens eget certifikat: lägg filerna i certs/
+#           (TLS_CERT_FILE, TLS_KEY_FILE; hela kedjan i certifikatfilen).
+#   intern  Caddys egen CA – för test och slutna nät; webbläsare varnar tills
+#           CA:n är betrodd (caddy_data-volymen, pki/authorities/local/root.crt).
+
+(tls-auto) {
+	tls {$ACME_EMAIL}
+}
+
+(tls-egen) {
+	tls /certs/{$TLS_CERT_FILE} /certs/{$TLS_KEY_FILE}
+}
+
+(tls-intern) {
+	tls internal
+}
+
+import sites/*.caddy
