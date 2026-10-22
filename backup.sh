@@ -44,7 +44,7 @@ date -Iseconds > "$dir/KLAR"
 
 behall=$(env_get BACKUP_BEHALL); behall=${behall:-14}
 # Äldst först; bara fullständiga backuper räknas och tas bort.
-mapfile -t alla < <(find backups -mindepth 2 -maxdepth 2 -name KLAR -printf '%h\n' | sort)
+mapfile -t alla < <(find backups -mindepth 2 -maxdepth 2 -name KLAR | sed 's|/KLAR$||' | sort)
 if [ "${#alla[@]}" -gt "$behall" ]; then
     for gammal in "${alla[@]:0:${#alla[@]}-behall}"; do
         rm -rf "$gammal"

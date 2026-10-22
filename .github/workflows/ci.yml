@@ -52,7 +52,7 @@ jobs:
       - name: shellcheck
         run: |
           docker run --rm -v "$PWD:/mnt:ro" -w /mnt koalaman/shellcheck:v0.10.0 -x -S warning \
-            installera.sh uppgradera.sh backup.sh aterstall.sh
+            installera.sh uppgradera.sh backup.sh aterstall.sh bygg-installationsfil.sh lib/installationsfil.sh
       - name: Hjälptexterna
         run: |
           ./installera.sh --help | grep -q "Installationsguide"

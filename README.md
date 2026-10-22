@@ -21,16 +21,31 @@ inne i Docker-nätet.
   på servern.
 - Certifikat: antingen når servern internet på port 80 och 443 (Let's
   Encrypt), eller så har organisationen ett eget certifikat.
-- Så länge avbilderna är privata: `docker login ghcr.io` med ett GitHub-token
-  som har `read:packages`.
+- Docker installeras av installationsfilen om det saknas (Ubuntu, Debian,
+  RHEL och liknande).
 
 ## Installera
 
-```sh
-git clone https://github.com/Arkitektursamverkan/arkitekturportalen-drift.git arkitekturportalen
-cd arkitekturportalen
-./installera.sh
-```
+1. Gå till [Releases](https://github.com/Arkitektursamverkan/arkitekturportalen-drift/releases)
+   och ladda ner filen `arkitekturportalen-<version>.run` under den senaste
+   versionen.
+2. Kopiera filen till servern (till exempel med WinSCP).
+3. Kör den på servern:
+
+   ```sh
+   sudo sh arkitekturportalen-<version>.run
+   ```
+
+Filen innehåller allt: skripten och själva programmet. Inget annat behöver
+hämtas och ingen inloggning behövs. Saknar servern Docker erbjuder filen att
+installera det. Portalen hamnar i `/opt/arkitekturportalen`.
+
+Samma fil uppgraderar: körs en nyare `.run` på en server där portalen redan
+finns tas en backup och den nya versionen startas (se [Uppgradera](#uppgradera)).
+
+Testa på en dator utan DNS-namn: svara `localhost` som värdnamn och `intern`
+som TLS-läge, och öppna https://localhost (webbläsaren varnar för
+certifikatet).
 
 Guiden frågar efter
 
@@ -74,6 +89,11 @@ docker compose exec api python -m app.services.content_pack import <paket>
 ```
 
 ## Uppgradera
+
+Enklast: ladda ner den nya `.run`-filen och kör den som vid installationen.
+Den gör samma sak som `uppgradera.sh` nedan.
+
+Med skriptet, om servern själv får hämta avbilderna från ghcr.io:
 
 ```sh
 ./uppgradera.sh 0.2.0          # portalen
@@ -131,6 +151,8 @@ sparas som `.env.fore-aterstallning`) och startar allt igen. Allt som
 | `installera.sh` | Installationsguiden. |
 | `uppgradera.sh` | Ny version, med backup först. |
 | `backup.sh`, `aterstall.sh` | Backup och återställning. |
+| `bygg-installationsfil.sh` | För underhållarna: bygger `.run`-filen och releasen. |
+| `lib/installationsfil.sh` | Början av `.run`-filen: packar upp och startar guiden. |
 | `compose.yml` | Alla tjänster. Ändras inte per installation. |
 | `.env` | Installationens inställningar och hemligheter (inte i git). |
 | `caddy/Caddyfile` | TLS-lägena. |
