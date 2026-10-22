@@ -2,7 +2,7 @@
 <html lang="sv">
 <head>
 <meta charset="utf-8">
-<title>Arkitekturportalen – broschyr</title>
+<title>Arkitekturportalen 0.2.1 – broschyr</title>
 <style>
 @page { size: A4; margin: 0; }
 :root {
@@ -50,7 +50,7 @@ h3 { font-size: 12.5pt; color: var(--navy); margin: 0 0 1.4mm; }
 .omslag .kicker { color: #9ecbff; }
 .omslag h1 { font-size: 40pt; line-height: 1.05; margin: 4mm 0 5mm; }
 .omslag .under { font-size: 15pt; max-width: 150mm; color: #dbeaff; line-height: 1.4; }
-.omslag .hero { position: absolute; left: 18mm; right: -30mm; top: 118mm;  }
+.omslag .hero { position: absolute; left: 18mm; right: 18mm; top: 112mm; }
 .omslag .hero .ram { border: none; box-shadow: 0 4mm 14mm rgba(0,0,0,0.35); }
 .omslag .botten { position: absolute; left: 18mm; right: 18mm; bottom: 16mm; display: flex; justify-content: space-between; font-size: 9pt; color: #cfe3ff; }
 .omslag .botten b { color: #fff; }
@@ -97,7 +97,7 @@ h3 { font-size: 12.5pt; color: var(--navy); margin: 0 0 1.4mm; }
   <h1>Arkitekturportalen</h1>
   <p class="under">Hela verksamhetens IT-landskap på ett ställe – processer, system, information och teknik, och hur allt hänger ihop.</p>
   <div class="hero"><div class="ram"><div class="list"><i></i><i></i><i></i></div><img src="jpg/applikation.jpg"></div></div>
-  <div class="botten"><span><b>Fri programvara</b> · EUPL-1.2</span><span>Körs på organisationens egen server</span></div>
+  <div class="botten" style="display:block;border-top:0.6pt solid rgba(255,255,255,0.4);padding-top:4mm;line-height:1.7"><div><b>Version 0.2.1</b> · oktober 2026 · fri programvara under EUPL-1.2</div><div>Kontakt: <b>David Bjärlestam</b>, david.bjarlestam@hfab.se · Arkitektursamverkan (Halmstads Fastighets AB)</div></div>
 </section>
 
 <!-- 2 Översikt -->
@@ -130,7 +130,7 @@ h3 { font-size: 12.5pt; color: var(--navy); margin: 0 0 1.4mm; }
     <div><b>Svenska</b><span>Gränssnittet är på svenska, med engelska som val.</span></div>
     <div><b>EUPL-1.2</b><span>Fri programvara under EU:s öppna licens.</span></div>
   </div>
-  <div class="fot"><span>Arkitekturportalen</span><span>Skärmbilderna visar fiktiva exempeldata</span></div>
+  <div class="fot"><span>Arkitekturportalen 0.2.1</span><span>Skärmbilderna visar fiktiva exempeldata</span></div>
 </section>
 
 <!-- 3 Kärnan: landskapet -->
@@ -156,7 +156,7 @@ h3 { font-size: 12.5pt; color: var(--navy); margin: 0 0 1.4mm; }
       </ul>
     </div>
   </div>
-  <div class="fot"><span>Arkitekturportalen · Kärnan</span><span>3</span></div>
+  <div class="fot"><span>Arkitekturportalen 0.2.1 · Kärnan</span><span>3</span></div>
 </section>
 
 <!-- 4 Kärnan: rapporter -->
@@ -184,7 +184,7 @@ h3 { font-size: 12.5pt; color: var(--navy); margin: 0 0 1.4mm; }
       <p style="margin-top:2mm;font-size:9pt;color:var(--muted)">Rapporterna kan taggas, döpas om och läggas som snabblänkar på startsidan.</p>
     </div>
   </div>
-  <div class="fot"><span>Arkitekturportalen · Kärnan</span><span>4</span></div>
+  <div class="fot"><span>Arkitekturportalen 0.2.1 · Kärnan</span><span>4</span></div>
 </section>
 
 <!-- 5 Kalender + Samarbeten -->
@@ -212,7 +212,7 @@ h3 { font-size: 12.5pt; color: var(--navy); margin: 0 0 1.4mm; }
       </div>
     </div>
   </div>
-  <div class="fot"><span>Arkitekturportalen · Moduler</span><span>5</span></div>
+  <div class="fot"><span>Arkitekturportalen 0.2.1 · Moduler</span><span>5</span></div>
 </section>
 
 <!-- 6 Styrning, Ordlista, Enkäter -->
@@ -245,7 +245,7 @@ h3 { font-size: 12.5pt; color: var(--navy); margin: 0 0 1.4mm; }
       <p class="bildtext">Fråga systemförvaltarna direkt – svaren blir rapporter som går att jämföra år från år.</p>
     </div>
   </div>
-  <div class="fot"><span>Arkitekturportalen · Moduler</span><span>6</span></div>
+  <div class="fot"><span>Arkitekturportalen 0.2.1 · Moduler</span><span>6</span></div>
 </section>
 
 <!-- 7 Integrationsplattformen -->
@@ -280,7 +280,7 @@ h3 { font-size: 12.5pt; color: var(--navy); margin: 0 0 1.4mm; }
       </ul>
     </div>
   </div>
-  <div class="fot"><span>Arkitekturportalen · Integrationsplattformen</span><span>7</span></div>
+  <div class="fot"><span>Arkitekturportalen 0.2.1 · Integrationsplattformen</span><span>7</span></div>
 </section>
 
 <!-- 8 Arkitekten + kom igång -->
@@ -344,8 +344,9 @@ h3 { font-size: 12.5pt; color: var(--navy); margin: 0 0 1.4mm; }
       <div><b>3 · Fyll på</b>Börja med exempelinnehållet, importera från CSV eller koppla källsystemen.</div>
     </div>
     <p class="lank">Installationsfil och manual: github.com/Arkitektursamverkan/arkitekturportalen-drift → Releases</p>
+    <p class="lank" style="margin-top:2mm;color:#fff"><b>Kontakt:</b> David Bjärlestam, david.bjarlestam@hfab.se · Arkitektursamverkan (Halmstads Fastighets AB)</p>
   </div>
-  <div class="fot"><span>Arkitekturportalen · Fri programvara under EUPL-1.2</span><span>Skärmbilderna visar fiktiva exempeldata</span></div>
+  <div class="fot"><span>Arkitekturportalen 0.2.1 · Fri programvara under EUPL-1.2</span><span>Skärmbilderna visar fiktiva exempeldata</span></div>
 </section>
 
 </body>
