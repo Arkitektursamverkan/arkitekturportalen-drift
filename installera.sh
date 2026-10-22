@@ -3,7 +3,8 @@
 #
 # Frågar efter det som skiljer en installation från en annan, skriver .env,
 # skapar hemligheterna, startar allt och gör det första: administratörskonto,
-# plattformens nyckel för portalen och exempelinnehåll.
+# plattformens nyckel för portalen, Arkitektens källa i plattformen och
+# exempelinnehåll.
 #
 # Går att köra igen: värdena i en befintlig .env blir förslag och hemligheter
 # som redan finns behålls (en ny databas- eller krypteringsnyckel skulle göra
@@ -155,11 +156,10 @@ env_set MODULES "$MODULES"
 
 rubrik "Integrationsplattformen"
 info "Hämtar data från andra system (t.ex. HR, ekonomi, CMDB) in i portalen."
-plattform_nu=n; [ "$(env_get COMPOSE_PROFILES)" = plattform ] && plattform_nu=j
+plattform_nu=n; plattform_vald && plattform_nu=j
 if ja_nej "Installera Integrationsplattformen?" "$plattform_nu"; then
     PLATTFORM=1
     env_set PLATFORM_HOST "$(fraga_maste "Plattformens värdnamn" "$(env_get PLATFORM_HOST)")"
-    env_set COMPOSE_PROFILES plattform
     env_set INTEGRATION_PLATFORM_URL "http://plattform-api:8000/api/v1"
     for k in PLATFORM_ENCRYPTION_KEY PLATFORM_ADMIN_API_KEY PLATFORM_JWT_SECRET PLATFORM_POSTGRES_PASSWORD SYNC_WEBHOOK_SECRET; do
         env_set "$k" "$(hemlighet "$k")"
@@ -167,10 +167,77 @@ if ja_nej "Installera Integrationsplattformen?" "$plattform_nu"; then
     cp caddy/mallar/plattform.caddy caddy/sites/plattform.caddy
 else
     PLATTFORM=0
-    env_set COMPOSE_PROFILES ""
     env_set INTEGRATION_PLATFORM_URL ""
     rm -f caddy/sites/plattform.caddy
 fi
+
+# ── Arkitekten (processritaren) ──────────────────────────────────────────────
+
+rubrik "Arkitekten (processritaren)"
+info "Ritar affärsprocesser och systemprocesser; de som publiceras visas i portalen."
+ARKITEKTEN=0
+ark_nu=n; arkitekten_vald && ark_nu=j
+if [ $PLATTFORM = 0 ]; then
+    # Beslut B1: bilderna når portalen bara genom plattformen.
+    info "Arkitekten kräver Integrationsplattformen – processbilderna når portalen"
+    info "bara genom den. Välj plattformen ovan för att kunna installera Arkitekten."
+    [ $ark_nu = j ] && info "Arkitekten stängs av (dess innehåll ligger kvar i volymen)."
+elif ja_nej "Installera Arkitekten?" "$ark_nu"; then
+    ARKITEKTEN=1
+    ARKITEKTEN_HOST=$(fraga_maste "Arkitektens värdnamn" "$(env_get ARKITEKTEN_HOST)")
+    env_set ARKITEKTEN_HOST "$ARKITEKTEN_HOST"
+    env_set ARKITEKTEN_URL "https://$ARKITEKTEN_HOST"
+    [ -n "$(env_get ARKITEKTEN_VERSION)" ] \
+        || env_set ARKITEKTEN_VERSION "$(fraga_maste "Arkitektens version (se $RELEASES_ARKITEKTEN)")"
+    env_set ARKITEKTEN_SESSION_SECRET "$(hemlighet ARKITEKTEN_SESSION_SECRET)"
+
+    ark_entra=n; [ "$(env_get ARKITEKTEN_AUTH)" = entra ] && ark_entra=j
+    [ $ENTRA = 1 ] && [ $FORSTA = 1 ] && ark_entra=j
+    if ja_nej "Logga in med Entra ID i Arkitekten? (annars egna konton – första besöket skapar administratören)" "$ark_entra"; then
+        env_set ARKITEKTEN_AUTH entra
+        samma=n; [ $ENTRA = 1 ] && samma=j
+        if [ $ENTRA = 1 ] && ja_nej "  Samma appregistrering som portalen?" "$samma"; then
+            env_set ARKITEKTEN_ENTRA_TENANT_ID "$(env_get ENTRA_TENANT_ID)"
+            env_set ARKITEKTEN_ENTRA_CLIENT_ID "$(env_get ENTRA_CLIENT_ID)"
+        else
+            env_set ARKITEKTEN_ENTRA_TENANT_ID "$(fraga_maste "  Katalog-ID (tenant ID)" "$(env_get ARKITEKTEN_ENTRA_TENANT_ID)")"
+            env_set ARKITEKTEN_ENTRA_CLIENT_ID "$(fraga_maste "  Program-ID (client ID)" "$(env_get ARKITEKTEN_ENTRA_CLIENT_ID)")"
+        fi
+        if [ -z "$(env_get ARKITEKTEN_ENTRA_CLIENT_SECRET)" ]; then
+            printf '  Klienthemlighet (värdet, inte id:t): ' >&2
+            IFS= read -rs hemlig || true
+            printf '\n' >&2
+            [ -n "$hemlig" ] || fel "Entra ID kräver en klienthemlighet."
+            env_set ARKITEKTEN_ENTRA_CLIENT_SECRET "$hemlig"
+        fi
+        env_set ARKITEKTEN_ENTRA_ADMIN_ROLLER "$(fraga "  Approller som ger administratör" "$(env_get ARKITEKTEN_ENTRA_ADMIN_ROLLER)")"
+    else
+        env_set ARKITEKTEN_AUTH lokal
+    fi
+
+    if [ -z "$(env_get ARKITEKTEN_ANTHROPIC_API_KEY)" ]; then
+        printf 'Nyckel för AI-stödet (Anthropic), tomt = AI-stödet är av: ' >&2
+        IFS= read -rs ai || true
+        printf '\n' >&2
+        [ -n "$ai" ] && env_set ARKITEKTEN_ANTHROPIC_API_KEY "$ai"
+    fi
+    cp caddy/mallar/arkitekten.caddy caddy/sites/arkitekten.caddy
+else
+    info "Arkitekten installeras inte."
+fi
+[ $ARKITEKTEN = 1 ] || { env_set ARKITEKTEN_URL ""; rm -f caddy/sites/arkitekten.caddy; }
+
+# Profilerna och modulen följer valen.
+profiler=()
+[ $PLATTFORM = 1 ] && profiler+=(plattform)
+[ $ARKITEKTEN = 1 ] && profiler+=(arkitekten)
+env_set COMPOSE_PROFILES "$(IFS=,; printf '%s' "${profiler[*]:-}")"
+if [ $ARKITEKTEN = 1 ]; then
+    case ",$MODULES," in *,arkitekten,*) ;; *) MODULES=${MODULES:+$MODULES,}arkitekten ;; esac
+else
+    MODULES=$(printf '%s' ",$MODULES," | sed 's/,arkitekten,/,/; s/^,//; s/,$//')
+fi
+env_set MODULES "$MODULES"
 
 # ── Hemligheter ───────────────────────────────────────────────────────────────
 
@@ -188,7 +255,7 @@ if [ $PULL = 1 ]; then
         fel "docker compose pull misslyckades."
     fi
 fi
-info "Portalen $(env_get PORTAL_VERSION)$([ $PLATTFORM = 1 ] && echo ", plattformen $(env_get PLATFORM_VERSION)")."
+info "Portalen $(env_get PORTAL_VERSION)$([ $PLATTFORM = 1 ] && echo ", plattformen $(env_get PLATFORM_VERSION)")$([ $ARKITEKTEN = 1 ] && echo ", Arkitekten $(env_get ARKITEKTEN_VERSION)")."
 
 # ── Exempelinnehåll ───────────────────────────────────────────────────────────
 
@@ -225,6 +292,10 @@ rubrik "Startar"
 if [ $PLATTFORM = 0 ] && [ -n "$(dc --profile plattform ps -q plattform-api 2>/dev/null)" ]; then
     info "Stoppar Integrationsplattformen (dess data ligger kvar i volymerna)."
     dc --profile plattform rm -sf plattform-web plattform-api plattform-redis plattform-db >&2
+fi
+if [ $ARKITEKTEN = 0 ] && [ -n "$(dc --profile arkitekten ps -q arkitekten 2>/dev/null)" ]; then
+    info "Stoppar Arkitekten (dess innehåll ligger kvar i volymen)."
+    dc --profile arkitekten rm -sf arkitekten arkitekten-flodestjanst >&2
 fi
 dc up -d --remove-orphans
 # Caddy läser om webbplatserna (plattformen kan ha slagits på eller av).
@@ -271,6 +342,61 @@ print(json.load(urllib.request.urlopen(req))["key"])
     fi
 fi
 
+if [ $ARKITEKTEN = 1 ]; then
+    info "Väntar på Arkitekten…"
+    vanta_pa_node arkitekten http://localhost:5173/health || fel "Avbrutet."
+    # Källan i plattformen som hämtar de publicerade processbilderna från
+    # Arkitektens flödestjänst varannan timme. Portalen hittar den själv.
+    svar=$(dc exec -T plattform-api python -c '
+import json, os, urllib.request
+H = {"Content-Type": "application/json", "X-API-Key": os.environ["ADMIN_API_KEY"]}
+def anrop(väg, data=None, metod="GET"):
+    req = urllib.request.Request("http://localhost:8000/api/v1" + väg, method=metod, headers=H,
+                                 data=json.dumps(data).encode() if data is not None else None)
+    return json.load(urllib.request.urlopen(req))
+ark = {c["id"] for c in anrop("/connections") if c.get("connector_type") == "arkitekten"}
+if ark:
+    # Slås på igen om Arkitekten varit avvald.
+    for f in anrop("/flows"):
+        if f.get("connection_id") in ark and not f.get("enabled"):
+            anrop("/flows/" + f["id"], {"enabled": True}, "PUT")
+    print("finns")
+else:
+    c = anrop("/connections", {"name": "Arkitekten", "connector_type": "arkitekten",
+        "description": "Publicerade processbilder från Arkitekten",
+        "config": {"base_url": "http://arkitekten-flodestjanst:8200", "familj": "alla",
+                   "endast_publicerade": True, "version": "fastslagen"}}, "POST")
+    f = anrop("/flows", {"name": "Arkitekten – processbilder till portalen", "connection_id": c["id"]}, "POST")
+    anrop("/schedules", {"flow_id": f["id"], "cron_expression": "0 */2 * * *"}, "POST")
+    print("skapad")
+' </dev/null) || fel "Arkitektens källa i plattformen kunde inte skapas."
+    case "$svar" in
+        skapad) info "Arkitektens källa i plattformen är skapad (hämtar varannan timme)." ;;
+        finns) info "Arkitektens källa i plattformen finns redan (påslagen)." ;;
+    esac
+    if ja_nej "Lägga in Arkitektens exempelprocesser?" "$([ $FORSTA = 1 ] && echo j || echo n)"; then
+        # Skriver aldrig över – det som finns står kvar.
+        dc exec -T arkitekten node_modules/.bin/tsx server/innehallspaket.mts import exempel </dev/null >&2 || true
+    fi
+fi
+
+if [ $ARKITEKTEN = 0 ] && [ $PLATTFORM = 1 ]; then
+    # Avvald: plattformens källa ska inte försöka nå en Arkitekten som inte körs.
+    dc exec -T plattform-api python -c '
+import json, os, urllib.request
+H = {"Content-Type": "application/json", "X-API-Key": os.environ["ADMIN_API_KEY"]}
+def anrop(väg, data=None, metod="GET"):
+    req = urllib.request.Request("http://localhost:8000/api/v1" + väg, method=metod, headers=H,
+                                 data=json.dumps(data).encode() if data is not None else None)
+    return json.load(urllib.request.urlopen(req))
+ark = {c["id"] for c in anrop("/connections") if c.get("connector_type") == "arkitekten"}
+for f in anrop("/flows"):
+    if f.get("connection_id") in ark and f.get("enabled"):
+        anrop("/flows/" + f["id"], {"enabled": False}, "PUT")
+        print("Arkitektens källa i plattformen är avstängd.")
+' </dev/null >&2 || info "Arkitektens källa i plattformen kunde inte stängas av – gör det i plattformen."
+fi
+
 for p in "${valda_paket[@]}"; do
     info "Läser in $p…"
     # Bara sammanfattningen per slag, inte loggraden för varje post.
@@ -282,6 +408,10 @@ done
 rubrik "Klart"
 info "Portalen:      https://$PORTAL_HOST/"
 [ $PLATTFORM = 1 ] && info "Plattformen:   https://$(env_get PLATFORM_HOST)/  (första besöket skapar dess administratör)"
+if [ $ARKITEKTEN = 1 ]; then
+    info "Arkitekten:    https://$(env_get ARKITEKTEN_HOST)/$([ "$(env_get ARKITEKTEN_AUTH)" = lokal ] && echo "  (första besöket skapar dess administratör)")"
+    [ "$(env_get ARKITEKTEN_AUTH)" = entra ] && info "               Entra ID: redirect-URI (Web) https://$(env_get ARKITEKTEN_HOST)/__ark/auth/callback"
+fi
 if [ $LOKAL_ADMIN = 1 ]; then
     info "Logga in som:  $ADMIN_EPOST"
     [ "${ADMIN_LOSEN_GENERERAT:-0}" = 1 ] && info "Lösenord:      $ADMIN_LOSEN   (visas bara nu – byt det efter inloggningen)"

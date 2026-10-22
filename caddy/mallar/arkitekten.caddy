@@ -1,0 +1,8 @@
+# Arkitekten (processritaren). Slås på genom att kopiera filen till sites/
+# (installationsguiden gör det när Arkitekten väljs):
+#   cp caddy/mallar/arkitekten.caddy caddy/sites/
+# Flödestjänsten (:8200) exponeras aldrig – bara plattformen når den, över Docker-nätet.
+{$ARKITEKTEN_HOST} {
+	import tls-{$TLS_MODE}
+	reverse_proxy arkitekten:5173
+}

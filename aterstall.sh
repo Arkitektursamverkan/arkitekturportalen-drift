@@ -35,11 +35,12 @@ if [ -f "$ENV_FILE" ]; then cp "$ENV_FILE" "$ENV_FILE.fore-aterstallning"; fi
 cp "$dir/env" "$ENV_FILE"
 chmod 600 "$ENV_FILE" "$ENV_FILE.fore-aterstallning" 2>/dev/null || true
 if plattform_vald; then cp caddy/mallar/plattform.caddy caddy/sites/plattform.caddy; else rm -f caddy/sites/plattform.caddy; fi
+if arkitekten_vald; then cp caddy/mallar/arkitekten.caddy caddy/sites/arkitekten.caddy; else rm -f caddy/sites/arkitekten.caddy; fi
 
 if [ $PULL = 1 ]; then dc pull --quiet || fel "Avbilderna gick inte att hämta (docker login ghcr.io?)."; fi
 
 info "Stoppar portalen och plattformen…"
-dc --profile plattform stop api web plattform-api plattform-web >/dev/null 2>&1 || true
+dc --profile plattform --profile arkitekten stop api web plattform-api plattform-web arkitekten arkitekten-flodestjanst >/dev/null 2>&1 || true
 dc up -d db >/dev/null 2>&1
 plattform_vald && dc up -d plattform-db >/dev/null 2>&1
 vanta_db() {
@@ -64,10 +65,16 @@ if plattform_vald && [ -f "$dir/plattform_db.sql.gz" ]; then
     aterstall_db plattform-db integration_user integration_db "$dir/plattform_db.sql.gz"
 fi
 
+if arkitekten_vald && [ -f "$dir/arkitekten.tar.gz" ]; then
+    info "Läser tillbaka Arkitektens innehåll…"
+    dc run --rm --no-deps -T --entrypoint sh arkitekten -c 'find /data -mindepth 1 -delete && tar xzf - -C /data' < "$dir/arkitekten.tar.gz"
+fi
+
 info "Startar…"
 dc up -d --remove-orphans >/dev/null 2>&1
 dc exec -T caddy caddy reload --config /etc/caddy/Caddyfile --adapter caddyfile >/dev/null 2>&1 || dc restart caddy >/dev/null 2>&1
 vanta_pa api http://localhost:8000/api/v1/health || fel "Avbrutet."
 if plattform_vald; then vanta_pa plattform-api http://localhost:8000/api/v1/health || fel "Avbrutet."; fi
+if arkitekten_vald; then vanta_pa_node arkitekten http://localhost:5173/health || fel "Avbrutet."; fi
 rubrik "Återställt"
 info "Portalen kör $(rapporterad_version api)$(plattform_vald && echo ", plattformen $(rapporterad_version plattform-api)")."

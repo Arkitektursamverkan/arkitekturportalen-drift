@@ -1,8 +1,9 @@
 # Arkitekturportalen – installation från färdiga avbilder.
 #
 # Allt som är installationsspecifikt kommer från .env (se .env.example).
-# Integrationsplattformen är valfri och startas med profilen "plattform"
-# (COMPOSE_PROFILES=plattform i .env). Caddy tar emot HTTPS och skickar vidare
+# Integrationsplattformen och Arkitekten är valfria och startas med profilerna
+# "plattform" och "arkitekten" (COMPOSE_PROFILES=plattform,arkitekten i .env).
+# Arkitekten kräver plattformen: processbilderna når portalen bara genom den. Caddy tar emot HTTPS och skickar vidare
 # till portalens och plattformens webbcontainrar; inga andra portar publiceras.
 
 name: arkitekturportalen
@@ -59,6 +60,8 @@ services:
       INTEGRATION_PLATFORM_API_KEY: ${INTEGRATION_PLATFORM_API_KEY:-}
       INTEGRATION_PLATFORM_ADMIN_KEY: ${PLATFORM_ADMIN_API_KEY:-}
       SYNC_WEBHOOK_SECRET: ${SYNC_WEBHOOK_SECRET:-}
+      # Arkitekten (modulen "arkitekten"): länken i toppfältet.
+      ARKITEKTEN_URL: ${ARKITEKTEN_URL:-}
     depends_on:
       db:
         condition: service_healthy
@@ -73,6 +76,7 @@ services:
       ENTRA_TENANT_ID: ${ENTRA_TENANT_ID:-}
       ENTRA_CLIENT_ID: ${ENTRA_CLIENT_ID:-}
       ENTRA_API_SCOPE: ${ENTRA_API_SCOPE:-}
+      ARKITEKTEN_URL: ${ARKITEKTEN_URL:-}
     depends_on:
       - api
 
@@ -86,6 +90,7 @@ services:
     environment:
       PORTAL_HOST: ${PORTAL_HOST}
       PLATFORM_HOST: ${PLATFORM_HOST:-}
+      ARKITEKTEN_HOST: ${ARKITEKTEN_HOST:-}
       # auto (Let's Encrypt) | egen (certifikatfiler i certs/) | intern (Caddys egen CA)
       TLS_MODE: ${TLS_MODE:?Sätt TLS_MODE i .env}
       ACME_EMAIL: ${ACME_EMAIL:-}
@@ -162,11 +167,56 @@ services:
     depends_on:
       - plattform-api
 
+  # ── Arkitekten, processritaren (profil "arkitekten") ────────────────────────
+  # En avbild, två processer: webben med bryggan, och flödestjänsten som
+  # plattformen hämtar processbilderna från. Innehållet ligger i volymen.
+  arkitekten:
+    <<: *restart
+    image: ${REGISTRY:-ghcr.io/arkitektursamverkan}/arkitekten:${ARKITEKTEN_VERSION:-}
+    profiles: ["arkitekten"]
+    environment:
+      ARK_BAS_URL: https://${ARKITEKTEN_HOST:-}
+      ARK_SESSION_SECRET: ${ARKITEKTEN_SESSION_SECRET:-}
+      # entra eller lokal (docs/inloggning.md i Arkitekten).
+      ARK_AUTH: ${ARKITEKTEN_AUTH:-lokal}
+      ENTRA_TENANT_ID: ${ARKITEKTEN_ENTRA_TENANT_ID:-}
+      ENTRA_CLIENT_ID: ${ARKITEKTEN_ENTRA_CLIENT_ID:-}
+      ENTRA_CLIENT_SECRET: ${ARKITEKTEN_ENTRA_CLIENT_SECRET:-}
+      ENTRA_ADMIN_ROLLER: ${ARKITEKTEN_ENTRA_ADMIN_ROLLER:-Arkitekten.Admin,Admin}
+      ENTRA_ADMIN_GRUPPER: ${ARKITEKTEN_ENTRA_ADMIN_GRUPPER:-}
+      ARK_ADMINS: ${BOOTSTRAP_ADMIN_EMAILS:-}
+      # Valfritt – tomt = AI-stödet är av.
+      ANTHROPIC_API_KEY: ${ARKITEKTEN_ANTHROPIC_API_KEY:-}
+      # Publiceringen till portalen, med portalens tjänstenyckel över Docker-nätet.
+      EA_API_URL: http://api:8000/api/v1
+      EA_API_KEY: ${API_KEY:-}
+      EA_WEBB_URL: https://${PORTAL_HOST:-}
+      ARK_PORTALBANA: ${ARKITEKTEN_PORTALBANA:-}
+      ARK_SYSTEMPROCESS_KATEGORI: ${ARKITEKTEN_SYSTEMPROCESS_KATEGORI:-}
+    volumes:
+      - arkitekten_data:/data
+    depends_on:
+      - api
+
+  arkitekten-flodestjanst:
+    <<: *restart
+    image: ${REGISTRY:-ghcr.io/arkitektursamverkan}/arkitekten:${ARKITEKTEN_VERSION:-}
+    profiles: ["arkitekten"]
+    command: ["node_modules/.bin/tsx", "server/flodestjanst.mts"]
+    environment:
+      PORT: "8200"
+      ARK_PORTALBANA: ${ARKITEKTEN_PORTALBANA:-}
+      ARK_SYSTEMPROCESS_KATEGORI: ${ARKITEKTEN_SYSTEMPROCESS_KATEGORI:-}
+    # Tjänsten kan inte skriva – volymen monteras bara för läsning.
+    volumes:
+      - arkitekten_data:/data:ro
+
 volumes:
   portal_db:
   portal_snapshots:
   portal_sync:
   plattform_db:
   plattform_redis:
+  arkitekten_data:
   caddy_data:
   caddy_config:

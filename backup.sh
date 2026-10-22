@@ -3,6 +3,8 @@
 #   portal_db.sql.gz      portalens databas
 #   portal_filer.tar.gz   ögonblicksbilder och synkprofiler
 #   plattform_db.sql.gz   plattformens databas (om den är vald)
+#   arkitekten.tar.gz     Arkitektens innehåll: processer, visualiseringar,
+#                         stilar och konton (om Arkitekten är vald)
 #   env                   kopia av .env – nycklarna som krävs för att läsa datan
 #   versioner             versionerna som körde
 #   KLAR                  skrivs sist; utan den är backupen ofullständig
@@ -34,11 +36,16 @@ dc exec -T api tar czf - -C /app snapshots sync_data > "$dir/portal_filer.tar.gz
 if plattform_vald; then
     dc exec -T plattform-db pg_dump -U integration_user -d integration_db | gzip > "$dir/plattform_db.sql.gz"
 fi
+if arkitekten_vald; then
+    dc exec -T arkitekten tar czf - -C /data . > "$dir/arkitekten.tar.gz"
+fi
 cp "$ENV_FILE" "$dir/env"
 {
     echo "PORTAL_VERSION=$(env_get PORTAL_VERSION)"
     echo "PLATFORM_VERSION=$(env_get PLATFORM_VERSION)"
     echo "PLATTFORM=$(plattform_vald && echo ja || echo nej)"
+    echo "ARKITEKTEN_VERSION=$(env_get ARKITEKTEN_VERSION)"
+    echo "ARKITEKTEN=$(arkitekten_vald && echo ja || echo nej)"
 } > "$dir/versioner"
 date -Iseconds > "$dir/KLAR"
 
