@@ -1,0 +1,352 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<title>Arkitekturportalen – broschyr</title>
+<style>
+@page { size: A4; margin: 0; }
+:root {
+  --blue: #1565c0; --navy: #0d2c54; --ink: #1c2733; --muted: #5a6776; --line: #dfe4ea;
+  --soft: #eef4fb; --green: #2e7d32; --orange: #ef6c00; --purple: #7b1fa2; --red: #c62828; --amber: #b26a00;
+}
+* { box-sizing: border-box; }
+html { font-family: Inter, sans-serif; color: var(--ink); font-size: 10pt; line-height: 1.5; }
+body { margin: 0; }
+h1, h2, h3, p { margin: 0; }
+.sida { width: 210mm; height: 297mm; padding: 16mm 16mm 14mm; position: relative; page-break-after: always; overflow: hidden; }
+.sida:last-child { page-break-after: auto; }
+.fot { position: absolute; left: 16mm; right: 16mm; bottom: 8mm; font-size: 7.5pt; color: var(--muted); display: flex; justify-content: space-between; border-top: 0.5pt solid var(--line); padding-top: 2mm; }
+
+/* Etiketter */
+.etikett { display: inline-block; font-size: 7.4pt; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 0.8mm 2.6mm; border-radius: 10mm; }
+.e-karna { background: var(--blue); color: #fff; }
+.e-modul { background: #e3f0e4; color: var(--green); border: 0.6pt solid #a5d0a8; }
+.e-tillagg { background: #f3e5f5; color: var(--purple); border: 0.6pt solid #d1a6db; }
+.e-kommande { background: #fff3e0; color: var(--amber); border: 0.6pt dashed #e0a24a; }
+
+.kicker { font-size: 8.4pt; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--blue); margin-bottom: 2mm; }
+h2 { font-size: 22pt; line-height: 1.15; color: var(--navy); margin: 2mm 0 3mm; font-weight: 700; }
+.ingress { font-size: 11.2pt; color: var(--muted); max-width: 165mm; margin-bottom: 6mm; }
+h3 { font-size: 12.5pt; color: var(--navy); margin: 0 0 1.4mm; }
+
+/* Skärmbilder i webbläsarram */
+.ram { border-radius: 2.4mm; overflow: hidden; box-shadow: 0 1.2mm 4mm rgba(13,44,84,0.18); border: 0.6pt solid #cfd8e3; background: #fff; }
+.ram .list { height: 5mm; background: #e8edf3; display: flex; align-items: center; gap: 1.2mm; padding-left: 2.6mm; }
+.ram .list i { width: 1.8mm; height: 1.8mm; border-radius: 50%; background: #c3cdd8; display: block; }
+.ram img { display: block; width: 100%; }
+.bildtext { font-size: 8.4pt; color: var(--muted); margin-top: 2mm; }
+
+.tva { display: flex; gap: 7mm; }
+.tva > div { flex: 1; }
+.punkter { list-style: none; padding: 0; margin: 0; }
+.punkter li { padding-left: 5mm; position: relative; margin-bottom: 1.6mm; }
+.punkter li::before { content: ""; position: absolute; left: 0; top: 1.9mm; width: 2mm; height: 2mm; border-radius: 50%; background: var(--blue); }
+.del { margin-bottom: 7mm; }
+.del-huvud { display: flex; align-items: center; gap: 3mm; margin-bottom: 1.6mm; }
+.del-huvud h3 { margin: 0; }
+
+/* Omslag */
+.omslag { background: linear-gradient(160deg, #0d2c54 0%, #1565c0 70%, #1e88e5 100%); color: #fff; padding: 22mm 18mm; }
+.omslag .kicker { color: #9ecbff; }
+.omslag h1 { font-size: 40pt; line-height: 1.05; margin: 4mm 0 5mm; }
+.omslag .under { font-size: 15pt; max-width: 150mm; color: #dbeaff; line-height: 1.4; }
+.omslag .hero { position: absolute; left: 18mm; right: -30mm; top: 118mm;  }
+.omslag .hero .ram { border: none; box-shadow: 0 4mm 14mm rgba(0,0,0,0.35); }
+.omslag .botten { position: absolute; left: 18mm; right: 18mm; bottom: 16mm; display: flex; justify-content: space-between; font-size: 9pt; color: #cfe3ff; }
+.omslag .botten b { color: #fff; }
+
+/* Översikt */
+.karta { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 3.4mm; margin-top: 4mm; }
+.ruta { border-radius: 2mm; padding: 3.4mm 3.8mm; border: 0.6pt solid var(--line); background: #fff; }
+.ruta h4 { margin: 1.6mm 0 1mm; font-size: 10.4pt; color: var(--navy); }
+.ruta p { font-size: 8.6pt; color: var(--muted); line-height: 1.45; }
+.ruta.karna { grid-column: span 3; background: var(--soft); border-color: #b9d3ef; }
+.ruta.karna .inne { display: flex; gap: 6mm; }
+.ruta.karna .inne > div { flex: 1; }
+.ruta.tillagg { background: #fbf6fc; border-color: #e2c8e8; }
+.ruta.kommande { background: #fffaf2; border: 0.8pt dashed #e0a24a; }
+.fakta { display: flex; gap: 4mm; margin-top: 7mm; }
+.fakta div { flex: 1; border-top: 1.4pt solid var(--blue); padding-top: 2.4mm; }
+.fakta b { display: block; font-size: 15pt; color: var(--navy); line-height: 1.2; }
+.fakta span { font-size: 8.4pt; color: var(--muted); }
+
+/* Plattformsflöde */
+.flode { display: flex; align-items: center; gap: 3mm; margin: 4mm 0 6mm; }
+.flode .steg { flex: 1; border-radius: 2mm; padding: 3mm; text-align: center; font-size: 8.6pt; }
+.flode .kallor { background: #f4f6f8; border: 0.6pt solid var(--line); }
+.flode .plattf { background: #f3e5f5; border: 0.6pt solid #d1a6db; color: var(--purple); }
+.flode .portal { background: var(--soft); border: 0.6pt solid #b9d3ef; color: var(--blue); }
+.flode .steg b { display: block; font-size: 10pt; margin-bottom: 0.6mm; }
+.pil { font-size: 16pt; color: #9aa7b4; }
+
+/* Kommande */
+.kommande-panel { border: 1pt dashed #e0a24a; border-radius: 3mm; padding: 6mm; background: #fffaf2; }
+.cta { background: var(--navy); color: #fff; border-radius: 3mm; padding: 7mm 8mm; margin-top: 8mm; }
+.cta h2 { color: #fff; font-size: 18pt; margin-top: 0; }
+.cta .tre { display: flex; gap: 6mm; margin-top: 4mm; }
+.cta .tre div { flex: 1; font-size: 9pt; color: #d3e3f7; }
+.cta .tre b { display: block; color: #fff; font-size: 10.4pt; margin-bottom: 1mm; }
+.cta .lank { margin-top: 5mm; font-size: 9pt; color: #9ecbff; }
+</style>
+</head>
+<body>
+
+<!-- 1 Omslag -->
+<section class="sida omslag">
+  <div class="kicker">Arkitektursamverkan</div>
+  <h1>Arkitekturportalen</h1>
+  <p class="under">Hela verksamhetens IT-landskap på ett ställe – processer, system, information och teknik, och hur allt hänger ihop.</p>
+  <div class="hero"><div class="ram"><div class="list"><i></i><i></i><i></i></div><img src="jpg/applikation.jpg"></div></div>
+  <div class="botten"><span><b>Fri programvara</b> · EUPL-1.2</span><span>Körs på organisationens egen server</span></div>
+</section>
+
+<!-- 2 Översikt -->
+<section class="sida">
+  <div class="kicker">Översikt</div>
+  <h2>En portal – byggd i delar</h2>
+  <p class="ingress">Kärnan ger en gemensam bild av IT-landskapet. Ovanpå den väljer varje organisation de moduler den behöver, och kan koppla på Integrationsplattformen för att hämta uppgifter automatiskt från andra system.</p>
+
+  <div class="karta">
+    <div class="ruta karna">
+      <span class="etikett e-karna">Kärnan · ingår alltid</span>
+      <div class="inne">
+        <div><h4>Utforska landskapet</h4><p>Processer, applikationer, informationsobjekt, informationskällor och teknikkomponenter – med sambanden mellan dem i klickbara grafer.</p></div>
+        <div><h4>Rapporter och analys</h4><p>Ett tjugotal färdiga rapporter: portfölj, överlapp och luckor, livscykel, leverantörsberoende, NIS2, behandlingsregister med mera.</p></div>
+        <div><h4>Lösningsskisser och administration</h4><p>Skisser för nya lösningar, CSV-import, behörigheter per objekt och grupp, inloggning med Entra ID.</p></div>
+      </div>
+    </div>
+    <div class="ruta"><span class="etikett e-modul">Modul</span><h4>Verksamhetskalender</h4><p>Händelser, frysperioder och förändringslogg i en gemensam kalender.</p></div>
+    <div class="ruta"><span class="etikett e-modul">Modul</span><h4>Samarbeten</h4><p>Arbetsytor för uppdrag och arbetsgrupper: sidor, möten, uppgifter och diskussion.</p></div>
+    <div class="ruta"><span class="etikett e-modul">Modul</span><h4>Arkitekturstyrning</h4><p>Principer, nulägesanalys, målarkitektur och GAP-analys med handlingsplan.</p></div>
+    <div class="ruta"><span class="etikett e-modul">Modul</span><h4>Ordlista</h4><p>Organisationens begrepp och förslag på nya.</p></div>
+    <div class="ruta"><span class="etikett e-modul">Modul</span><h4>Enkäter</h4><p>Frågor till systemförvaltare och användare, med resultat som rapporter.</p></div>
+    <div class="ruta kommande"><span class="etikett e-kommande">Kommande modul</span><h4>Arkitekten</h4><p>Processritaren: processbilder direkt på processkartan.</p></div>
+    <div class="ruta tillagg" style="grid-column: span 3"><span class="etikett e-tillagg">Tillägg · eget system</span><h4>Integrationsplattformen</h4><p>Hämtar uppgifter från SharePoint, 2C8, REST-API:er och CSV-filer på schema, så att portalen hålls i takt med källsystemen.</p></div>
+  </div>
+
+  <div class="fakta">
+    <div><b>1 fil</b><span>Installationen är en enda fil som ställer några frågor och gör resten.</span></div>
+    <div><b>Er server</b><span>Data stannar hos er. Inga molntjänster krävs.</span></div>
+    <div><b>Svenska</b><span>Gränssnittet är på svenska, med engelska som val.</span></div>
+    <div><b>EUPL-1.2</b><span>Fri programvara under EU:s öppna licens.</span></div>
+  </div>
+  <div class="fot"><span>Arkitekturportalen</span><span>Skärmbilderna visar fiktiva exempeldata</span></div>
+</section>
+
+<!-- 3 Kärnan: landskapet -->
+<section class="sida">
+  <span class="etikett e-karna">Kärnan · ingår alltid</span>
+  <h2>Se hur allt hänger ihop</h2>
+  <p class="ingress">Välj ett system eller en process och se direkt vilka processer det stödjer, vilken information det hanterar och vilken teknik det körs på.</p>
+  <div class="ram"><div class="list"><i></i><i></i><i></i></div><img src="jpg/applikation.jpg"></div>
+  <p class="bildtext">Applikationslandskapet: SAP S/4HANA med processerna det stödjer (grönt), informationen det hanterar (orange), integrationerna (blått) och tekniken det körs på (rött).</p>
+  <div class="tva" style="margin-top:6mm">
+    <div>
+      <div class="ram"><div class="list"><i></i><i></i><i></i></div><img src="jpg/processer.jpg"></div>
+      <p class="bildtext">Processkartan: en process och allt som behövs för att genomföra den.</p>
+    </div>
+    <div>
+      <h3>Ett landskap, fem perspektiv</h3>
+      <ul class="punkter">
+        <li><b>Verksamhet</b> – processer i hierarki, gärna hämtade från 2C8.</li>
+        <li><b>Applikation</b> – systemen, deras förvaltare och integrationer.</li>
+        <li><b>Information</b> – informationsobjekt och var de lagras.</li>
+        <li><b>Teknik</b> – plattformar, databaser och drift.</li>
+        <li><b>Samband</b> – stödjer, hanterar, körs på, integrerar med.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="fot"><span>Arkitekturportalen · Kärnan</span><span>3</span></div>
+</section>
+
+<!-- 4 Kärnan: rapporter -->
+<section class="sida">
+  <span class="etikett e-karna">Kärnan · ingår alltid</span>
+  <h2>Svar i stället för kalkylblad</h2>
+  <p class="ingress">Rapporterna räknas fram ur landskapet och är alltid aktuella. Var finns överlapp? Vilka processer saknar systemstöd? Vilka leverantörer är vi beroende av?</p>
+  <div class="ram"><div class="list"><i></i><i></i><i></i></div><img src="jpg/portfolj.jpg"></div>
+  <p class="bildtext">Applikationsportföljen med kategori, avdelning, leverantör och antal processer och integrationer.</p>
+  <div class="tva" style="margin-top:6mm">
+    <div>
+      <div class="ram"><div class="list"><i></i><i></i><i></i></div><img src="jpg/overlapp.jpg"></div>
+      <p class="bildtext">Överlapp och luckor: processer som stöds av flera system.</p>
+    </div>
+    <div>
+      <h3>Ett urval av rapporterna</h3>
+      <ul class="punkter">
+        <li>Applikationsportfölj och livscykelstatus</li>
+        <li>Överlapp, luckor och redundans</li>
+        <li>Integrations- och leverantörsberoende</li>
+        <li>Dataklassificering och behandlingsregister</li>
+        <li>Riskregister, verksamhetspåverkan och NIS2</li>
+        <li>Teknisk skuld och kostnadsöversikt</li>
+      </ul>
+      <p style="margin-top:2mm;font-size:9pt;color:var(--muted)">Rapporterna kan taggas, döpas om och läggas som snabblänkar på startsidan.</p>
+    </div>
+  </div>
+  <div class="fot"><span>Arkitekturportalen · Kärnan</span><span>4</span></div>
+</section>
+
+<!-- 5 Kalender + Samarbeten -->
+<section class="sida">
+  <div class="del">
+    <div class="del-huvud"><span class="etikett e-modul">Modul</span></div>
+    <h2 style="margin-top:0">Verksamhetskalender</h2>
+    <p class="ingress" style="margin-bottom:4mm">När passar det att uppgradera ett system? Kalendern visar verksamhetens kritiska perioder – lönekörning, bokslut, budget – bredvid planerade förändringar i IT-miljön.</p>
+    <div class="ram"><div class="list"><i></i><i></i><i></i></div><img src="jpg/kalender.jpg"></div>
+    <p class="bildtext">Frysperioder (rött) kopplas till de system och processer de berör. Startsidan varnar när en sådan pågår.</p>
+  </div>
+  <div class="del">
+    <div class="del-huvud"><span class="etikett e-modul">Modul</span></div>
+    <h2 style="margin-top:0">Samarbeten</h2>
+    <div class="tva">
+      <div style="flex:1.5"><div class="ram"><div class="list"><i></i><i></i><i></i></div><img src="jpg/uppdrag.jpg"></div></div>
+      <div>
+        <p style="margin-bottom:3mm">En arbetsyta per uppdrag eller arbetsgrupp – nära arkitekturen den handlar om.</p>
+        <ul class="punkter">
+          <li>Sidor och mötesanteckningar från mallar</li>
+          <li>Uppgifter, kalender och diskussion</li>
+          <li>Filer och länkar</li>
+          <li>Egen medlemslista: ägare, medlem, läsare</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="fot"><span>Arkitekturportalen · Moduler</span><span>5</span></div>
+</section>
+
+<!-- 6 Styrning, Ordlista, Enkäter -->
+<section class="sida">
+  <div class="del">
+    <div class="del-huvud"><span class="etikett e-modul">Modul</span></div>
+    <h2 style="margin-top:0">Arkitekturstyrning</h2>
+    <div class="tva">
+      <div style="flex:1.5"><div class="ram"><div class="list"><i></i><i></i><i></i></div><img src="jpg/principer.jpg"></div></div>
+      <div>
+        <p style="margin-bottom:3mm">Principer, målbild och väg dit – på samma ställe som landskapet de styr.</p>
+        <ul class="punkter">
+          <li>Arkitekturprinciper och principdokument</li>
+          <li>Nulägesanalys och målarkitektur</li>
+          <li>GAP-analys med handlingsplan</li>
+          <li>Versionerade PDF:er att publicera</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="tva">
+    <div class="del">
+      <div class="del-huvud"><span class="etikett e-modul">Modul</span><h3>Ordlista</h3></div>
+      <div class="ram"><div class="list"><i></i><i></i><i></i></div><img src="jpg/ordlista.jpg"></div>
+      <p class="bildtext">Ett gemensamt språk för arkitekturarbetet. Alla kan föreslå nya begrepp.</p>
+    </div>
+    <div class="del">
+      <div class="del-huvud"><span class="etikett e-modul">Modul</span><h3>Enkäter</h3></div>
+      <div class="ram"><div class="list"><i></i><i></i><i></i></div><img src="jpg/enkat.jpg"></div>
+      <p class="bildtext">Fråga systemförvaltarna direkt – svaren blir rapporter som går att jämföra år från år.</p>
+    </div>
+  </div>
+  <div class="fot"><span>Arkitekturportalen · Moduler</span><span>6</span></div>
+</section>
+
+<!-- 7 Integrationsplattformen -->
+<section class="sida">
+  <span class="etikett e-tillagg">Tillägg · eget system</span>
+  <h2>Integrationsplattformen</h2>
+  <p class="ingress">Låt källsystemen fylla portalen. Plattformen hämtar uppgifter på schema, bearbetar dem i flöden och lämnar dem till portalen – så att landskapet aldrig blir inaktuellt.</p>
+  <div class="flode">
+    <div class="steg kallor"><b>Källsystem</b>SharePoint · 2C8 · REST-API · CSV</div>
+    <div class="pil">→</div>
+    <div class="steg plattf"><b>Integrationsplattformen</b>Kopplingar · flöden · scheman</div>
+    <div class="pil">→</div>
+    <div class="steg portal"><b>Arkitekturportalen</b>Alltid aktuellt landskap</div>
+  </div>
+  <div class="ram"><div class="list"><i></i><i></i><i></i></div><img src="jpg/plattform-floden.jpg"></div>
+  <p class="bildtext">Fyra exempelflöden: systemförteckningen från SharePoint, processkartan från 2C8, teknik från CMDB och kostnadsunderlag från CSV.</p>
+  <div class="tva" style="margin-top:6mm">
+    <div>
+      <h3>Det här ger den</h3>
+      <ul class="punkter">
+        <li>Mindre handpåläggning – en sanning i källsystemet</li>
+        <li>Körning på schema eller med <i>Hämta nu</i> i portalen</li>
+        <li>Körningslogg för varje hämtning</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Bra att veta</h3>
+      <ul class="punkter">
+        <li>Väljs vid installationen eller läggs till senare</li>
+        <li>Inloggningsuppgifter till källsystemen lagras krypterat</li>
+        <li>Eget webbgränssnitt och egen webbadress</li>
+      </ul>
+    </div>
+  </div>
+  <div class="fot"><span>Arkitekturportalen · Integrationsplattformen</span><span>7</span></div>
+</section>
+
+<!-- 8 Arkitekten + kom igång -->
+<section class="sida">
+  <span class="etikett e-kommande">Kommande modul</span>
+  <h2>Arkitekten – processritaren</h2>
+  <div class="kommande-panel">
+    <div class="tva">
+      <div style="flex:1.3">
+        <svg viewBox="0 0 400 210" width="100%" xmlns="http://www.w3.org/2000/svg" font-family="Inter, sans-serif" font-size="7">
+          <rect x="0" y="0" width="400" height="210" rx="6" fill="#fff" stroke="#e8d5b5"/>
+          <g fill="#7a6a55" font-size="8" font-weight="700">
+            <text x="10" y="66" transform="rotate(-90 10 66)">MEDARBETARE</text>
+            <text x="10" y="122" transform="rotate(-90 10 122)">CHEF</text>
+            <text x="10" y="186" transform="rotate(-90 10 186)">HR</text>
+          </g>
+          <line x1="22" y1="70" x2="392" y2="70" stroke="#efe3cf"/><line x1="22" y1="140" x2="392" y2="140" stroke="#efe3cf"/>
+          <line x1="22" y1="0" x2="22" y2="210" stroke="#efe3cf"/>
+          <circle cx="45" cy="35" r="9" fill="#e8f5e9" stroke="#2e7d32" stroke-width="1.5"/>
+          <rect x="64" y="20" width="88" height="30" rx="5" fill="#e3f2fd" stroke="#1565c0"/><text x="108" y="38" text-anchor="middle" fill="#0d2c54">Ansök om ledighet</text>
+          <rect x="64" y="90" width="88" height="30" rx="5" fill="#e3f2fd" stroke="#1565c0"/><text x="108" y="108" text-anchor="middle" fill="#0d2c54">Granska ansökan</text>
+          <path d="M190 90 L210 105 L190 120 L170 105 Z" fill="#fff8e1" stroke="#b26a00"/><text x="190" y="108" text-anchor="middle" fill="#7a4b00" font-size="8">OK?</text>
+          <rect x="226" y="160" width="96" height="30" rx="5" fill="#e3f2fd" stroke="#1565c0"/><text x="274" y="178" text-anchor="middle" fill="#0d2c54">Registrera i Workday</text>
+          <rect x="230" y="20" width="88" height="30" rx="5" fill="#fce4ec" stroke="#c62828"/><text x="274" y="38" text-anchor="middle" fill="#7f1d1d">Komplettera</text>
+          <circle cx="360" cy="175" r="9" fill="#ffebee" stroke="#c62828" stroke-width="2.5"/>
+          <g stroke="#5a6776" fill="none" stroke-width="1.1" marker-end="url(#p)">
+            <path d="M54 35 H62"/><path d="M108 50 V88"/><path d="M152 105 H168"/>
+            <path d="M190 120 V175 H224"/><path d="M190 90 V35 H228"/><path d="M322 175 H349"/>
+            <path d="M274 50 V60 H108 V52" stroke-dasharray="3 2"/>
+          </g>
+          <text x="196" y="150" fill="#2e7d32" font-size="7.5">Ja</text><text x="196" y="62" fill="#c62828" font-size="7.5">Nej</text>
+          <defs><marker id="p" viewBox="0 0 6 6" refX="5" refY="3" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0 L6 3 L0 6 Z" fill="#5a6776"/></marker></defs>
+        </svg>
+        <p class="bildtext">Illustration – modulen är under utveckling.</p>
+      </div>
+      <div>
+        <p style="margin-bottom:3mm">Arkitekten är ett verktyg för att rita processer och systemflöden. Modulen kopplar ihop det med portalen:</p>
+        <ul class="punkter">
+          <li>Processbilder visas direkt på processkartan</li>
+          <li>Publicering från Arkitekten till portalen</li>
+          <li>Både affärsprocesser och systemprocesser</li>
+          <li>Hämtas via Integrationsplattformen</li>
+        </ul>
+        <p style="margin-top:3mm;font-size:8.8pt;color:var(--amber)"><b>Kommer i en senare version.</b> Den slås på som de andra modulerna.</p>
+      </div>
+    </div>
+  </div>
+
+  <h2 style="margin-top:8mm;font-size:18pt">Varför Arkitekturportalen?</h2>
+  <div class="tva" style="gap:5mm">
+    <div class="ruta"><h4 style="margin-top:0">Gemensam bild</h4><p>Verksamhet, förvaltning och IT ser samma landskap – i stället för var sin lista i var sitt kalkylblad.</p></div>
+    <div class="ruta"><h4 style="margin-top:0">Bättre beslut</h4><p>Konsekvenser av en förändring syns innan den görs: vilka processer, vilken information, vilka integrationer.</p></div>
+    <div class="ruta"><h4 style="margin-top:0">Delas mellan organisationer</h4><p>Fri programvara som utvecklas i samverkan. Förbättringar kommer alla installationer till godo.</p></div>
+  </div>
+
+  <div class="cta">
+    <h2>Kom igång</h2>
+    <div class="tre">
+      <div><b>1 · Förbered</b>En Linux-server, ett DNS-namn och svar på frågorna i installationsmanualen.</div>
+      <div><b>2 · Installera</b>Ladda ner installationsfilen och kör den. Den ställer frågorna och gör resten.</div>
+      <div><b>3 · Fyll på</b>Börja med exempelinnehållet, importera från CSV eller koppla källsystemen.</div>
+    </div>
+    <p class="lank">Installationsfil och manual: github.com/Arkitektursamverkan/arkitekturportalen-drift → Releases</p>
+  </div>
+  <div class="fot"><span>Arkitekturportalen · Fri programvara under EUPL-1.2</span><span>Skärmbilderna visar fiktiva exempeldata</span></div>
+</section>
+
+</body>
+</html>

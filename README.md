@@ -157,6 +157,7 @@ sparas som `.env.fore-aterstallning`) och startar allt igen. Allt som
 | `backup.sh`, `aterstall.sh` | Backup och återställning. |
 | `bygg-installationsfil.sh` | För underhållarna: bygger `.run`-filen och releasen. |
 | `docs/installationsmanual.html` | Installationsmanualen; görs om till PDF och bifogas releasen. |
+| `docs/broschyr/` | Broschyren med skärmbilder av en demoinstallation; görs om till PDF och bifogas releasen. |
 | `lib/installationsfil.sh` | Början av `.run`-filen: packar upp och startar guiden. |
 | `compose.yml` | Alla tjänster. Ändras inte per installation. |
 | `.env` | Installationens inställningar och hemligheter (inte i git). |
