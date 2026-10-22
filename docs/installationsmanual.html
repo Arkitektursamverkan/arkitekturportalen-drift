@@ -1,0 +1,527 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<title>Arkitekturportalen – installationsmanual</title>
+<style>
+@page {
+  size: A4;
+  margin: 20mm 18mm 22mm 18mm;
+  @bottom-left { content: "Arkitekturportalen 0.2.1 – installationsmanual"; font: 8pt Inter, sans-serif; color: #6b7280; }
+  @bottom-right { content: counter(page) " / " counter(pages); font: 8pt Inter, sans-serif; color: #6b7280; }
+}
+@page :first { margin: 0; @bottom-left { content: none; } @bottom-right { content: none; } }
+
+:root {
+  --ink: #1f2933;
+  --muted: #5b6673;
+  --line: #d9dee4;
+  --accent: #1d5c8c;
+  --accent-soft: #e8f1f8;
+  --deep-soft: #f6f7f9;
+  --warn: #8a5a00;
+  --warn-soft: #fdf4e3;
+}
+* { box-sizing: border-box; }
+html { font-family: Inter, "Liberation Sans", sans-serif; font-size: 9.6pt; line-height: 1.5; color: var(--ink); }
+body { margin: 0; }
+h1, h2, h3, h4 { line-height: 1.25; margin: 0; }
+h2 { font-size: 17pt; color: var(--accent); margin-bottom: 4mm; page-break-before: always; padding-bottom: 2mm; border-bottom: 1.5pt solid var(--accent); }
+h3 { font-size: 11.5pt; margin: 6mm 0 2mm; }
+p { margin: 0 0 2.4mm; }
+ul, ol { margin: 0 0 2.4mm; padding-left: 5mm; }
+li { margin-bottom: 1mm; }
+code, .mono { font-family: "DejaVu Sans Mono", "Liberation Mono", monospace; font-size: 8.4pt; }
+code { background: #eef1f4; padding: 0 1mm; border-radius: 1mm; }
+pre { font-family: "DejaVu Sans Mono", monospace; font-size: 8.2pt; background: #1f2933; color: #f1f5f9; padding: 3mm 4mm; border-radius: 1.5mm; margin: 0 0 3mm; white-space: pre-wrap; }
+table { width: 100%; border-collapse: collapse; margin: 0 0 3mm; font-size: 9pt; }
+th, td { text-align: left; vertical-align: top; padding: 1.2mm 2mm; border-bottom: 0.5pt solid var(--line); }
+th { font-weight: 600; color: var(--muted); font-size: 8.4pt; text-transform: uppercase; letter-spacing: 0.03em; }
+.lead { font-size: 10.6pt; color: var(--muted); margin-bottom: 5mm; }
+
+/* Omslag */
+.cover { height: 297mm; padding: 38mm 22mm 24mm; background: var(--accent); color: #fff; display: flex; flex-direction: column; page-break-after: always; }
+.cover .kicker { font-size: 10pt; letter-spacing: 0.14em; text-transform: uppercase; opacity: 0.8; }
+.cover h1 { font-size: 34pt; margin: 6mm 0 4mm; font-weight: 700; }
+.cover .sub { font-size: 14pt; opacity: 0.92; max-width: 140mm; }
+.cover { position: relative; }
+.cover .meta { position: absolute; left: 22mm; right: 22mm; bottom: 24mm; font-size: 9.5pt; opacity: 0.85; border-top: 0.6pt solid rgba(255,255,255,0.45); padding-top: 4mm; }
+
+/* Innehåll */
+.toc { list-style: none; padding: 0; }
+.toc li { display: flex; border-bottom: 0.5pt dotted var(--line); padding: 1.6mm 0; margin: 0; }
+.toc li a { color: var(--ink); text-decoration: none; flex: 1; }
+.toc li a::after { content: target-counter(attr(href), page); float: right; color: var(--muted); }
+
+/* Frågorna */
+.fraga { page-break-inside: avoid; margin: 0 0 6mm; }
+.fraga-huvud { display: flex; align-items: baseline; gap: 3mm; margin-bottom: 2mm; }
+.nr { flex: none; width: 7mm; height: 7mm; border-radius: 50%; background: var(--accent); color: #fff; font-weight: 700; font-size: 9pt; text-align: center; line-height: 7mm; }
+.fraga h3 { margin: 0; font-size: 11.5pt; }
+.prompt { font-family: "DejaVu Sans Mono", monospace; font-size: 8.2pt; background: #1f2933; color: #f1f5f9; padding: 1.6mm 3mm; border-radius: 1.2mm; margin: 0 0 2.4mm; }
+.rutor { display: flex; gap: 3mm; }
+.ruta { border-radius: 1.6mm; padding: 3mm 3.6mm; }
+.ruta .etikett { font-size: 7.6pt; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 1.4mm; }
+.ruta p:last-child, .ruta ul:last-child { margin-bottom: 0; }
+.kort { flex: 0 0 38%; background: var(--accent-soft); border: 0.6pt solid #bcd5e8; }
+.kort .etikett { color: var(--accent); }
+.djup { flex: 1; background: var(--deep-soft); border: 0.6pt solid var(--line); }
+.djup .etikett { color: var(--muted); }
+.svar { margin-top: 1.6mm; font-size: 8.8pt; }
+.svar b { color: var(--accent); }
+
+.not { background: var(--warn-soft); border-left: 2pt solid #d89a2b; padding: 2.4mm 3.6mm; margin: 0 0 3.6mm; border-radius: 0 1.4mm 1.4mm 0; page-break-inside: avoid; }
+.not b:first-child { color: var(--warn); }
+
+/* Moduler */
+.modul { page-break-inside: avoid; border: 0.6pt solid var(--line); border-radius: 1.6mm; padding: 3.6mm 4mm; margin: 0 0 4mm; }
+.modul h3 { margin: 0 0 1mm; }
+.modul .typ { font-size: 8pt; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 2mm; }
+.modul .kolumner { display: flex; gap: 5mm; }
+.modul .kolumner > div { flex: 1; }
+.modul h4 { font-size: 8.4pt; color: var(--accent); text-transform: uppercase; letter-spacing: 0.05em; margin: 1mm 0 1.2mm; }
+.alltid { border-color: #bcd5e8; background: var(--accent-soft); }
+
+.steg { counter-reset: steg; list-style: none; padding: 0; }
+.steg > li { counter-increment: steg; position: relative; padding-left: 9mm; margin-bottom: 2.6mm; }
+.steg > li::before { content: counter(steg); position: absolute; left: 0; top: 0; width: 6mm; height: 6mm; border-radius: 50%; border: 0.8pt solid var(--accent); color: var(--accent); font-weight: 700; font-size: 8.4pt; text-align: center; line-height: 6mm; }
+.tva { display: flex; gap: 5mm; }
+.tva > div { flex: 1; }
+.kortlada { border: 0.6pt solid var(--line); border-radius: 1.6mm; padding: 3.4mm 4mm; page-break-inside: avoid; }
+.kortlada h3 { margin-top: 0; }
+.check td { height: 11mm; }
+</style>
+</head>
+<body>
+
+<section class="cover">
+  <div class="kicker">Arkitektursamverkan</div>
+  <h1>Arkitekturportalen</h1>
+  <div class="sub">Installationsmanual – det här behöver ni veta och bestämma innan installationen</div>
+  <div class="meta">
+    Gäller installationsfilen <b>arkitekturportalen-0.2.1.run</b> (portalen 0.2.1, Integrationsplattformen 0.1.2).<br>
+    Oktober 2026
+  </div>
+</section>
+
+<h2 style="page-break-before: avoid">Innehåll</h2>
+<ul class="toc">
+  <li><a href="#om">Om manualen och installationen</a></li>
+  <li><a href="#krav">Det här krävs</a></li>
+  <li><a href="#ubuntu">Exempel: Ubuntu Server och Ubuntu Desktop</a></li>
+  <li><a href="#fragor">Frågorna i installationen</a></li>
+  <li><a href="#moduler">Modulerna och Integrationsplattformen</a></li>
+  <li><a href="#efter">Efter installationen</a></li>
+  <li><a href="#checklista">Checklista att fylla i</a></li>
+</ul>
+
+<h3 id="om" style="margin-top:10mm">Om manualen och installationen</h3>
+<p>Arkitekturportalen är ett verktyg för verksamhetsarkitektur: processer, applikationer, information och teknik i ett gemensamt landskap med vyer, rapporter och analyser. Den installeras på organisationens egen server och körs där.</p>
+<p>Installationen är <b>en enda fil</b>, <code>arkitekturportalen-0.2.1.run</code>, som laddas ner från GitHub. Filen innehåller allt som behövs. När den körs ställer den ett antal frågor, och sedan installerar och startar den portalen. Det tar normalt 5–15 minuter.</p>
+<p>Manualen är till för att ni ska kunna förbereda svaren i förväg. Varje fråga förklaras i två rutor:</p>
+<div class="rutor" style="margin-bottom:4mm">
+  <div class="ruta kort"><div class="etikett">I korthet</div><p>Vad frågan gäller och vad de flesta svarar. Räcker för att komma igång.</p></div>
+  <div class="ruta djup"><div class="etikett">Fördjupning</div><p>Vad svaret påverkar tekniskt, vilka alternativ som finns, vad som går att ändra senare och vad IT-avdelningen behöver veta.</p></div>
+</div>
+<h3 style="margin-top:4mm">Vad händer när filen körs?</h3>
+<ol style="margin-bottom:4mm">
+  <li>Den kontrollerar att Docker finns, och erbjuder att installera det annars.</li>
+  <li>Den packar upp sig och läser in programmet i Docker.</li>
+  <li>Den ställer frågorna i nästa avsnitt.</li>
+  <li>Den skapar alla lösenord och nycklar som systemet behöver internt, startar portalen, skapar administratören och läser in exempelinnehållet.</li>
+  <li>Den visar adressen till portalen och hur ni loggar in.</li>
+</ol>
+<div class="not"><b>Allt går att ändra.</b> Körs installationsfilen igen på samma server startar frågorna om med era tidigare svar ifyllda. Organisationens namn, e-postdomäner, moduler och läsning utan inloggning kan dessutom ändras i portalen under <i>Administration → Organisation</i>.</div>
+
+<!-- ───────────────────────────── KRAV ───────────────────────────── -->
+
+<h2 id="krav">Det här krävs</h2>
+<p class="lead" style="margin-bottom:3mm">Portalen körs på Linux. Det går bra med en virtuell server i organisationens befintliga miljö (VMware, Hyper-V, Azure, AWS m.fl.) eller med en fysisk dator.</p>
+
+<h3>Server</h3>
+<table>
+  <tr><th style="width:20%">Vad</th><th style="width:28%">Rekommendation</th><th>Kommentar</th></tr>
+  <tr><td>Operativsystem</td><td>Ubuntu Server 24.04 LTS</td><td>Debian 12, Red Hat Enterprise Linux 9 och liknande fungerar också. LTS betyder fem års säkerhetsuppdateringar.</td></tr>
+  <tr><td>Processor</td><td>2 kärnor (vCPU)</td><td>4 kärnor med Integrationsplattformen.</td></tr>
+  <tr><td>Minne</td><td>4 GB</td><td>8 GB med Integrationsplattformen.</td></tr>
+  <tr><td>Disk</td><td>40 GB</td><td>Programmet tar ca 2 GB. Resten är data och backuper, som växer med tiden.</td></tr>
+  <tr><td>Docker</td><td>Installeras av filen</td><td>Saknas Docker erbjuder installationsfilen att installera det. Servern behöver då nå internet.</td></tr>
+  <tr><td>Behörighet</td><td>Ett konto med <code>sudo</code></td><td>Installationen ändrar systemet (Docker, katalogen <code>/opt/arkitekturportalen</code>).</td></tr>
+</table>
+
+<h3>Nätverk och namn</h3>
+<table>
+  <tr><th style="width:20%">Vad</th><th style="width:28%">Behövs</th><th>Kommentar</th></tr>
+  <tr><td>Webbadress (DNS-namn)</td><td>Ett namn som pekar på servern, t.ex. <code>arkitektur.kommunen.se</code></td><td>Ett namn till om Integrationsplattformen ska ingå, t.ex. <code>integration.kommunen.se</code>. Behövs inte för ett test på en enskild dator.</td></tr>
+  <tr><td>Portar</td><td>80 och 443 in till servern</td><td>Portalen använder bara dessa. Databaserna nås aldrig utifrån.</td></tr>
+  <tr><td>Certifikat</td><td>Ett av tre sätt (se fråga 2)</td><td>Automatiskt från Let's Encrypt, organisationens eget, eller ett internt för test.</td></tr>
+</table>
+
+<h3>Inloggning</h3>
+<p>Två sätt, som går att kombinera:</p>
+<ul>
+  <li><b>Microsoft Entra ID</b> (tidigare Azure AD): medarbetarna loggar in med sina vanliga jobbkonton. Kräver en appregistrering som er Entra-administratör skapar <i>före</i> installationen (se fråga 5).</li>
+  <li><b>Lokala konton</b>: en administratör i portalen skapar konton med e-post och lösenord. Inget behöver förberedas.</li>
+</ul>
+
+
+
+<h3 style="margin-top:4mm">Installationsfilen</h3>
+<p>Filen laddas ner från <b>github.com/Arkitektursamverkan/arkitekturportalen-drift</b> under <i>Releases</i>. Den är ca 320 MB. Så länge portalen inte är publik krävs att ni är inloggade på GitHub med ett konto som Arkitektursamverkan har bjudit in.</p>
+
+<!-- ───────────────────────────── UBUNTU ───────────────────────────── -->
+
+<h2 id="ubuntu">Exempel: Ubuntu Server och Ubuntu Desktop</h2>
+<p class="lead">Två vanliga sätt att komma igång. Ubuntu Server är för den riktiga installationen, Ubuntu Desktop för att prova portalen på en vanlig dator.</p>
+
+<div class="tva">
+<div class="kortlada">
+  <h3>Ubuntu Server – skarp drift</h3>
+  <p>Ingen grafisk miljö; man arbetar via fjärranslutning (SSH). Det är så IT-avdelningar normalt driftar tjänster.</p>
+  <ol class="steg">
+    <li><b>Ordna en server</b> med Ubuntu Server 24.04 LTS enligt tabellen på föregående sida.</li>
+    <li><b>Be om DNS-namn</b> som pekar på serverns adress, och öppna port 80 och 443 i brandväggen.</li>
+    <li><b>Ladda ner filen</b> från GitHub på din egen dator.</li>
+    <li><b>Kopiera den till servern</b>, t.ex. med WinSCP (Windows) eller:
+      <pre>scp arkitekturportalen-0.2.1.run anvandare@server:</pre></li>
+    <li><b>Logga in på servern</b> och kör filen:
+      <pre>ssh anvandare@server
+sudo sh arkitekturportalen-0.2.1.run</pre></li>
+    <li><b>Svara på frågorna</b> (nästa avsnitt). Välj certifikat <code>auto</code> eller <code>egen</code>.</li>
+  </ol>
+  <p>Har servern Ubuntus brandvägg påslagen släpper du igenom webbtrafiken med <code>sudo ufw allow 80,443/tcp</code>.</p>
+</div>
+<div class="kortlada">
+  <h3>Ubuntu Desktop – prova på</h3>
+  <p>En vanlig dator med grafisk miljö. Portalen nås bara från datorn själv, på adressen <code>https://localhost</code>.</p>
+  <ol class="steg">
+    <li><b>Installera Ubuntu Desktop</b> 24.04 LTS, gärna i en virtuell maskin (t.ex. VirtualBox) med minst 4 GB minne.</li>
+    <li><b>Ladda ner filen</b> från GitHub i webbläsaren på den datorn. Den hamnar i mappen <i>Hämtningar</i>.</li>
+    <li><b>Öppna Terminal</b> (sök på "Terminal" i programmenyn) och skriv:
+      <pre>cd ~/Hämtningar
+sudo sh arkitekturportalen-0.2.1.run</pre>
+      Heter mappen <i>Downloads</i> skriver du det i stället.</li>
+    <li><b>Svara på frågorna.</b> Värdnamn: <code>localhost</code>. Certifikat: <code>intern</code>. Inget Entra ID; skapa ett lokalt administratörskonto.</li>
+    <li><b>Öppna <code>https://localhost</code></b> i webbläsaren. Den varnar för certifikatet; välj <i>Avancerat → Fortsätt</i>. Det är väntat med ett internt certifikat.</li>
+  </ol>
+  <p>Andra program på datorn får inte redan använda port 80 eller 443, annars stannar installationen när portalen ska starta.</p>
+</div>
+</div>
+
+<div class="not" style="margin-top:4mm"><b>Om lösenordet:</b> när terminalen frågar efter lösenord (för <code>sudo</code> eller för administratörskontot) syns inget medan du skriver. Det är normalt – skriv lösenordet och tryck Enter.</div>
+
+
+
+<!-- ───────────────────────────── FRÅGORNA ───────────────────────────── -->
+
+<h2 id="fragor">Frågorna i installationen</h2>
+<p class="lead">Frågorna kommer i den här ordningen. Den mörka raden visar hur frågan ser ut på skärmen. Ett förslag inom hakparentes, <code>[så här]</code>, väljs om man bara trycker Enter. <code>(J/n)</code> betyder att Enter blir ja, <code>(j/N)</code> att Enter blir nej.</p>
+
+<div class="fraga">
+  <div class="fraga-huvud"><span class="nr">1</span><h3>Portalens värdnamn</h3></div>
+  <div class="prompt">Portalens värdnamn (DNS pekar på den här servern):</div>
+  <div class="rutor">
+    <div class="ruta kort"><div class="etikett">I korthet</div>
+      <p>Adressen användarna skriver i webbläsaren för att nå portalen, utan <code>https://</code>.</p>
+      <div class="svar"><b>Skarp drift:</b> t.ex. <code>arkitektur.kommunen.se</code><br><b>Test på egen dator:</b> <code>localhost</code></div>
+    </div>
+    <div class="ruta djup"><div class="etikett">Fördjupning</div>
+      <p>Namnet måste finnas i DNS och peka på serverns IP-adress <i>innan</i> portalen används, annars når ingen den. Be er nätverks- eller DNS-ansvariga lägga upp en A-post (eller CNAME).</p>
+      <p>Namnet används på tre ställen: av webbservern för att svara på rätt adress, i certifikatet och som tillåten adress för inloggningen. Med Entra ID ska samma adress finnas som omdirigerings-URI i appregistreringen.</p>
+      <p>Byter ni namn senare: kör filen igen med det nya namnet och uppdatera appregistreringen i Entra.</p>
+    </div>
+  </div>
+</div>
+
+<div class="fraga">
+  <div class="fraga-huvud"><span class="nr">2</span><h3>TLS-läge (certifikat)</h3></div>
+  <div class="prompt">TLS-läge: &nbsp;&nbsp;auto · egen · intern</div>
+  <div class="rutor">
+    <div class="ruta kort"><div class="etikett">I korthet</div>
+      <p>Hur portalen får sitt certifikat, så att anslutningen är krypterad (hänglåset i webbläsaren).</p>
+      <div class="svar"><b>auto</b> – servern nås från internet<br><b>egen</b> – ni har ett eget certifikat<br><b>intern</b> – test och slutna nät</div>
+    </div>
+    <div class="ruta djup"><div class="etikett">Fördjupning</div>
+      <p><b>auto:</b> certifikat hämtas gratis från Let's Encrypt och förnyas automatiskt. Kräver att servern nås från internet på port 80 och 443 under värdnamnet. Följdfråga: en e-postadress som får varningar om certifikatet inte kunnat förnyas.</p>
+      <p><b>egen:</b> organisationens certifikat, t.ex. från er interna CA eller en köpt leverantör. Lägg certifikatfilen (med hela kedjan) och nyckelfilen i katalogen <code>/opt/arkitekturportalen/certs/</code>. Följdfrågor: filernas namn (förslag <code>fullchain.pem</code> och <code>privkey.pem</code>). Saknas filerna väntar installationen tills de finns. Ni ansvarar själva för att byta certifikatet innan det går ut.</p>
+      <p><b>intern:</b> portalen skapar sitt eget certifikat. Fungerar direkt men webbläsarna varnar tills ni låter datorerna lita på det. Bra för test, inte för en tjänst många ska använda.</p>
+    </div>
+  </div>
+</div>
+
+<div class="fraga">
+  <div class="fraga-huvud"><span class="nr">3</span><h3>Organisationens namn</h3></div>
+  <div class="prompt">Organisationens namn (inloggningssidan och PDF:er):</div>
+  <div class="rutor">
+    <div class="ruta kort"><div class="etikett">I korthet</div>
+      <p>Namnet som visas på inloggningssidan och i dokument som portalen skapar.</p>
+      <div class="svar"><b>Exempel:</b> <code>Halmstads kommun</code></div>
+    </div>
+    <div class="ruta djup"><div class="etikett">Fördjupning</div>
+      <p>Används på inloggningssidan och i sidfoten på de PDF-dokument portalen skriver ut, t.ex. rapporter och principdokument. Kan lämnas tomt.</p>
+      <p>Ändras senare i portalen under <i>Administration → Organisation</i>, där det också går att ange kortnamn och organisationens färg.</p>
+    </div>
+  </div>
+</div>
+
+<div class="fraga">
+  <div class="fraga-huvud"><span class="nr">4</span><h3>Tillåtna e-postdomäner</h3></div>
+  <div class="prompt">Tillåtna e-postdomäner, kommaseparerade:</div>
+  <div class="rutor">
+    <div class="ruta kort"><div class="etikett">I korthet</div>
+      <p>Den del av e-postadressen som kommer efter @ hos era medarbetare.</p>
+      <div class="svar"><b>Exempel:</b> <code>kommunen.se</code><br><b>Flera:</b> <code>kommunen.se,bolaget.se</code></div>
+    </div>
+    <div class="ruta djup"><div class="etikett">Fördjupning</div>
+      <p>Med Entra ID släpps bara personer in vars inloggningsnamn slutar på någon av domänerna. Det skyddar mot att konton från andra organisationer i samma Microsoft-miljö (t.ex. gäster) kommer in.</p>
+      <p>Den första domänen används också när portalen föreslår e-postadresser till personer den hittar i arkitekturobjekten, t.ex. systemägare, så att de kan få konton i förväg.</p>
+      <p>Ange alla domäner era medarbetare kan ha, även för bolag eller förvaltningar med egna domäner. Ändras senare under <i>Administration → Organisation</i>.</p>
+    </div>
+  </div>
+</div>
+
+<div class="fraga">
+  <div class="fraga-huvud"><span class="nr">5</span><h3>Använda Entra ID?</h3></div>
+  <div class="prompt">Använda Entra ID? (j/N)</div>
+  <div class="rutor">
+    <div class="ruta kort"><div class="etikett">I korthet</div>
+      <p>Ska medarbetarna logga in med sina vanliga Microsoft-jobbkonton?</p>
+      <div class="svar"><b>Ja</b> – om appregistreringen är förberedd<br><b>Nej</b> – för test, eller om ni bara vill ha lokala konton</div>
+    </div>
+    <div class="ruta djup"><div class="etikett">Fördjupning</div>
+      <p>Kräver att er Entra-administratör först skapar en <b>appregistrering</b> av typen enkelsidig app (SPA) med omdirigerings-URI <code>https://&lt;värdnamnet&gt;/</code>, och under <i>Exponera ett API</i> ett scope som heter <code>access_as_user</code>.</p>
+      <p>Följdfrågor vid ja:</p>
+      <ul>
+        <li><b>Katalog-ID (tenant ID)</b> och <b>Program-ID (client ID)</b> – finns på appregistreringens översiktssida.</li>
+        <li><b>Vem blir administratör?</b> – e-postadresser till de personer som ska bli administratörer i portalen första gången de loggar in. Övriga blir vanliga användare.</li>
+      </ul>
+      <p>Konton skapas automatiskt första gången någon loggar in. Inga lösenord lagras i portalen.</p>
+    </div>
+  </div>
+</div>
+
+<div class="fraga">
+  <div class="fraga-huvud"><span class="nr">6</span><h3>Skapa ett lokalt administratörskonto?</h3></div>
+  <div class="prompt">Skapa ett lokalt administratörskonto? (J/n)</div>
+  <div class="rutor">
+    <div class="ruta kort"><div class="etikett">I korthet</div>
+      <p>Ett konto med e-post och lösenord som kan logga in och administrera portalen direkt.</p>
+      <div class="svar"><b>Utan Entra ID:</b> ja (annars kan ingen logga in)<br><b>Med Entra ID:</b> valfritt, bra som reserv</div>
+    </div>
+    <div class="ruta djup"><div class="etikett">Fördjupning</div>
+      <p>Följdfrågor: <b>namn</b>, <b>e-post</b> (används som inloggning) och <b>lösenord</b> (minst 8 tecken). Lämnas lösenordet tomt skapas ett slumpat som visas en gång i slutet av installationen – skriv upp det och byt det efter första inloggningen.</p>
+      <p>Administratören kan sedan skapa fler lokala konton i portalen. Lokala konton fungerar även när Entra ID inte går att nå, och är därför ett bra reservkonto.</p>
+      <p>Körs filen igen och kontot redan finns lämnas det orört.</p>
+    </div>
+  </div>
+</div>
+
+<div class="fraga">
+  <div class="fraga-huvud"><span class="nr">7</span><h3>Läsa utan att logga in?</h3></div>
+  <div class="prompt">Får man läsa arkitekturobjekten utan att logga in? (j/N)</div>
+  <div class="rutor">
+    <div class="ruta kort"><div class="etikett">I korthet</div>
+      <p>Ska vem som helst som når portalen kunna titta på innehållet utan konto?</p>
+      <div class="svar"><b>Rekommendation:</b> nej</div>
+    </div>
+    <div class="ruta djup"><div class="etikett">Fördjupning</div>
+      <p>Vid ja kan besökare utan inloggning läsa det som portalens behörigheter ger <i>alla</i> rätt att se. Att ändra kräver alltid inloggning, och objekt som är begränsade till vissa grupper förblir dolda.</p>
+      <p>Kan passa när portalen bara nås inifrån organisationens nät och arkitekturen ska vara öppen för alla medarbetare. Innehåller arkitekturen uppgifter som inte ska spridas, t.ex. säkerhetsklassningar eller leverantörsavtal, svara nej.</p>
+      <p>Ändras senare under <i>Administration → Organisation</i>.</p>
+    </div>
+  </div>
+</div>
+
+<div class="fraga">
+  <div class="fraga-huvud"><span class="nr">8</span><h3>Moduler</h3></div>
+  <div class="prompt">Verksamhetskalender med förändringslogg? (j/N)<br>Samarbeten: uppdrag och arbetsgrupper? (j/N)<br>Arkitekturstyrning: principer, nuläge, målarkitektur, GAP-analys? (j/N)<br>Ordlista? (j/N)<br>Enkäter? (j/N)</div>
+  <div class="rutor">
+    <div class="ruta kort"><div class="etikett">I korthet</div>
+      <p>Fem tillägg utöver grundfunktionerna. Svara ja på dem ni vill använda från början.</p>
+      <div class="svar"><b>Osäker?</b> Svara nej – de kan slås på senare.</div>
+    </div>
+    <div class="ruta djup"><div class="etikett">Fördjupning</div>
+      <p>Kärnan – arkitekturobjekt, vyer, rapporter, lösningsskisser, import och administration – ingår alltid. Modulerna beskrivs i avsnittet <a href="#moduler">Modulerna och Integrationsplattformen</a>.</p>
+      <p>En administratör slår på och av moduler under <i>Administration → Organisation</i>. En modul som stängs av döljs, men dess innehåll finns kvar och kommer tillbaka när den slås på igen.</p>
+      <p>Valet påverkar också vilka exempelpaket som erbjuds i fråga 10.</p>
+    </div>
+  </div>
+</div>
+
+<div class="fraga">
+  <div class="fraga-huvud"><span class="nr">9</span><h3>Installera Integrationsplattformen?</h3></div>
+  <div class="prompt">Installera Integrationsplattformen? (j/N)</div>
+  <div class="rutor">
+    <div class="ruta kort"><div class="etikett">I korthet</div>
+      <p>Ett tillägg som automatiskt hämtar uppgifter från andra system in i portalen.</p>
+      <div class="svar"><b>Första gången:</b> nej, om ni inte redan vet vilka system som ska kopplas</div>
+    </div>
+    <div class="ruta djup"><div class="etikett">Fördjupning</div>
+      <p>Följdfråga: <b>plattformens värdnamn</b>, ett eget DNS-namn som pekar på samma server, t.ex. <code>integration.kommunen.se</code>. Plattformen har ett eget webbgränssnitt på den adressen. Certifikatet ordnas på samma sätt som för portalen.</p>
+      <p>Installationen kopplar ihop plattformen och portalen automatiskt. Plattformen behöver mer minne och processor (se kraven). Första besöket på plattformens adress skapar dess administratör.</p>
+      <p>Väljs plattformen bort vid en senare körning stoppas den, men dess data ligger kvar. Mer i avsnittet om modulerna.</p>
+    </div>
+  </div>
+</div>
+
+<div class="fraga">
+  <div class="fraga-huvud"><span class="nr">10</span><h3>Exempelinnehåll</h3></div>
+  <div class="prompt">Läsa in arkitekturstyrning? (J/n)</div>
+  <div class="rutor">
+    <div class="ruta kort"><div class="etikett">I korthet</div>
+      <p>Färdiga exempel att utgå från i modulerna ni valt, så att portalen inte är tom.</p>
+      <div class="svar"><b>Första installationen:</b> ja<br><b>Vid omkörning:</b> nej</div>
+    </div>
+    <div class="ruta djup"><div class="etikett">Fördjupning</div>
+      <p>Frågan ställs bara för valda moduler som har exempel:</p>
+      <ul>
+        <li><b>arkitekturstyrning</b> – sju allmänna arkitekturprinciper, principdokumentets inledning och stommar med vägledning för målarkitektur och nulägesanalys.</li>
+        <li><b>ordlista</b> – grundbegrepp inom verksamhetsarkitektur.</li>
+        <li><b>samarbeten</b> – tre exempel på arbetsgrupper och en text om deras uppdrag.</li>
+      </ul>
+      <p>Exemplen är neutrala och tänkta att skrivas om till organisationens egna. Läses ett paket in igen skrivs ändringar i samma poster över – därför nej vid omkörning.</p>
+    </div>
+  </div>
+</div>
+
+<div class="not"><b>Sista steget</b> sker utan frågor: installationen skapar systemets interna lösenord och nycklar, startar allt och visar till sist portalens adress och hur ni loggar in. Inställningarna sparas i filen <code>/opt/arkitekturportalen/.env</code>. Den innehåller nycklarna som behövs för att läsa databasen – <b>spara en kopia på ett säkert ställe</b>.</div>
+
+<!-- ───────────────────────────── MODULER ───────────────────────────── -->
+
+<h2 id="moduler">Modulerna och Integrationsplattformen</h2>
+<p class="lead">Kärnan ingår alltid. Modulerna väljs i fråga 8 och kan slås på och av senare. Integrationsplattformen väljs i fråga 9 och är ett eget system som körs bredvid portalen.</p>
+
+<div class="modul alltid">
+  <h3>Kärnan</h3>
+  <div class="typ">Ingår alltid</div>
+  <div class="kolumner">
+    <div><h4>Vad den gör</h4>
+      <p>Arkitekturobjekten – processer, applikationer, informationsobjekt, informationskällor och teknikkomponenter – och sambanden mellan dem. Klickbara grafvyer för att utforska landskapet, ett tjugotal rapporter (t.ex. applikationsportfölj, överlapp och luckor, livscykel, teknisk skuld, NIS2 och behandlingsregister), lösningsskisser, import och export med CSV, samt administration av användare och behörigheter.</p></div>
+    <div><h4>Vad det innebär</h4>
+      <p>Det här är portalen. Den fungerar fullt ut utan några moduler. Innehållet fylls på för hand, med CSV-import eller automatiskt via Integrationsplattformen. Behörigheter kan sättas per objekt och grupp.</p></div>
+  </div>
+</div>
+
+<div class="modul">
+  <h3>Verksamhetskalender</h3>
+  <div class="typ">Modul</div>
+  <div class="kolumner">
+    <div><h4>Vad den gör</h4>
+      <p>En gemensam kalender för verksamhetens händelser och frysperioder – t.ex. bokslut, löneperioder och större driftsättningar – tillsammans med en förändringslogg över vad som ändrats i IT-landskapet.</p></div>
+    <div><h4>Vad det innebär</h4>
+      <p>Ger förvaltning och IT en plats att se när ändringar passar och inte passar. Administratören bestämmer vilka avdelningar som får skriva i förändringsloggen. Följer inget exempelinnehåll; kalendern fylls av organisationens egna händelser.</p></div>
+  </div>
+</div>
+
+<div class="modul">
+  <h3>Samarbeten</h3>
+  <div class="typ">Modul</div>
+  <div class="kolumner">
+    <div><h4>Vad den gör</h4>
+      <p>Arbetsytor för uppdrag och arbetsgrupper. Varje yta har egna sidor, mötesanteckningar från mallar, uppladdade filer, en diskussionstavla, uppgifter och en kalender, och en egen medlemslista.</p></div>
+    <div><h4>Vad det innebär</h4>
+      <p>Behörigheten gäller per yta: ägare, medlem eller läsare. En yta är privat som standard. Uppladdade filer (högst 25 MB styck) lagras i portalens databas och följer med i backupen – tänk på diskutrymmet om mycket laddas upp.</p></div>
+  </div>
+</div>
+
+<div class="modul">
+  <h3>Arkitekturstyrning</h3>
+  <div class="typ">Modul</div>
+  <div class="kolumner">
+    <div><h4>Vad den gör</h4>
+      <p>Arkitekturprinciper och principdokumentet, nulägesanalys, målarkitektur och GAP-analys med handlingsplan. Dokumenten kan skrivas ut som PDF.</p></div>
+    <div><h4>Vad det innebär</h4>
+      <p>För organisationer som arbetar med arkitekturstyrning och vill ha principer och målbild på samma ställe som landskapet. Exempelpaketet ger en stomme att utgå från.</p></div>
+  </div>
+</div>
+
+<div class="modul">
+  <h3>Ordlista</h3>
+  <div class="typ">Modul</div>
+  <div class="kolumner">
+    <div><h4>Vad den gör</h4>
+      <p>Organisationens begrepp med definitioner, och ett sätt för användarna att föreslå nya begrepp.</p></div>
+    <div><h4>Vad det innebär</h4>
+      <p>Ger ett gemensamt språk för arkitekturarbetet. Exempelpaketet innehåller grundbegrepp inom verksamhetsarkitektur.</p></div>
+  </div>
+</div>
+
+<div class="modul">
+  <h3>Enkäter</h3>
+  <div class="typ">Modul</div>
+  <div class="kolumner">
+    <div><h4>Vad den gör</h4>
+      <p>Enkäter till användarna, t.ex. om systemnöjdhet eller arkitekturmognad. Användarna besvarar dem under <i>Mina enkäter</i>, och resultatet publiceras som rapporter.</p></div>
+    <div><h4>Vad det innebär</h4>
+      <p>Varje publicerad omgång blir en egen rapport under <i>Rapporter</i>, så att resultat kan jämföras över tid. Följer inget exempelinnehåll; enkäterna skapas i portalen.</p></div>
+  </div>
+</div>
+
+<div class="modul" style="border-color:#bcd5e8">
+  <h3>Integrationsplattformen</h3>
+  <div class="typ">Eget system bredvid portalen – fråga 9</div>
+  <div class="kolumner">
+    <div><h4>Vad den gör</h4>
+      <p>Hämtar uppgifter från andra system – SharePoint-listor, processmodeller i 2C8, REST-API:er och CSV-filer – bearbetar dem i flöden och lämnar dem till portalen. Flödena körs på schema, t.ex. varje natt, eller när någon trycker på <i>Hämta nu</i> i portalen.</p>
+      <p>Har ett eget webbgränssnitt för anslutningar, flöden, scheman och körningsloggar.</p></div>
+    <div><h4>Vad det innebär</h4>
+      <ul>
+        <li><b>Mindre handpåläggning:</b> applikationslistan och processerna hålls i takt med källsystemen.</li>
+        <li><b>Eget DNS-namn</b> och mer minne och processor på servern.</li>
+        <li><b>Inloggningsuppgifter till källsystemen</b> lagras i plattformen, krypterade. Nyckeln finns i <code>.env</code> – utan den blir de oläsbara, ytterligare ett skäl att spara filen säkert.</li>
+        <li><b>Nätverk:</b> servern måste nå de system som ska läsas.</li>
+        <li>Kan läggas till senare genom att köra installationsfilen igen.</li>
+      </ul></div>
+  </div>
+</div>
+
+<!-- ───────────────────────────── EFTER ───────────────────────────── -->
+
+<h2 id="efter">Efter installationen</h2>
+
+<h3>Logga in</h3>
+<p>Öppna portalens adress. Med Entra ID loggar de administratörer ni angav in med sina jobbkonton; annars loggar ni in med det lokala administratörskontot. Gå sedan till <i>Administration</i> för att bjuda in fler och justera inställningarna.</p>
+
+<h3>Backup</h3>
+<p>Installationen tar inga backuper av sig själv. Lägg in en nattlig backup – IT-avdelningen kan göra det med kommandot <code>sudo crontab -e</code> och raden:</p>
+<pre>0 3 * * * cd /opt/arkitekturportalen &amp;&amp; ./backup.sh &gt;&gt; backups/backup.log 2&gt;&amp;1</pre>
+<p>Backuperna hamnar i <code>/opt/arkitekturportalen/backups/</code> på samma server, och de 14 senaste sparas. Kopiera dem regelbundet till en annan plats. De innehåller nycklarna och ska förvaras som lösenord.</p>
+
+<h3>Uppgradera till en ny version</h3>
+<p>Ladda ner den nya installationsfilen från GitHub och kör den på samma sätt som första gången. Den känner igen den befintliga installationen, tar en backup och startar den nya versionen. Inga frågor ställs om utom en bekräftelse. Skulle något gå fel skriver den ut hur ni kommer tillbaka till läget före.</p>
+
+<h3>Ändra svaren</h3>
+<p>Kör samma installationsfil igen. Frågorna kommer med era tidigare svar som förslag; tryck Enter för att behålla dem. Befintliga lösenord, nycklar och data behålls.</p>
+
+<h3>Var finns vad?</h3>
+<table>
+  <tr><th style="width:42%">Sökväg på servern</th><th>Innehåll</th></tr>
+  <tr><td><code>/opt/arkitekturportalen/</code></td><td>Installationen</td></tr>
+  <tr><td><code>/opt/arkitekturportalen/.env</code></td><td>Svaren och de interna nycklarna – spara en kopia säkert</td></tr>
+  <tr><td><code>/opt/arkitekturportalen/certs/</code></td><td>Eget certifikat (TLS-läge <code>egen</code>)</td></tr>
+  <tr><td><code>/opt/arkitekturportalen/backups/</code></td><td>Backuper</td></tr>
+  <tr><td><code>/opt/arkitekturportalen/README.md</code></td><td>Teknisk beskrivning för IT-avdelningen</td></tr>
+</table>
+
+<!-- ───────────────────────────── CHECKLISTA ───────────────────────────── -->
+
+<h2 id="checklista">Checklista att fylla i</h2>
+<p class="lead">Fyll i före installationen, så går själva installationen på några minuter.</p>
+<table class="check">
+  <tr><th style="width:6%">#</th><th style="width:40%">Fråga</th><th>Vårt svar</th></tr>
+  <tr><td>–</td><td>Server med Linux, sudo-konto, port 80/443 öppna</td><td style="height:9mm"></td></tr>
+  <tr><td>1</td><td>Portalens värdnamn</td><td style="height:9mm"></td></tr>
+  <tr><td>2</td><td>TLS-läge: auto / egen / intern<br><span style="color:#5b6673;font-size:8.4pt">auto: e-post för varningar · egen: filnamn i certs/</span></td><td></td></tr>
+  <tr><td>3</td><td>Organisationens namn</td><td style="height:9mm"></td></tr>
+  <tr><td>4</td><td>Tillåtna e-postdomäner</td><td style="height:9mm"></td></tr>
+  <tr><td>5</td><td>Entra ID: ja / nej<br><span style="color:#5b6673;font-size:8.4pt">tenant ID · client ID · administratörernas e-post</span></td><td style="height:16mm"></td></tr>
+  <tr><td>6</td><td>Lokalt administratörskonto: namn och e-post</td><td style="height:9mm"></td></tr>
+  <tr><td>7</td><td>Läsa utan inloggning: ja / nej</td><td style="height:9mm"></td></tr>
+  <tr><td>8</td><td>Moduler: kalender · samarbeten · arkitekturstyrning · ordlista · enkäter</td><td style="height:9mm"></td></tr>
+  <tr><td>9</td><td>Integrationsplattformen: ja / nej · värdnamn</td><td style="height:9mm"></td></tr>
+  <tr><td>10</td><td>Exempelinnehåll: ja / nej</td><td style="height:9mm"></td></tr>
+  <tr><td>–</td><td>Vem ansvarar för backup och kopian av <code>.env</code>?</td><td style="height:9mm"></td></tr>
+</table>
+
+</body>
+</html>

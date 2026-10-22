@@ -26,6 +26,10 @@ inne i Docker-nätet.
 
 ## Installera
 
+Läs först installationsmanualen (PDF), som ligger bredvid installationsfilen
+under Releases. Den förklarar kraven, varje fråga i guiden och modulerna.
+Källan är [docs/installationsmanual.html](docs/installationsmanual.html).
+
 1. Gå till [Releases](https://github.com/Arkitektursamverkan/arkitekturportalen-drift/releases)
    och ladda ner filen `arkitekturportalen-<version>.run` under den senaste
    versionen.
@@ -152,6 +156,7 @@ sparas som `.env.fore-aterstallning`) och startar allt igen. Allt som
 | `uppgradera.sh` | Ny version, med backup först. |
 | `backup.sh`, `aterstall.sh` | Backup och återställning. |
 | `bygg-installationsfil.sh` | För underhållarna: bygger `.run`-filen och releasen. |
+| `docs/installationsmanual.html` | Installationsmanualen; görs om till PDF och bifogas releasen. |
 | `lib/installationsfil.sh` | Början av `.run`-filen: packar upp och startar guiden. |
 | `compose.yml` | Alla tjänster. Ändras inte per installation. |
 | `.env` | Installationens inställningar och hemligheter (inte i git). |
