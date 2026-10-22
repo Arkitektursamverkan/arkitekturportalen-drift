@@ -74,13 +74,18 @@ th { font-weight: 600; color: var(--muted); font-size: 8.4pt; text-transform: up
 .not b:first-child { color: var(--warn); }
 
 /* Moduler */
-.modul { page-break-inside: avoid; border: 0.6pt solid var(--line); border-radius: 1.6mm; padding: 3.6mm 4mm; margin: 0 0 4mm; }
+.modul { page-break-inside: avoid; border: 0.6pt solid var(--line); border-radius: 1.6mm; padding: 3.2mm 4mm; margin: 0 0 3.2mm; }
 .modul h3 { margin: 0 0 1mm; }
 .modul .typ { font-size: 8pt; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 2mm; }
 .modul .kolumner { display: flex; gap: 5mm; }
 .modul .kolumner > div { flex: 1; }
 .modul h4 { font-size: 8.4pt; color: var(--accent); text-transform: uppercase; letter-spacing: 0.05em; margin: 1mm 0 1.2mm; }
 .alltid { border-color: #bcd5e8; background: var(--accent-soft); }
+.kommande { border: 0.8pt dashed #d89a2b; background: var(--warn-soft); }
+.stampel { display: inline-block; font-size: 7.6pt; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--warn); border: 1pt solid #d89a2b; border-radius: 1mm; padding: 0.4mm 2mm; margin-left: 2mm; vertical-align: middle; }
+.om { background: var(--accent-soft); border-radius: 1.6mm; padding: 5mm 6mm; margin-top: 3mm; }
+.om p { margin-bottom: 3mm; }
+.om p:last-child { margin-bottom: 0; }
 
 .steg { counter-reset: steg; list-style: none; padding: 0; }
 .steg > li { counter-increment: steg; position: relative; padding-left: 9mm; margin-bottom: 2.6mm; }
@@ -113,6 +118,7 @@ th { font-weight: 600; color: var(--muted); font-size: 8.4pt; text-transform: up
   <li><a href="#moduler">Modulerna och Integrationsplattformen</a></li>
   <li><a href="#efter">Efter installationen</a></li>
   <li><a href="#checklista">Checklista att fylla i</a></li>
+  <li><a href="#om-samverkan">Om Arkitektursamverkan och Arkitekturportalen</a></li>
 </ul>
 
 <h3 id="om" style="margin-top:10mm">Om manualen och installationen</h3>
@@ -141,12 +147,12 @@ th { font-weight: 600; color: var(--muted); font-size: 8.4pt; text-transform: up
 <h3>Server</h3>
 <table>
   <tr><th style="width:20%">Vad</th><th style="width:28%">Rekommendation</th><th>Kommentar</th></tr>
-  <tr><td>Operativsystem</td><td>Ubuntu Server 24.04 LTS</td><td>Debian 12, Red Hat Enterprise Linux 9 och liknande fungerar också. LTS betyder fem års säkerhetsuppdateringar.</td></tr>
+  <tr><td>Operativsystem</td><td>Ubuntu Server 24.04 LTS</td><td>Debian 12, RHEL 9 och liknande fungerar också.</td></tr>
   <tr><td>Processor</td><td>2 kärnor (vCPU)</td><td>4 kärnor med Integrationsplattformen.</td></tr>
   <tr><td>Minne</td><td>4 GB</td><td>8 GB med Integrationsplattformen.</td></tr>
-  <tr><td>Disk</td><td>40 GB</td><td>Programmet tar ca 2 GB. Resten är data och backuper, som växer med tiden.</td></tr>
-  <tr><td>Docker</td><td>Installeras av filen</td><td>Saknas Docker erbjuder installationsfilen att installera det. Servern behöver då nå internet.</td></tr>
-  <tr><td>Behörighet</td><td>Ett konto med <code>sudo</code></td><td>Installationen ändrar systemet (Docker, katalogen <code>/opt/arkitekturportalen</code>).</td></tr>
+  <tr><td>Disk</td><td>40 GB</td><td>Programmet tar ca 2 GB; resten är data och backuper.</td></tr>
+  <tr><td>Docker</td><td>Installeras av filen</td><td>Installeras vid behov; servern behöver då nå internet.</td></tr>
+  <tr><td>Behörighet</td><td>Ett konto med <code>sudo</code></td><td>Installationen ändrar systemet.</td></tr>
 </table>
 
 <h3>Nätverk och namn</h3>
@@ -167,7 +173,8 @@ th { font-weight: 600; color: var(--muted); font-size: 8.4pt; text-transform: up
 
 
 <h3 style="margin-top:4mm">Installationsfilen</h3>
-<p>Filen laddas ner från <b>github.com/Arkitektursamverkan/arkitekturportalen-drift</b> under <i>Releases</i>. Den är ca 320 MB. Så länge portalen inte är publik krävs att ni är inloggade på GitHub med ett konto som Arkitektursamverkan har bjudit in.</p>
+<p>Filen laddas ner från <b>github.com/Arkitektursamverkan/arkitekturportalen-drift</b> under <i>Releases</i>. Den är ca 320 MB. Så länge portalen inte är publik krävs att ni är inloggade på GitHub med ett konto som Arkitektursamverkan (Halmstads Fastighets AB) har bjudit in.</p>
+<p><b>Kontaktperson:</b> David Bjärlestam, <a href="mailto:david.bjarlestam@hfab.se">david.bjarlestam@hfab.se</a> – för inbjudan till GitHub och frågor om installationen.</p>
 
 <!-- ───────────────────────────── UBUNTU ───────────────────────────── -->
 
@@ -475,9 +482,14 @@ sudo sh arkitekturportalen-0.2.1.run</pre>
   </div>
 </div>
 
+<div class="modul kommande">
+  <h3>Arkitekten <span class="stampel">Kommande funktion</span></h3>
+  <p style="margin:1.4mm 0 0">Ett verktyg för att rita processer och systemflöden. Modulen visar processbilderna direkt på processkartan och låter dem publiceras från Arkitekten till portalen. Bilderna hämtas via Integrationsplattformen. Ingår inte i 0.2.1; slås på som de andra modulerna när den kommer.</p>
+</div>
+
 <!-- ───────────────────────────── EFTER ───────────────────────────── -->
 
-<h2 id="efter">Efter installationen</h2>
+<h2 id="efter" style="page-break-before: auto; margin-top: 8mm">Efter installationen</h2>
 
 <h3>Logga in</h3>
 <p>Öppna portalens adress. Med Entra ID loggar de administratörer ni angav in med sina jobbkonton; annars loggar ni in med det lokala administratörskontot. Gå sedan till <i>Administration</i> för att bjuda in fler och justera inställningarna.</p>
@@ -522,6 +534,16 @@ sudo sh arkitekturportalen-0.2.1.run</pre>
   <tr><td>10</td><td>Exempelinnehåll: ja / nej</td><td style="height:9mm"></td></tr>
   <tr><td>–</td><td>Vem ansvarar för backup och kopian av <code>.env</code>?</td><td style="height:9mm"></td></tr>
 </table>
+
+<!-- ───────────────────────────── OM ───────────────────────────── -->
+
+<h2 id="om-samverkan">Om Arkitektursamverkan och Arkitekturportalen</h2>
+<div class="om">
+  <p><b>Bakgrunden.</b> Arkitekturportalen började som ett eget behov hos Halmstads Fastighets AB (HFAB). Vi gjorde en kartläggning av vår IT-arkitektur – processer, system, information och teknik – med TOGAF som ramverk i bakhuvudet. Kartläggningen behövde ett hem där den kunde hållas levande och användas, inte bara ett dokument som blir inaktuellt.</p>
+  <p><b>Valet.</b> Vi utvärderade olika systemstöd för arkitekturarbetet. Slutsatsen blev att det var värt att pröva att utveckla ett eget, med hjälp av AI-agenter. Resultatet är Arkitekturportalen och Integrationsplattformen.</p>
+  <p><b>Delningen.</b> Vår vision är att släppa portalen som öppen källkod – den är redan licensierad under EUPL-1.2, EU:s licens för fri programvara. Eftersom vi inte har arbetat så här tidigare börjar vi försiktigt: de som är intresserade bjuds in att ta del av koden via GitHub under namnet Arkitektursamverkan. Vi hoppas kunna dela den fullt ut publikt framöver, och att fler organisationer vill vara med och utveckla den.</p>
+  <p><b>Vill ni vara med?</b> Kontakta David Bjärlestam, <a href="mailto:david.bjarlestam@hfab.se">david.bjarlestam@hfab.se</a>.</p>
+</div>
 
 </body>
 </html>
