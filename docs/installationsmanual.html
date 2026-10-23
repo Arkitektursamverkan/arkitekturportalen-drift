@@ -7,7 +7,7 @@
 @page {
   size: A4;
   margin: 20mm 18mm 22mm 18mm;
-  @bottom-left { content: "Arkitekturportalen 0.2.1 – installationsmanual"; font: 8pt Inter, sans-serif; color: #6b7280; }
+  @bottom-left { content: "Arkitekturportalen 0.3.0 – installationsmanual"; font: 8pt Inter, sans-serif; color: #6b7280; }
   @bottom-right { content: counter(page) " / " counter(pages); font: 8pt Inter, sans-serif; color: #6b7280; }
 }
 @page :first { margin: 0; @bottom-left { content: none; } @bottom-right { content: none; } }
@@ -104,8 +104,8 @@ th { font-weight: 600; color: var(--muted); font-size: 8.4pt; text-transform: up
   <h1>Arkitekturportalen</h1>
   <div class="sub">Installationsmanual – det här behöver ni veta och bestämma innan installationen</div>
   <div class="meta">
-    <b>Version 0.2.1</b> · oktober 2026<br>
-    Gäller installationsfilen <b>arkitekturportalen-0.2.1.run</b> (portalen 0.2.1, Integrationsplattformen 0.1.2).<br>
+    <b>Version 0.3.0</b> · oktober 2026<br>
+    Gäller installationsfilen <b>arkitekturportalen-0.3.0.run</b> (portalen 0.3.0, Integrationsplattformen 0.2.0, Arkitekten 0.2.0).<br>
     Kontakt: David Bjärlestam, david.bjarlestam@hfab.se
   </div>
 </section>
@@ -116,7 +116,7 @@ th { font-weight: 600; color: var(--muted); font-size: 8.4pt; text-transform: up
   <li><a href="#krav">Det här krävs</a></li>
   <li><a href="#ubuntu">Exempel: Ubuntu Server och Ubuntu Desktop</a></li>
   <li><a href="#fragor">Frågorna i installationen</a></li>
-  <li><a href="#moduler">Modulerna och Integrationsplattformen</a></li>
+  <li><a href="#moduler">Modulerna, Integrationsplattformen och Arkitekten</a></li>
   <li><a href="#efter">Efter installationen</a></li>
   <li><a href="#checklista">Checklista att fylla i</a></li>
   <li><a href="#om-samverkan">Om Arkitektursamverkan och Arkitekturportalen</a></li>
@@ -124,7 +124,7 @@ th { font-weight: 600; color: var(--muted); font-size: 8.4pt; text-transform: up
 
 <h3 id="om" style="margin-top:10mm">Om manualen och installationen</h3>
 <p>Arkitekturportalen är ett verktyg för verksamhetsarkitektur: processer, applikationer, information och teknik i ett gemensamt landskap med vyer, rapporter och analyser. Den installeras på organisationens egen server och körs där.</p>
-<p>Installationen är <b>en enda fil</b>, <code>arkitekturportalen-0.2.1.run</code>, som laddas ner från GitHub. Filen innehåller allt som behövs. När den körs ställer den ett antal frågor, och sedan installerar och startar den portalen. Det tar normalt 5–15 minuter.</p>
+<p>Installationen är <b>en enda fil</b>, <code>arkitekturportalen-0.3.0.run</code>, som laddas ner från GitHub. Filen innehåller allt som behövs. När den körs ställer den ett antal frågor, och sedan installerar och startar den portalen. Det tar normalt 5–15 minuter.</p>
 <p>Manualen är till för att ni ska kunna förbereda svaren i förväg. Varje fråga förklaras i två rutor:</p>
 <div class="rutor" style="margin-bottom:4mm">
   <div class="ruta kort"><div class="etikett">I korthet</div><p>Vad frågan gäller och vad de flesta svarar. Räcker för att komma igång.</p></div>
@@ -149,8 +149,8 @@ th { font-weight: 600; color: var(--muted); font-size: 8.4pt; text-transform: up
 <table>
   <tr><th style="width:20%">Vad</th><th style="width:28%">Rekommendation</th><th>Kommentar</th></tr>
   <tr><td>Operativsystem</td><td>Ubuntu Server 24.04 LTS</td><td>Debian 12, RHEL 9 och liknande fungerar också.</td></tr>
-  <tr><td>Processor</td><td>2 kärnor (vCPU)</td><td>4 kärnor med Integrationsplattformen.</td></tr>
-  <tr><td>Minne</td><td>4 GB</td><td>8 GB med Integrationsplattformen.</td></tr>
+  <tr><td>Processor</td><td>2 kärnor (vCPU)</td><td>4 kärnor med Integrationsplattformen och Arkitekten.</td></tr>
+  <tr><td>Minne</td><td>4 GB</td><td>8 GB med Integrationsplattformen och Arkitekten.</td></tr>
   <tr><td>Disk</td><td>40 GB</td><td>Programmet tar ca 2 GB; resten är data och backuper.</td></tr>
   <tr><td>Docker</td><td>Installeras av filen</td><td>Installeras vid behov; servern behöver då nå internet.</td></tr>
   <tr><td>Behörighet</td><td>Ett konto med <code>sudo</code></td><td>Installationen ändrar systemet.</td></tr>
@@ -159,7 +159,7 @@ th { font-weight: 600; color: var(--muted); font-size: 8.4pt; text-transform: up
 <h3>Nätverk och namn</h3>
 <table>
   <tr><th style="width:20%">Vad</th><th style="width:28%">Behövs</th><th>Kommentar</th></tr>
-  <tr><td>Webbadress (DNS-namn)</td><td>Ett namn som pekar på servern, t.ex. <code>arkitektur.kommunen.se</code></td><td>Ett namn till om Integrationsplattformen ska ingå, t.ex. <code>integration.kommunen.se</code>. Behövs inte för ett test på en enskild dator.</td></tr>
+  <tr><td>Webbadress (DNS-namn)</td><td>Ett namn som pekar på servern, t.ex. <code>arkitektur.kommunen.se</code></td><td>Ett namn till för Integrationsplattformen, t.ex. <code>integration.kommunen.se</code>, och ett för Arkitekten, t.ex. <code>processer.kommunen.se</code>, om de ska ingå. Behövs inte för ett test på en enskild dator.</td></tr>
   <tr><td>Portar</td><td>80 och 443 in till servern</td><td>Portalen använder bara dessa. Databaserna nås aldrig utifrån.</td></tr>
   <tr><td>Certifikat</td><td>Ett av tre sätt (se fråga 2)</td><td>Automatiskt från Let's Encrypt, organisationens eget, eller ett internt för test.</td></tr>
 </table>
@@ -174,7 +174,7 @@ th { font-weight: 600; color: var(--muted); font-size: 8.4pt; text-transform: up
 
 
 <h3 style="margin-top:4mm">Installationsfilen</h3>
-<p>Filen laddas ner från <b>github.com/Arkitektursamverkan/arkitekturportalen-drift</b> under <i>Releases</i>. Den är ca 320 MB. Så länge portalen inte är publik krävs att ni är inloggade på GitHub med ett konto som Arkitektursamverkan (Halmstads Fastighets AB) har bjudit in.</p>
+<p>Filen laddas ner från <b>github.com/Arkitektursamverkan/arkitekturportalen-drift</b> under <i>Releases</i>. Den är ca 410 MB. Så länge portalen inte är publik krävs att ni är inloggade på GitHub med ett konto som Arkitektursamverkan (Halmstads Fastighets AB) har bjudit in.</p>
 <p><b>Kontaktperson:</b> David Bjärlestam, <a href="mailto:david.bjarlestam@hfab.se">david.bjarlestam@hfab.se</a> – för inbjudan till GitHub och frågor om installationen.</p>
 
 <!-- ───────────────────────────── UBUNTU ───────────────────────────── -->
@@ -191,10 +191,10 @@ th { font-weight: 600; color: var(--muted); font-size: 8.4pt; text-transform: up
     <li><b>Be om DNS-namn</b> som pekar på serverns adress, och öppna port 80 och 443 i brandväggen.</li>
     <li><b>Ladda ner filen</b> från GitHub på din egen dator.</li>
     <li><b>Kopiera den till servern</b>, t.ex. med WinSCP (Windows) eller:
-      <pre>scp arkitekturportalen-0.2.1.run anvandare@server:</pre></li>
+      <pre>scp arkitekturportalen-0.3.0.run anvandare@server:</pre></li>
     <li><b>Logga in på servern</b> och kör filen:
       <pre>ssh anvandare@server
-sudo sh arkitekturportalen-0.2.1.run</pre></li>
+sudo sh arkitekturportalen-0.3.0.run</pre></li>
     <li><b>Svara på frågorna</b> (nästa avsnitt). Välj certifikat <code>auto</code> eller <code>egen</code>.</li>
   </ol>
   <p>Har servern Ubuntus brandvägg påslagen släpper du igenom webbtrafiken med <code>sudo ufw allow 80,443/tcp</code>.</p>
@@ -207,7 +207,7 @@ sudo sh arkitekturportalen-0.2.1.run</pre></li>
     <li><b>Ladda ner filen</b> från GitHub i webbläsaren på den datorn. Den hamnar i mappen <i>Hämtningar</i>.</li>
     <li><b>Öppna Terminal</b> (sök på "Terminal" i programmenyn) och skriv:
       <pre>cd ~/Hämtningar
-sudo sh arkitekturportalen-0.2.1.run</pre>
+sudo sh arkitekturportalen-0.3.0.run</pre>
       Heter mappen <i>Downloads</i> skriver du det i stället.</li>
     <li><b>Svara på frågorna.</b> Värdnamn: <code>localhost</code>. Certifikat: <code>intern</code>. Inget Entra ID; skapa ett lokalt administratörskonto.</li>
     <li><b>Öppna <code>https://localhost</code></b> i webbläsaren. Den varnar för certifikatet; välj <i>Avancerat → Fortsätt</i>. Det är väntat med ett internt certifikat.</li>
@@ -349,9 +349,9 @@ sudo sh arkitekturportalen-0.2.1.run</pre>
       <div class="svar"><b>Osäker?</b> Svara nej – de kan slås på senare.</div>
     </div>
     <div class="ruta djup"><div class="etikett">Fördjupning</div>
-      <p>Kärnan – arkitekturobjekt, vyer, rapporter, lösningsskisser, import och administration – ingår alltid. Modulerna beskrivs i avsnittet <a href="#moduler">Modulerna och Integrationsplattformen</a>.</p>
+      <p>Kärnan – arkitekturobjekt, vyer, rapporter, lösningsskisser, import och administration – ingår alltid. Modulerna beskrivs i avsnittet <a href="#moduler">Modulerna, Integrationsplattformen och Arkitekten</a>.</p>
       <p>En administratör slår på och av moduler under <i>Administration → Organisation</i>. En modul som stängs av döljs, men dess innehåll finns kvar och kommer tillbaka när den slås på igen.</p>
-      <p>Valet påverkar också vilka exempelpaket som erbjuds i fråga 10.</p>
+      <p>Valet påverkar också vilka exempelpaket som erbjuds i fråga 11. Arkitekten väljs för sig i fråga 10.</p>
     </div>
   </div>
 </div>
@@ -373,7 +373,28 @@ sudo sh arkitekturportalen-0.2.1.run</pre>
 </div>
 
 <div class="fraga">
-  <div class="fraga-huvud"><span class="nr">10</span><h3>Exempelinnehåll</h3></div>
+  <div class="fraga-huvud"><span class="nr">10</span><h3>Installera Arkitekten?</h3></div>
+  <div class="prompt">Installera Arkitekten? (j/N)</div>
+  <div class="rutor">
+    <div class="ruta kort"><div class="etikett">I korthet</div>
+      <p>Ett verktyg för att rita affärsprocesser och systemprocesser. De processer som publiceras visas i portalen.</p>
+      <div class="svar"><b>Kräver</b> Integrationsplattformen (fråga 9) – utan den ställs frågan inte.<br><b>Osäker?</b> Svara nej – Arkitekten kan läggas till senare.</div>
+    </div>
+    <div class="ruta djup"><div class="etikett">Fördjupning</div>
+      <p>Följdfrågor vid ja:</p>
+      <ul>
+        <li><b>Arkitektens värdnamn</b>, ett eget DNS-namn som pekar på samma server, t.ex. <code>processer.kommunen.se</code>. Certifikatet ordnas som för portalen.</li>
+        <li><b>Inloggning:</b> Entra ID eller egna konton. Med Entra ID kan portalens appregistrering användas (lägg då till <code>https://&lt;Arkitektens värdnamn&gt;/__ark/auth/callback</code> som omdirigerings-URI, plattform Web), eller en egen; klienthemligheten och de approller som ger administratör efterfrågas. Med egna konton skapar första besöket administratören.</li>
+        <li><b>Nyckel för AI-stödet</b> (Anthropic), valfri. Tom = AI-stödet är av.</li>
+        <li><b>Arkitektens exempelprocesser</b> i slutet av installationen – ja första gången.</li>
+      </ul>
+      <p>Installationen slår på modulen Arkitekten i portalen och skapar källan i Integrationsplattformen, som hämtar de publicerade processerna varannan timme. Väljs Arkitekten bort vid en senare körning stoppas den och källan stängs av, men processerna ligger kvar.</p>
+    </div>
+  </div>
+</div>
+
+<div class="fraga">
+  <div class="fraga-huvud"><span class="nr">11</span><h3>Exempelinnehåll</h3></div>
   <div class="prompt">Läsa in arkitekturstyrning? (J/n)</div>
   <div class="rutor">
     <div class="ruta kort"><div class="etikett">I korthet</div>
@@ -396,8 +417,8 @@ sudo sh arkitekturportalen-0.2.1.run</pre>
 
 <!-- ───────────────────────────── MODULER ───────────────────────────── -->
 
-<h2 id="moduler">Modulerna och Integrationsplattformen</h2>
-<p class="lead">Kärnan ingår alltid. Modulerna väljs i fråga 8 och kan slås på och av senare. Integrationsplattformen väljs i fråga 9 och är ett eget system som körs bredvid portalen.</p>
+<h2 id="moduler">Modulerna, Integrationsplattformen och Arkitekten</h2>
+<p class="lead">Kärnan ingår alltid. Modulerna väljs i fråga 8 och kan slås på och av senare. Integrationsplattformen väljs i fråga 9 och Arkitekten i fråga 10; båda är egna system som körs bredvid portalen.</p>
 
 <div class="modul alltid">
   <h3>Kärnan</h3>
@@ -483,9 +504,22 @@ sudo sh arkitekturportalen-0.2.1.run</pre>
   </div>
 </div>
 
-<div class="modul kommande">
+<div class="modul" style="border-color:#bcd5e8">
   <h3>Arkitekten (processritaren)</h3>
-  <p style="margin:1.4mm 0 0">Ett verktyg för att rita affärsprocesser och systemprocesser. Modulen visar de publicerade processbilderna på processkartan och hos applikationerna. Bilderna hämtas via Integrationsplattformen, så Arkitekten kräver plattformen. Installationsguiden frågar efter Arkitektens värdnamn, inloggning (egna konton eller Entra ID) och en valfri nyckel för AI-stödet, och skapar källan i plattformen.</p>
+  <div class="typ">Eget system bredvid portalen, kräver Integrationsplattformen – fråga 10</div>
+  <div class="kolumner">
+    <div><h4>Vad den gör</h4>
+      <p>Ritar affärsprocesser och systemprocesser med versioner: ett utkast blir fastslaget när det är klart. Fastslagna processer som publiceras till portalen visas på processkartan och, för systemprocesser, under fliken <i>Systemprocesser</i> hos applikationen.</p>
+      <p>Har ett eget webbgränssnitt och en länk från portalens toppfält.</p></div>
+    <div><h4>Vad det innebär</h4>
+      <ul>
+        <li><b>Bilderna går via plattformen:</b> plattformen hämtar dem från Arkitekten varannan timme, eller när någon trycker på <i>Hämta nu</i>. Därför kräver Arkitekten plattformen.</li>
+        <li><b>Eget DNS-namn</b> och egen inloggning (Entra ID eller egna konton).</li>
+        <li><b>AI-stödet är valfritt</b> och använder en egen nyckel till Anthropic.</li>
+        <li><b>Processerna</b> ligger i en egen volym och ingår i <code>backup.sh</code>.</li>
+        <li>Kan läggas till senare genom att köra installationsfilen igen.</li>
+      </ul></div>
+  </div>
 </div>
 
 <!-- ───────────────────────────── EFTER ───────────────────────────── -->
@@ -532,7 +566,8 @@ sudo sh arkitekturportalen-0.2.1.run</pre>
   <tr><td>7</td><td>Läsa utan inloggning: ja / nej</td><td style="height:9mm"></td></tr>
   <tr><td>8</td><td>Moduler: kalender · samarbeten · arkitekturstyrning · ordlista · enkäter</td><td style="height:9mm"></td></tr>
   <tr><td>9</td><td>Integrationsplattformen: ja / nej · värdnamn</td><td style="height:9mm"></td></tr>
-  <tr><td>10</td><td>Exempelinnehåll: ja / nej</td><td style="height:9mm"></td></tr>
+  <tr><td>10</td><td>Arkitekten: ja / nej · värdnamn · inloggning (Entra ID / egna konton) · AI-nyckel</td><td style="height:9mm"></td></tr>
+  <tr><td>11</td><td>Exempelinnehåll: ja / nej</td><td style="height:9mm"></td></tr>
   <tr><td>–</td><td>Vem ansvarar för backup och kopian av <code>.env</code>?</td><td style="height:9mm"></td></tr>
 </table>
 

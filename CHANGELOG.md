@@ -12,6 +12,8 @@ funktioner, en ny korrigering för rättelser.
 ## 0.3.0 – 2026-10-23
 
 - Arkitekten som valbar del i installationen (profilen `arkitekten`, bara med plattformen): eget värdnamn, inloggning, valfri AI-nyckel, modulen och källan i plattformen samt exempelprocesserna. Uppgradering, backup och återställning tar med Arkitekten.
+- Installationsfilen innehåller Arkitektens avbild (`bygg-installationsfil.sh <portal> <plattform> <arkitekten>`); en ny installation frågar inte efter dess version.
+- Installationsmanualen och broschyren: Arkitekten som modul (fråga 10 i installationen), version 0.3.0.
 
 ## 0.2.1 – 2026-10-22
 

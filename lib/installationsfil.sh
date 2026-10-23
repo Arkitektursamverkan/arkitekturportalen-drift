@@ -2,7 +2,7 @@
 # Arkitekturportalen @PORTAL@ – installationsfil.
 #
 # Allt som behövs finns i den här filen: skripten och programmet (avbilderna
-# för portalen, Integrationsplattformen, databasen och Caddy). Inget hämtas
+# för portalen, Integrationsplattformen, Arkitekten, databasen och Caddy). Inget hämtas
 # från GitHub, och ingen inloggning behövs.
 #
 #   sudo sh arkitekturportalen-@PORTAL@.run
@@ -20,6 +20,7 @@ set -eu
 
 PORTAL=@PORTAL@
 PLATTFORM=@PLATTFORM@
+ARKITEKTEN=@ARKITEKTEN@
 KATALOG=${ARKITEKTURPORTALEN_KATALOG:-/opt/arkitekturportalen}
 FIL=$0
 
@@ -36,6 +37,12 @@ ja() {
 aldre() { [ "$1" != "$2" ] && [ "$(printf '%s\n%s\n' "$1" "$2" | sort -V | head -n1)" = "$1" ]; }
 # env_varde NYCKEL – värdet i installationens .env.
 env_varde() { sed -n "s/^$1=//p" "$KATALOG/.env" | tail -n1 | tr -d "'"; }
+# satt_varde NYCKEL VÄRDE – i installationens .env; raden läggs till om den saknas
+# (en .env från en äldre version har inte alla nycklar).
+satt_varde() {
+    if grep -q "^$1=" "$KATALOG/.env"; then sed -i "s|^$1=.*|$1=$2|" "$KATALOG/.env"
+    else printf '%s=%s\n' "$1" "$2" >> "$KATALOG/.env"; fi
+}
 
 case "${1:-}" in -h|--help) sed -n '2,18p' "$FIL" | sed 's/^# \{0,1\}//'; exit 0 ;; esac
 
@@ -75,9 +82,11 @@ LAGE=ny
 if [ -f "$KATALOG/.env" ]; then
     portal_nu=$(env_varde PORTAL_VERSION)
     plattform_nu=$(env_varde PLATFORM_VERSION)
+    ark_nu=$(env_varde ARKITEKTEN_VERSION)
     if aldre "$PORTAL" "$portal_nu"; then
         fel "Servern kör redan $portal_nu, som är nyare än $PORTAL. Inget är ändrat."
-    elif [ "$PORTAL" = "$portal_nu" ] && [ "$PLATTFORM" = "$plattform_nu" ]; then
+    elif [ "$PORTAL" = "$portal_nu" ] && [ "$PLATTFORM" = "$plattform_nu" ] \
+        && { [ -z "$ark_nu" ] || [ "$ARKITEKTEN" = "$ark_nu" ]; }; then
         LAGE=samma
         info "$KATALOG har redan version $PORTAL. Guiden startar så att du kan ändra inställningarna."
     else
@@ -108,12 +117,16 @@ rm -rf "$tmp"
 cd "$KATALOG"
 case $LAGE in
     uppgradera)
-        bash ./uppgradera.sh --utan-pull "$PORTAL" "$PLATTFORM"
-        # Utan plattformen hoppar uppgraderingen över dess version; den ska ändå
-        # peka på avbilderna som nu finns, om plattformen slås på senare.
-        sed -i "s/^PLATFORM_VERSION=.*/PLATFORM_VERSION=$PLATTFORM/" .env
+        bash ./uppgradera.sh --utan-pull "$PORTAL" "$PLATTFORM" "$ARKITEKTEN"
+        # Utan plattformen eller Arkitekten hoppar uppgraderingen över deras
+        # versioner; de ska ändå peka på avbilderna som nu finns, om de slås på
+        # senare.
+        satt_varde PLATFORM_VERSION "$PLATTFORM"
+        satt_varde ARKITEKTEN_VERSION "$ARKITEKTEN"
         ;;
     *)
+        # Arkitektens version följer filen, så att guiden inte frågar efter den.
+        [ -f .env ] && [ -z "$(env_varde ARKITEKTEN_VERSION)" ] && satt_varde ARKITEKTEN_VERSION "$ARKITEKTEN"
         bash ./installera.sh --utan-pull
         ;;
 esac
