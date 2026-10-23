@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 # Bygger installationsfilen som organisationerna laddar ner från GitHub:
 # dist/arkitekturportalen-<portal>.run, med drift-skripten och alla avbilder
-# (portalen, plattformen, postgres, redis, caddy). Den som installerar behöver
+# (portalen, plattformen, Arkitekten, postgres, redis, caddy). Den som installerar behöver
 # alltså varken git eller inloggning mot avbildsregistret.
 #
 #   ./bygg-installationsfil.sh                    versionerna i .env.example
-#   ./bygg-installationsfil.sh 0.2.1 0.1.2        portalen och plattformen
+#   ./bygg-installationsfil.sh 0.3.0 0.2.0 0.2.0  portalen, plattformen och Arkitekten
 #   ./bygg-installationsfil.sh … --publicera      och skapar releasen v<portal>
 #                                                 på GitHub med filen bifogad
 #
@@ -30,11 +30,14 @@ done
 ENV_FILE=.env.example
 PORTAL=${versioner[0]:-$(env_get PORTAL_VERSION)}
 PLATTFORM=${versioner[1]:-$(env_get PLATFORM_VERSION)}
+ARKITEKTEN=${versioner[2]:-$(env_get ARKITEKTEN_VERSION)}
+[ -n "$ARKITEKTEN" ] || fel "Arkitektens version saknas (tredje argumentet eller ARKITEKTEN_VERSION i $ENV_FILE)."
 REGISTRY=ghcr.io/arkitektursamverkan
 kontrollera_docker
 
 env_set PORTAL_VERSION "$PORTAL"
 env_set PLATFORM_VERSION "$PLATTFORM"
+env_set ARKITEKTEN_VERSION "$ARKITEKTEN"
 if [ $PUBLICERA = 1 ]; then
     command -v gh >/dev/null || fel "gh saknas."
     [ -z "$(git status --porcelain)" ] || fel "Det finns ändringar som inte är incheckade (git status). Checka in dem först."
@@ -48,11 +51,12 @@ AVBILDER=(
     "$REGISTRY/arkitekturportalen-web:$PORTAL"
     "$REGISTRY/integrationsplattformen-api:$PLATTFORM"
     "$REGISTRY/integrationsplattformen-web:$PLATTFORM"
+    "$REGISTRY/arkitekten:$ARKITEKTEN"
 )
 # Övriga avbilder läses ur compose.yml, så att listan följer med när de byts.
 while IFS= read -r a; do AVBILDER+=("$a"); done < <(grep -oE '^\s+image: [a-z0-9]+:[^$ ]+$' compose.yml | awk '{print $2}' | sort -u)
 
-rubrik "Installationsfil: portalen $PORTAL, plattformen $PLATTFORM"
+rubrik "Installationsfil: portalen $PORTAL, plattformen $PLATTFORM, Arkitekten $ARKITEKTEN"
 for a in "${AVBILDER[@]}"; do
     info "Hämtar $a"
     docker pull --quiet "$a" >/dev/null || fel "$a gick inte att hämta."
@@ -68,14 +72,14 @@ docker save "${AVBILDER[@]}" | gzip -6 > "$tmp/avbilder.tar.gz"
 
 mkdir -p dist
 ut=dist/arkitekturportalen-$PORTAL.run
-sed -e "s/@PORTAL@/$PORTAL/g" -e "s/@PLATTFORM@/$PLATTFORM/g" lib/installationsfil.sh > "$ut"
+sed -e "s/@PORTAL@/$PORTAL/g" -e "s/@PLATTFORM@/$PLATTFORM/g" -e "s/@ARKITEKTEN@/$ARKITEKTEN/g" lib/installationsfil.sh > "$ut"
 tar -c -C "$tmp" filer avbilder.tar.gz >> "$ut"
 chmod +x "$ut"
 info "Klar: $ut ($(du -h "$ut" | cut -f1))"
 
 if [ $PUBLICERA = 1 ]; then
     anteckningar=$(cat <<EOF
-Arkitekturportalen $PORTAL med Integrationsplattformen $PLATTFORM.
+Arkitekturportalen $PORTAL med Integrationsplattformen $PLATTFORM och Arkitekten $ARKITEKTEN.
 
 ## Installera eller uppgradera
 
@@ -86,7 +90,7 @@ Arkitekturportalen $PORTAL med Integrationsplattformen $PLATTFORM.
 
 Filen innehåller allt som behövs. Första gången ställer den några frågor och installerar portalen i /opt/arkitekturportalen. På en server där portalen redan finns uppgraderar den, med en backup först.
 
-Nyheter: [portalen]($RELEASES_PORTAL/tag/v$PORTAL), [plattformen]($RELEASES_PLATTFORM/tag/v$PLATTFORM).
+Nyheter: [portalen]($RELEASES_PORTAL/tag/v$PORTAL), [plattformen]($RELEASES_PLATTFORM/tag/v$PLATTFORM), [Arkitekten]($RELEASES_ARKITEKTEN/tag/v$ARKITEKTEN).
 EOF
 )
     gh release create "v$PORTAL" "$ut" --title "Arkitekturportalen $PORTAL" --notes "$anteckningar"
