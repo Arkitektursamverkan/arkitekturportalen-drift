@@ -1,13 +1,14 @@
 # Arkitekturportalen – drift
 
 Installera och drifta Arkitekturportalen (och, om du vill,
-Integrationsplattformen) på en egen server med Docker. Allt körs från färdiga
+Integrationsplattformen och Arkitekten) på en egen server med Docker. Allt körs från färdiga
 avbilder; inget byggs på servern.
 
 | Del | Avbild |
 |---|---|
 | Portalen | `arkitekturportalen-api`, `arkitekturportalen-web` |
 | Integrationsplattformen (valfri) | `integrationsplattformen-api`, `integrationsplattformen-web` |
+| Arkitekten, processritaren (valfri, kräver plattformen) | `arkitekten` (webben och flödestjänsten ur samma avbild) |
 | TLS | `caddy` – Let's Encrypt, eget certifikat eller intern CA |
 | Databaser | `postgres:16-alpine`, `redis:7-alpine` |
 
@@ -60,15 +61,21 @@ Guiden frågar efter
 - om objekten får läsas utan inloggning,
 - vilka moduler som ska vara på (standard: bara kärnan),
 - om Integrationsplattformen ska ingå,
+- om Arkitekten ska ingå (bara med plattformen): värdnamn, inloggning (egna
+  konton eller Entra ID, samma appregistrering som portalen eller en egen) och
+  en valfri nyckel för AI-stödet,
 - vilka exempelpaket som ska läsas in (bara för moduler som är på).
 
 Sedan skapar den alla hemligheter, skriver `.env`, hämtar avbilderna, startar
 allt, skapar administratören och plattformens läsnyckel för portalen och läser
-in exempelpaketen.
+in exempelpaketen. Med Arkitekten slår den också på modulen `arkitekten` i
+portalen och skapar källan i plattformen som hämtar de publicerade
+processbilderna från Arkitektens flödestjänst varannan timme.
 
 Guiden går att köra igen för att ändra något: värdena i `.env` blir förslag
-och befintliga hemligheter behålls. Väljs plattformen bort stoppas den, men
-dess data ligger kvar.
+och befintliga hemligheter behålls. Väljs plattformen eller Arkitekten bort
+stoppas den, men dess data ligger kvar. Utan plattformen går Arkitekten inte
+att välja – processbilderna når portalen bara genom den.
 
 **Entra ID:** skapa först en appregistrering (SPA) med redirect-URI
 `https://<portalens värdnamn>/` och ett exponerat API-scope `access_as_user`.
@@ -84,6 +91,13 @@ Integrationsplattformen: `COMPOSE_PROFILES=plattform`,
 `INTEGRATION_PLATFORM_URL`, `PLATFORM_HOST` och plattformens hemligheter, och
 `cp caddy/mallar/plattform.caddy caddy/sites/`. Ett flödes webhook "efter
 körning" till portalen är `http://api:8000/api/v1/sync/webhook`.
+
+Med Arkitekten: `COMPOSE_PROFILES=plattform,arkitekten`, `arkitekten` i
+`MODULES`, variablerna `ARKITEKTEN_*` i `.env.example`, och
+`cp caddy/mallar/arkitekten.caddy caddy/sites/`. I plattformen en källa av
+typen *Arkitekten* mot `http://arkitekten-flodestjanst:8200` (familj `alla`,
+bara publicerade) med ett schema, t.ex. `0 */2 * * *`. Arkitektens
+exempelprocesser: `docker compose exec arkitekten node_modules/.bin/tsx server/innehallspaket.mts import exempel`.
 
 Exempelinnehåll:
 
@@ -130,7 +144,8 @@ Tillbaka till en äldre version = återställ en backup från den versionen.
 ```
 
 En backup innehåller portalens databas och filer (ögonblicksbilder,
-synkprofiler), plattformens databas, en kopia av `.env` och versionerna. Den
+synkprofiler), plattformens databas, Arkitektens innehåll (processer,
+visualiseringar, stilar, konton), en kopia av `.env` och versionerna. Den
 räknas bara som fullständig när filen `KLAR` finns. `BACKUP_BEHALL` i `.env`
 (standard 14) styr hur många som sparas.
 

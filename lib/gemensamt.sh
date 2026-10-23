@@ -92,6 +92,27 @@ vanta_pa() {
 # Är Integrationsplattformen vald i .env?
 plattform_vald() { case ",$(env_get COMPOSE_PROFILES)," in *,plattform,*) return 0 ;; esac; return 1; }
 
+# Är Arkitekten vald i .env?
+arkitekten_vald() { case ",$(env_get COMPOSE_PROFILES)," in *,arkitekten,*) return 0 ;; esac; return 1; }
+
+# vanta_pa_node TJÄNST URL – som vanta_pa, för en container med Node (Arkitekten).
+vanta_pa_node() {
+    for _ in $(seq 1 60); do
+        if dc exec -T "$1" node -e "fetch('$2').then(r=>process.exit(r.ok?0:1),()=>process.exit(1))" </dev/null >/dev/null 2>&1; then
+            return 0
+        fi
+        sleep 3
+    done
+    dc logs --tail 40 "$1" >&2
+    info "$1 svarar inte. Loggen ovan visar varför."
+    return 1
+}
+
+# Versionen Arkitekten rapporterar i /health.
+arkitekten_version() {
+    dc exec -T arkitekten node -e "fetch('http://localhost:5173/health').then(r=>r.json()).then(j=>console.log(j.version))" </dev/null 2>/dev/null
+}
+
 # Versionen som TJÄNSTEN rapporterar i /api/v1/health.
 rapporterad_version() {
     dc exec -T "$1" python -c "import json, urllib.request; print(json.load(urllib.request.urlopen('http://localhost:8000/api/v1/health'))['version'])" 2>/dev/null
@@ -107,3 +128,4 @@ kontrollera_docker() {
 # Releaseanteckningar per del.
 RELEASES_PORTAL=https://github.com/Arkitektursamverkan/arkitekturportalen/releases
 RELEASES_PLATTFORM=https://github.com/Arkitektursamverkan/integrationsplattformen/releases
+RELEASES_ARKITEKTEN=https://github.com/Arkitektursamverkan/arkitekten/releases
