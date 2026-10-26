@@ -9,6 +9,11 @@ funktioner, en ny korrigering för rättelser.
 
 - (inget än)
 
+## 0.3.2 – 2026-10-26
+
+- Installationsfilen med portalen 0.3.2, Integrationsplattformen 0.2.1 och Arkitekten 0.3.1: rättad MSAL-inloggning (MSAL 5) och uppdaterade beroenden, bland annat Vite 8, react-router 7 och SQLAlchemy 2.1.
+- Installationsmanualen och broschyren: version 0.3.2.
+
 ## 0.3.1 – 2026-10-23
 
 - Installationsfilen med portalen 0.3.1, Integrationsplattformen 0.2.1 och Arkitekten 0.3.0: uppdaterade beroenden (bland annat React 19 och MUI 9) och organisationens namn, logotyp och profilfärg i Arkitekten, hämtade ur portalens organisationsinställningar.
