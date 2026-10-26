@@ -551,6 +551,11 @@ sudo sh arkitekturportalen-0.4.0.run</pre>
 <h3>Ändra svaren</h3>
 <p>Kör samma installationsfil igen. Frågorna kommer med era tidigare svar som förslag; tryck Enter för att behålla dem. Befintliga lösenord, nycklar och data behålls.</p>
 
+<h3>Avinstallera</h3>
+<p>Ska portalen bort från servern: ladda ner <code>arkitekturportalen-avinstallation.run</code> från samma ställe som installationsfilen och kör den på samma sätt:</p>
+<pre>sudo sh arkitekturportalen-avinstallation.run</pre>
+<p>Den visar vad som är installerat och erbjuder en sista backup, och att spara backuperna utanför installationen så att portalen kan återskapas senare. Inget tas bort förrän ni har skrivit <code>avinstallera</code>. Sedan tas portalen, all dess data och programmet bort; Docker finns kvar. DNS-namnen, appregistreringen i Entra ID och brandväggsöppningarna tas bort för hand.</p>
+
 <h3>Var finns vad?</h3>
 <table>
   <tr><th style="width:42%">Sökväg på servern</th><th>Innehåll</th></tr>

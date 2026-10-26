@@ -2,7 +2,8 @@
 # Bygger installationsfilen som organisationerna laddar ner från GitHub:
 # dist/arkitekturportalen-<portal>.run, med drift-skripten och alla avbilder
 # (portalen, plattformen, Arkitekten, postgres, redis, caddy). Den som installerar behöver
-# alltså varken git eller inloggning mot avbildsregistret.
+# alltså varken git eller inloggning mot avbildsregistret. Bredvid den
+# dist/arkitekturportalen-avinstallation.run (avinstallera.sh).
 #
 #   ./bygg-installationsfil.sh                    versionerna i .env.example
 #   ./bygg-installationsfil.sh 0.4.0 0.2.1 0.3.1  portalen, plattformen och Arkitekten
@@ -76,6 +77,10 @@ sed -e "s/@PORTAL@/$PORTAL/g" -e "s/@PLATTFORM@/$PLATTFORM/g" -e "s/@ARKITEKTEN@
 tar -c -C "$tmp" filer avbilder.tar.gz >> "$ut"
 chmod +x "$ut"
 info "Klar: $ut ($(du -h "$ut" | cut -f1))"
+avinst=dist/arkitekturportalen-avinstallation.run
+cp avinstallera.sh "$avinst"
+chmod +x "$avinst"
+info "Klar: $avinst"
 
 if [ $PUBLICERA = 1 ]; then
     anteckningar=$(cat <<EOF
@@ -90,8 +95,14 @@ Arkitekturportalen $PORTAL med Integrationsplattformen $PLATTFORM och Arkitekten
 
 Filen innehåller allt som behövs. Första gången ställer den några frågor och installerar portalen i /opt/arkitekturportalen. På en server där portalen redan finns uppgraderar den, med en backup först.
 
+## Avinstallera
+
+**arkitekturportalen-avinstallation.run** tar bort portalen från servern, med frågor och en sista backup först:
+
+       sudo sh arkitekturportalen-avinstallation.run
+
 Nyheter: [portalen]($RELEASES_PORTAL/tag/v$PORTAL), [plattformen]($RELEASES_PLATTFORM/tag/v$PLATTFORM), [Arkitekten]($RELEASES_ARKITEKTEN/tag/v$ARKITEKTEN).
 EOF
 )
-    gh release create "v$PORTAL" "$ut" --title "Arkitekturportalen $PORTAL" --notes "$anteckningar"
+    gh release create "v$PORTAL" "$ut" "$avinst" --title "Arkitekturportalen $PORTAL" --notes "$anteckningar"
 fi

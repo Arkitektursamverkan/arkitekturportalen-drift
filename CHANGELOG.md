@@ -7,7 +7,8 @@ funktioner, en ny korrigering för rättelser.
 
 ## Ej släppt
 
-- (inget än)
+- Avinstallation: `arkitekturportalen-avinstallation.run` bifogas releasen (och `avinstallera.sh` finns i installationen). Den visar vad som finns, erbjuder en sista backup och att spara backuperna utanför installationen, och tar sedan bort tjänsterna, datan, avbilderna, cron-raderna för backup och `/opt/arkitekturportalen` – först när man skrivit `avinstallera`. Docker lämnas kvar.
+- Installationsmanualen och README: avsnittet Avinstallera.
 
 ## 0.4.0 – 2026-10-26
 

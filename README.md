@@ -163,6 +163,32 @@ databaserna, filerna, `.env` och versionerna som körde (nuvarande `.env`
 sparas som `.env.fore-aterstallning`) och startar allt igen. Allt som
 ändrats efter backupen försvinner.
 
+## Avinstallera
+
+Ladda ner `arkitekturportalen-avinstallation.run` från samma release som
+installationsfilen och kör den på servern:
+
+```sh
+sudo sh arkitekturportalen-avinstallation.run
+```
+
+Samma skript finns i installationen: `sudo /opt/arkitekturportalen/avinstallera.sh`.
+Det visar vad som finns och frågar
+
+1. om en sista backup ska tas (`backups/<tid>-fore-avinstallation`),
+2. om backuperna ska sparas utanför installationen (förslag:
+   `/var/backups/arkitekturportalen-<tid>`, med en kopia av `.env`),
+3. om avbilderna ska tas bort ur Docker (en avbild som något annat på servern
+   använder lämnas kvar).
+
+Först när man skrivit `avinstallera` tas containrarna, volymerna (all data),
+nätverken, raderna i crontab som kör installationens skript och
+installationskatalogen bort. Docker lämnas kvar. Utanför servern återstår
+DNS-namnen, appregistreringarna i Entra ID och brandväggsöppningarna.
+
+Tillbaka igen: installera med installationsfilen och kör
+`./aterstall.sh <sparad backup>`.
+
 ## Filer
 
 | Fil | Vad |
@@ -170,6 +196,7 @@ sparas som `.env.fore-aterstallning`) och startar allt igen. Allt som
 | `installera.sh` | Installationsguiden. |
 | `uppgradera.sh` | Ny version, med backup först. |
 | `backup.sh`, `aterstall.sh` | Backup och återställning. |
+| `avinstallera.sh` | Avinstallation; bifogas också releasen som `arkitekturportalen-avinstallation.run`. |
 | `bygg-installationsfil.sh` | För underhållarna: bygger `.run`-filen och releasen. |
 | `docs/installationsmanual.html` | Installationsmanualen; görs om till PDF och bifogas releasen. |
 | `docs/broschyr/` | Broschyren med skärmbilder av en demoinstallation; görs om till PDF och bifogas releasen. |
