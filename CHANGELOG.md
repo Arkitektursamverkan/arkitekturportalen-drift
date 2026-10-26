@@ -9,6 +9,12 @@ funktioner, en ny korrigering för rättelser.
 
 - (inget än)
 
+## 0.4.0 – 2026-10-26
+
+- Installationsfilen med portalen 0.4.0, Integrationsplattformen 0.2.1 och Arkitekten 0.3.1.
+- Ny valbar modul Förändringsstatistik (`changes`): installationsguiden frågar efter den, och manualen och broschyren beskriver den.
+- Installationsmanualen och broschyren: version 0.4.0.
+
 ## 0.3.2 – 2026-10-26
 
 - Installationsfilen med portalen 0.3.2, Integrationsplattformen 0.2.1 och Arkitekten 0.3.1: rättad MSAL-inloggning (MSAL 5) och uppdaterade beroenden, bland annat Vite 8, react-router 7 och SQLAlchemy 2.1.
