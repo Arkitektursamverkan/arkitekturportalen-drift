@@ -25,13 +25,14 @@ for arg in "$@"; do
     esac
 done
 
-MODULE_KEYS=(calendar collaboration governance glossary surveys)
+MODULE_KEYS=(calendar collaboration governance glossary surveys changes)
 declare -A MODULE_NAMES=(
     [calendar]="Verksamhetskalender med förändringslogg"
     [collaboration]="Samarbeten: uppdrag och arbetsgrupper"
     [governance]="Arkitekturstyrning: principer, nuläge, målarkitektur, GAP-analys"
     [glossary]="Ordlista"
     [surveys]="Enkäter"
+    [changes]="Förändringsstatistik: tillagda, ändrade och borttagna objekt över tid"
 )
 
 # shellcheck source=lib/gemensamt.sh
