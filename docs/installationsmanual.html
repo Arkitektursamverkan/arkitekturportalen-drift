@@ -546,14 +546,14 @@ sudo sh arkitekturportalen-0.4.0.run</pre>
 <p>Backuperna hamnar i <code>/opt/arkitekturportalen/backups/</code> på samma server, och de 14 senaste sparas. Kopiera dem regelbundet till en annan plats. De innehåller nycklarna och ska förvaras som lösenord.</p>
 
 <h3>Uppgradera till en ny version</h3>
-<p>Ladda ner den nya installationsfilen från GitHub och kör den på samma sätt som första gången. Den känner igen den befintliga installationen, tar en backup och startar den nya versionen. Inga frågor ställs om utom en bekräftelse. Skulle något gå fel skriver den ut hur ni kommer tillbaka till läget före.</p>
+<p>Ladda ner den nya installationsfilen från GitHub och kör den på samma sätt som första gången. Den känner igen den befintliga installationen och frågar vad som ska göras; välj <em>Uppgradera</em> (förvalt). Den tar en backup och startar den nya versionen. Inga frågor ställs om utom en bekräftelse. Skulle något gå fel skriver den ut hur ni kommer tillbaka till läget före.</p>
 
 <h3>Ändra svaren</h3>
-<p>Kör samma installationsfil igen. Frågorna kommer med era tidigare svar som förslag; tryck Enter för att behålla dem. Befintliga lösenord, nycklar och data behålls.</p>
+<p>Kör samma installationsfil igen och välj <em>Ändra inställningarna</em>. Frågorna kommer med era tidigare svar som förslag; tryck Enter för att behålla dem. Befintliga lösenord, nycklar och data behålls.</p>
 
 <h3>Avinstallera</h3>
-<p>Ska portalen bort från servern: ladda ner <code>arkitekturportalen-avinstallation.run</code> från samma ställe som installationsfilen och kör den på samma sätt:</p>
-<pre>sudo sh arkitekturportalen-avinstallation.run</pre>
+<p>Ska portalen bort från servern: kör installationsfilen på samma sätt som vid installationen och välj <em>Avinstallera portalen från servern</em>. Det går också att gå direkt till avinstallationen:</p>
+<pre>sudo sh arkitekturportalen-&lt;version&gt;.run --avinstallera</pre>
 <p>Den visar vad som är installerat och erbjuder en sista backup, och att spara backuperna utanför installationen så att portalen kan återskapas senare. Inget tas bort förrän ni har skrivit <code>avinstallera</code>. Sedan tas portalen, all dess data och programmet bort; Docker finns kvar. DNS-namnen, appregistreringen i Entra ID och brandväggsöppningarna tas bort för hand.</p>
 
 <h3>Var finns vad?</h3>

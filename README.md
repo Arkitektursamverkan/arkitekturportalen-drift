@@ -165,11 +165,12 @@ sparas som `.env.fore-aterstallning`) och startar allt igen. Allt som
 
 ## Avinstallera
 
-Ladda ner `arkitekturportalen-avinstallation.run` från samma release som
-installationsfilen och kör den på servern:
+Kör installationsfilen på servern och välj *Avinstallera portalen från
+servern* i menyn som visas när portalen redan är installerad, eller gå direkt
+till avinstallationen:
 
 ```sh
-sudo sh arkitekturportalen-avinstallation.run
+sudo sh arkitekturportalen-<version>.run --avinstallera
 ```
 
 Samma skript finns i installationen: `sudo /opt/arkitekturportalen/avinstallera.sh`.
@@ -196,7 +197,7 @@ Tillbaka igen: installera med installationsfilen och kör
 | `installera.sh` | Installationsguiden. |
 | `uppgradera.sh` | Ny version, med backup först. |
 | `backup.sh`, `aterstall.sh` | Backup och återställning. |
-| `avinstallera.sh` | Avinstallation; bifogas också releasen som `arkitekturportalen-avinstallation.run`. |
+| `avinstallera.sh` | Avinstallation; installationsfilen kör det när man väljer att avinstallera. |
 | `bygg-installationsfil.sh` | För underhållarna: bygger `.run`-filen och releasen. |
 | `docs/installationsmanual.html` | Installationsmanualen; görs om till PDF och bifogas releasen. |
 | `docs/broschyr/` | Broschyren med skärmbilder av en demoinstallation; görs om till PDF och bifogas releasen. |
