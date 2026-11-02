@@ -9,6 +9,11 @@ funktioner, en ny korrigering för rättelser.
 
 - (inget än)
 
+## 0.5.1 – 2026-11-02
+
+- Installationsfilen med portalen 0.5.1, Integrationsplattformen 0.2.3 och Arkitekten 0.3.2: Python 3.14 och Node 26, ny Anthropic-SDK i Arkitekten och en tömd bana som står kvar under redigeringen.
+- Installationsmanualen och broschyren: version 0.5.1.
+
 ## 0.5.0 – 2026-11-02
 
 - Installationsfilen med portalen 0.5.0, Integrationsplattformen 0.2.2 och Arkitekten 0.3.1: PDF-visare i portalen, rättad Neo4j-skrivning och uppdaterade beroenden.
