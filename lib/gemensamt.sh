@@ -108,6 +108,43 @@ vanta_pa_node() {
     return 1
 }
 
+# vardnamn SVAR → värdnamnet i den form webbläsaren använder: gemener, utan
+# https:// och avslutande snedstreck. CORS jämför exakt mot webbläsarens adress.
+vardnamn() {
+    local namn=${1,,}
+    namn=${namn#http://}; namn=${namn#https://}; namn=${namn%%/*}
+    printf '%s' "$namn"
+}
+
+# kontrollera_namn NAMN TLS_LÄGE – varnar för ett namn som inte kan fungera och
+# erbjuder en rad i hosts-filen. Stoppar aldrig: DNS kan vara på väg. Utan det
+# här startade portalen felfritt, men webbläsaren hittade den inte.
+kontrollera_namn() {
+    local namn=$1 tls=$2 hosts=${HOSTS_FIL:-/etc/hosts} forslag=n
+    if [ "$tls" = auto ]; then
+        case "$namn" in
+            *.*) ;;
+            *) info "  Varning: Let's Encrypt ger inga certifikat till ett namn utan punkt ($namn)."
+               info "  Välj intern eller egen, eller ange ett fullständigt namn." ;;
+        esac
+    fi
+    command -v getent >/dev/null || return 0
+    getent hosts "$namn" >/dev/null && return 0
+    info "  Varning: namnet $namn går inte att slå upp på den här datorn."
+    info "  Portalen startar ändå, men webbläsaren hittar den inte förrän namnet finns i DNS eller i hosts-filen."
+    [ "$tls" = intern ] && forslag=j
+    if [ -w "$hosts" ]; then
+        if ja_nej "  Lägga till \"127.0.0.1 $namn\" i $hosts, så att det fungerar på den här datorn?" "$forslag"; then
+            printf '127.0.0.1 %s\n' "$namn" >> "$hosts"
+            info "  Tillagt."
+        fi
+    else
+        info "  På den här datorn:  echo \"127.0.0.1 $namn\" | sudo tee -a $hosts"
+    fi
+    info "  På andra datorer behövs DNS, eller en rad i deras hosts-fil med den här datorns IP-adress."
+    return 0
+}
+
 # Versionen Arkitekten rapporterar i /health.
 arkitekten_version() {
     dc exec -T arkitekten node -e "fetch('http://localhost:5173/health').then(r=>r.json()).then(j=>console.log(j.version))" </dev/null 2>/dev/null
