@@ -9,6 +9,11 @@ funktioner, en ny korrigering för rättelser.
 
 - (inget än)
 
+## 0.5.2 – 2026-11-02
+
+- Installationsfilen med portalen 0.5.2, Integrationsplattformen 0.2.3 och Arkitekten 0.3.2: *Ladda demodata* fungerar i en portal utan objekt.
+- Installationsmanualen och broschyren: version 0.5.2.
+
 ## 0.5.1, tillägg – 2026-11-02
 
 Samma version av portalen och samma avbilder; installationsfilen i releasen v0.5.1 är ombyggd:

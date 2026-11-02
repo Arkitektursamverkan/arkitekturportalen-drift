@@ -6,7 +6,7 @@
 # installerar, uppgraderar och avinstallerar.
 #
 #   ./bygg-installationsfil.sh                    versionerna i .env.example
-#   ./bygg-installationsfil.sh 0.5.1 0.2.3 0.3.2  portalen, plattformen och Arkitekten
+#   ./bygg-installationsfil.sh 0.5.2 0.2.3 0.3.2  portalen, plattformen och Arkitekten
 #   ./bygg-installationsfil.sh … --publicera      och skapar releasen v<portal>
 #                                                 på GitHub med filen bifogad
 #
