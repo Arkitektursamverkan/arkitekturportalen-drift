@@ -59,7 +59,7 @@ chmod 600 "$ENV_FILE"
 # ── Webbadress och TLS ────────────────────────────────────────────────────────
 
 rubrik "Webbadress och certifikat"
-PORTAL_HOST=$(fraga_maste "Portalens värdnamn (DNS pekar på den här servern)" "$(env_get PORTAL_HOST | sed 's/^arkitektur\.example\.org$//')")
+PORTAL_HOST=$(vardnamn "$(fraga_maste "Portalens värdnamn (DNS pekar på den här servern)" "$(env_get PORTAL_HOST | sed 's/^arkitektur\.example\.org$//')")")
 env_set PORTAL_HOST "$PORTAL_HOST"
 
 info "Certifikat:"
@@ -72,6 +72,7 @@ while :; do
     info "  Välj auto, egen eller intern."
 done
 env_set TLS_MODE "$TLS_MODE"
+kontrollera_namn "$PORTAL_HOST" "$TLS_MODE"
 case "$TLS_MODE" in
     auto)
         env_set ACME_EMAIL "$(fraga_maste "E-post för varningar om certifikat" "$(env_get ACME_EMAIL)")"
@@ -160,7 +161,9 @@ info "Hämtar data från andra system (t.ex. HR, ekonomi, CMDB) in i portalen."
 plattform_nu=n; plattform_vald && plattform_nu=j
 if ja_nej "Installera Integrationsplattformen?" "$plattform_nu"; then
     PLATTFORM=1
-    env_set PLATFORM_HOST "$(fraga_maste "Plattformens värdnamn" "$(env_get PLATFORM_HOST)")"
+    PLATFORM_HOST=$(vardnamn "$(fraga_maste "Plattformens värdnamn" "$(env_get PLATFORM_HOST)")")
+    env_set PLATFORM_HOST "$PLATFORM_HOST"
+    kontrollera_namn "$PLATFORM_HOST" "$TLS_MODE"
     env_set INTEGRATION_PLATFORM_URL "http://plattform-api:8000/api/v1"
     for k in PLATFORM_ENCRYPTION_KEY PLATFORM_ADMIN_API_KEY PLATFORM_JWT_SECRET PLATFORM_POSTGRES_PASSWORD SYNC_WEBHOOK_SECRET; do
         env_set "$k" "$(hemlighet "$k")"
@@ -185,8 +188,9 @@ if [ $PLATTFORM = 0 ]; then
     [ $ark_nu = j ] && info "Arkitekten stängs av (dess innehåll ligger kvar i volymen)."
 elif ja_nej "Installera Arkitekten?" "$ark_nu"; then
     ARKITEKTEN=1
-    ARKITEKTEN_HOST=$(fraga_maste "Arkitektens värdnamn" "$(env_get ARKITEKTEN_HOST)")
+    ARKITEKTEN_HOST=$(vardnamn "$(fraga_maste "Arkitektens värdnamn" "$(env_get ARKITEKTEN_HOST)")")
     env_set ARKITEKTEN_HOST "$ARKITEKTEN_HOST"
+    kontrollera_namn "$ARKITEKTEN_HOST" "$TLS_MODE"
     env_set ARKITEKTEN_URL "https://$ARKITEKTEN_HOST"
     [ -n "$(env_get ARKITEKTEN_VERSION)" ] \
         || env_set ARKITEKTEN_VERSION "$(fraga_maste "Arkitektens version (se $RELEASES_ARKITEKTEN)")"
@@ -407,6 +411,7 @@ done
 # ── Klart ─────────────────────────────────────────────────────────────────────
 
 rubrik "Klart"
+info "Skriv hela adressen i webbläsaren, med https:// och namnet, inte IP-adressen."
 info "Portalen:      https://$PORTAL_HOST/"
 [ $PLATTFORM = 1 ] && info "Plattformen:   https://$(env_get PLATFORM_HOST)/  (första besöket skapar dess administratör)"
 if [ $ARKITEKTEN = 1 ]; then
@@ -418,6 +423,7 @@ if [ $LOKAL_ADMIN = 1 ]; then
     [ "${ADMIN_LOSEN_GENERERAT:-0}" = 1 ] && info "Lösenord:      $ADMIN_LOSEN   (visas bara nu – byt det efter inloggningen)"
 fi
 [ $ENTRA = 1 ] && info "Entra ID:      appregistreringen behöver redirect-URI https://$PORTAL_HOST/"
+[ "$TLS_MODE" = intern ] && info "Webbläsaren varnar för certifikatet. Det är väntat i läget intern: välj Avancerat och fortsätt."
 [ "$TLS_MODE" = auto ] && info "Certifikatet hämtas från Let's Encrypt vid första besöket; det kräver port 80 och 443 från internet."
 [ $PLATTFORM = 1 ] && info "Synk efter körning: ge flödet webhooken http://api:8000/api/v1/sync/webhook"
 info ""

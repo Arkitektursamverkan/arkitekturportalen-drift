@@ -234,6 +234,7 @@ sudo sh arkitekturportalen-0.5.1.run</pre>
       <div class="svar"><b>Skarp drift:</b> t.ex. <code>arkitektur.kommunen.se</code><br><b>Test på egen dator:</b> <code>localhost</code></div>
     </div>
     <div class="ruta djup"><div class="etikett">Fördjupning</div>
+      <p>Går namnet inte att slå upp varnar guiden och erbjuder en rad i <code>/etc/hosts</code>, som räcker för test på samma dator. Från andra datorer behövs DNS, eller en rad i deras hosts-fil med serverns IP-adress. Använd alltid hela adressen, <code>https://namnet/</code>, inte IP-adressen.</p>
       <p>Namnet måste finnas i DNS och peka på serverns IP-adress <i>innan</i> portalen används, annars når ingen den. Be er nätverks- eller DNS-ansvariga lägga upp en A-post (eller CNAME).</p>
       <p>Namnet används på tre ställen: av webbservern för att svara på rätt adress, i certifikatet och som tillåten adress för inloggningen. Med Entra ID ska samma adress finnas som omdirigerings-URI i appregistreringen.</p>
       <p>Byter ni namn senare: kör filen igen med det nya namnet och uppdatera appregistreringen i Entra.</p>

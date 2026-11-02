@@ -9,6 +9,14 @@ funktioner, en ny korrigering för rättelser.
 
 - (inget än)
 
+## 0.5.1, tillägg – 2026-11-02
+
+Samma version av portalen och samma avbilder; installationsfilen i releasen v0.5.1 är ombyggd:
+
+- Guiden kontrollerar värdnamnen. Går ett namn inte att slå upp varnar den och erbjuder en rad i `/etc/hosts`, i läget `auto` varnar den också för ett namn utan punkt. Namnet skrivs med gemener och utan `https://`.
+- Sista sidan säger att hela adressen ska användas, och att webbläsaren varnar för certifikatet i läget `intern`.
+- Installationsmanualen och README: test utan DNS-namn.
+
 ## 0.5.1 – 2026-11-02
 
 - Installationsfilen med portalen 0.5.1, Integrationsplattformen 0.2.3 och Arkitekten 0.3.2: Python 3.14 och Node 26, ny Anthropic-SDK i Arkitekten och en tömd bana som står kvar under redigeringen.
