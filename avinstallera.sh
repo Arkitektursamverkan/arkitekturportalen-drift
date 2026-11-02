@@ -3,8 +3,8 @@
 # Docker (databaserna, portalens filer, Arkitektens innehåll, certifikaten),
 # programmet (avbilderna), cron-raderna för backup och installationskatalogen.
 #
-#   sudo sh arkitekturportalen-avinstallation.run      filen från Releases
-#   sudo /opt/arkitekturportalen/avinstallera.sh        samma skript, i installationen
+#   sudo sh arkitekturportalen-<version>.run --avinstallera   installationsfilen (eller välj i menyn)
+#   sudo /opt/arkitekturportalen/avinstallera.sh              samma skript, i installationen
 #
 # Inget tas bort förrän du har svarat på frågorna och skrivit "avinstallera".
 # Först erbjuds en sista backup, och backuperna kan sparas utanför
@@ -37,6 +37,9 @@ ja_nej() {
 }
 env_varde() { [ -f "$KATALOG/.env" ] && sed -n "s/^$1=//p" "$KATALOG/.env" | tail -n1 | tr -d "'" || true; }
 
+# Installationsfilen kör en uppackad kopia; meddelandena ska nämna filen.
+KOMMANDO=${ARKITEKTURPORTALEN_FIL:-$0}
+
 case "${1:-}" in -h|--help) sed -n '2,15p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;; esac
 
 rubrik "Arkitekturportalen – avinstallation"
@@ -44,8 +47,8 @@ rubrik "Arkitekturportalen – avinstallation"
 
 # ── Var finns installationen? ─────────────────────────────────────────────────
 
-# Skriptet i installationskatalogen avinstallerar den katalogen; filen från
-# Releases letar i standardkatalogen.
+# Skriptet i installationskatalogen avinstallerar den katalogen; annars
+# (installationsfilen anger katalogen) gäller standardkatalogen.
 har_skriptet=$(cd "$(dirname "$0")" && pwd)
 if [ -n "${ARKITEKTURPORTALEN_KATALOG:-}" ]; then KATALOG=$ARKITEKTURPORTALEN_KATALOG
 elif [ -f "$har_skriptet/compose.yml" ] && [ -f "$har_skriptet/lib/gemensamt.sh" ]; then KATALOG=$har_skriptet
@@ -62,11 +65,11 @@ PROJEKT=$(sed -n 's/^name: *//p' "$KATALOG/compose.yml" | head -n1)
 
 command -v docker >/dev/null 2>&1 || fel "Docker saknas – då körs inte heller portalen. Ta bort $KATALOG för hand."
 docker info >/dev/null 2>&1 || {
-    [ "$(id -u)" = 0 ] || fel "Du får inte använda Docker. Kör filen med sudo:  sudo sh $0"
+    [ "$(id -u)" = 0 ] || fel "Du får inte använda Docker. Kör filen med sudo:  sudo sh $KOMMANDO"
     fel "Docker svarar inte. Starta det (systemctl start docker) och kör filen igen."
 }
 foralder=$(dirname "$KATALOG")
-[ -w "$foralder" ] && [ -w "$KATALOG" ] || fel "Får inte ta bort $KATALOG. Kör filen med sudo:  sudo sh $0"
+[ -w "$foralder" ] && [ -w "$KATALOG" ] || fel "Får inte ta bort $KATALOG. Kör filen med sudo:  sudo sh $KOMMANDO"
 
 etikett="label=com.docker.compose.project=$PROJEKT"
 containrar=$(docker ps -aq --filter "$etikett")

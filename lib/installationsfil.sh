@@ -7,10 +7,13 @@
 #
 #   sudo sh arkitekturportalen-@PORTAL@.run
 #
-# Första gången installeras portalen i /opt/arkitekturportalen och guiden
-# ställer sina frågor. Körs en nyare fil på en installerad server uppgraderas
-# den (med backup först); körs samma version igen går det att ändra
-# inställningarna.
+# Samma fil installerar, uppgraderar och avinstallerar. Första gången
+# installeras portalen i /opt/arkitekturportalen och guiden ställer sina
+# frågor. Finns portalen redan frågar filen vad som ska göras: uppgradera (med
+# backup först) eller, med samma version, ändra inställningarna – eller
+# avinstallera.
+#
+#   sudo sh arkitekturportalen-@PORTAL@.run --avinstallera    direkt till avinstallationen
 #
 # ARKITEKTURPORTALEN_KATALOG=/annan/katalog väljer en annan katalog.
 #
@@ -44,10 +47,73 @@ satt_varde() {
     else printf '%s=%s\n' "$1" "$2" >> "$KATALOG/.env"; fi
 }
 
-case "${1:-}" in -h|--help) sed -n '2,18p' "$FIL" | sed 's/^# \{0,1\}//'; exit 0 ;; esac
+VAL=""
+case "${1:-}" in
+    -h|--help) sed -n '2,21p' "$FIL" | sed 's/^# \{0,1\}//'; exit 0 ;;
+    --avinstallera) VAL=avinstallera ;;
+    '') ;;
+    *) fel "Okänt argument: $1 (se --help)" ;;
+esac
 
 rubrik "Arkitekturportalen $PORTAL"
 [ "$(uname -s)" = Linux ] || fel "Den här filen är för Linux-servrar."
+
+# ── Ny installation, uppgradering eller samma version ─────────────────────────
+
+LAGE=ny
+if [ -f "$KATALOG/.env" ]; then
+    portal_nu=$(env_varde PORTAL_VERSION)
+    plattform_nu=$(env_varde PLATFORM_VERSION)
+    ark_nu=$(env_varde ARKITEKTEN_VERSION)
+    if aldre "$PORTAL" "$portal_nu"; then
+        LAGE=aldre
+        info "$KATALOG har version $portal_nu, som är nyare än den här filen ($PORTAL)."
+    elif [ "$PORTAL" = "$portal_nu" ] && [ "$PLATTFORM" = "$plattform_nu" ] \
+        && { [ -z "$ark_nu" ] || [ "$ARKITEKTEN" = "$ark_nu" ]; }; then
+        LAGE=samma
+        info "$KATALOG har redan version $PORTAL."
+    else
+        LAGE=uppgradera
+        info "$KATALOG har version $portal_nu."
+    fi
+fi
+
+# ── Vad ska göras? ────────────────────────────────────────────────────────────
+
+if [ -z "$VAL" ] && [ $LAGE != ny ]; then
+    rubrik "Vad vill du göra?"
+    case $LAGE in
+        uppgradera) info "  1) Uppgradera till $PORTAL (med en backup först)" ;;
+        samma) info "  1) Ändra inställningarna" ;;
+        aldre) info "  1) – (en äldre version kan inte installeras över en nyare)" ;;
+    esac
+    info "  2) Avinstallera portalen från servern"
+    info "  3) Avbryt"
+    forslag=1; [ $LAGE = aldre ] && forslag=3
+    while :; do
+        printf 'Välj [%s]: ' "$forslag" >&2
+        read -r svar || svar=""
+        case "${svar:-$forslag}" in
+            1) [ $LAGE != aldre ] && break ;;
+            2) VAL=avinstallera; break ;;
+            3) fel "Avbrutet. Inget är ändrat." ;;
+        esac
+        info "  Svara $([ $LAGE = aldre ] && echo "2 eller 3" || echo "1, 2 eller 3")."
+    done
+fi
+
+# ── Avinstallation ────────────────────────────────────────────────────────────
+
+if [ "$VAL" = avinstallera ]; then
+    [ $LAGE != ny ] || fel "Portalen är inte installerad i $KATALOG. Inget är ändrat."
+    tmp=$(mktemp -d "${TMPDIR:-/var/tmp}/arkitekturportalen.XXXXXX")
+    trap 'rm -rf "$tmp"' EXIT INT TERM
+    rad=$(awk '/^__INNEHALL__$/ { print NR + 1; exit }' "$FIL")
+    tail -n +"$rad" "$FIL" | tar -x -C "$tmp" filer/avinstallera.sh || fel "Filen är skadad – ladda ner den igen."
+    # Katalogen anges, annars skulle skriptet tro att den uppackade kopian är installationen.
+    ARKITEKTURPORTALEN_KATALOG=$KATALOG ARKITEKTURPORTALEN_FIL=$FIL sh "$tmp/filer/avinstallera.sh"
+    exit $?
+fi
 
 # ── Förutsättningar ───────────────────────────────────────────────────────────
 
@@ -76,26 +142,7 @@ for prog in bash openssl awk tar; do
     command -v "$prog" >/dev/null 2>&1 || fel "$prog saknas – installera det och kör filen igen."
 done
 
-# ── Ny installation, uppgradering eller samma version ─────────────────────────
-
-LAGE=ny
-if [ -f "$KATALOG/.env" ]; then
-    portal_nu=$(env_varde PORTAL_VERSION)
-    plattform_nu=$(env_varde PLATFORM_VERSION)
-    ark_nu=$(env_varde ARKITEKTEN_VERSION)
-    if aldre "$PORTAL" "$portal_nu"; then
-        fel "Servern kör redan $portal_nu, som är nyare än $PORTAL. Inget är ändrat."
-    elif [ "$PORTAL" = "$portal_nu" ] && [ "$PLATTFORM" = "$plattform_nu" ] \
-        && { [ -z "$ark_nu" ] || [ "$ARKITEKTEN" = "$ark_nu" ]; }; then
-        LAGE=samma
-        info "$KATALOG har redan version $PORTAL. Guiden startar så att du kan ändra inställningarna."
-    else
-        LAGE=uppgradera
-        info "$KATALOG har version $portal_nu. Den uppgraderas till $PORTAL, med en backup först."
-    fi
-else
-    info "Portalen installeras i $KATALOG."
-fi
+[ $LAGE = ny ] && info "Portalen installeras i $KATALOG."
 mkdir -p "$KATALOG" 2>/dev/null && [ -w "$KATALOG" ] || kraver_root "Får inte skriva i $KATALOG."
 
 # ── Packa upp ─────────────────────────────────────────────────────────────────
