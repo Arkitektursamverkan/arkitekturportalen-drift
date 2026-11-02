@@ -9,6 +9,12 @@ funktioner, en ny korrigering för rättelser.
 
 - (inget än)
 
+## 0.6.0 – 2026-11-02
+
+- Installationsfilen med portalen 0.6.0, Integrationsplattformen 0.2.3 och Arkitekten 0.3.2: portalens namn går att ändra, listor går att stänga av och egna listor går att lägga till, under Administration.
+- Installationsmanualen: avsnittet Anpassa portalen till organisationen.
+- Installationsmanualen och broschyren: version 0.6.0.
+
 ## 0.5.2 – 2026-11-02
 
 - Installationsfilen med portalen 0.5.2, Integrationsplattformen 0.2.3 och Arkitekten 0.3.2: *Ladda demodata* fungerar i en portal utan objekt.
