@@ -7,9 +7,15 @@ funktioner, en ny korrigering för rättelser.
 
 ## Ej släppt
 
+- (inget än)
+
+## 0.5.0 – 2026-11-02
+
+- Installationsfilen med portalen 0.5.0, Integrationsplattformen 0.2.2 och Arkitekten 0.3.1: PDF-visare i portalen, rättad Neo4j-skrivning och uppdaterade beroenden.
 - En fil för allt: installationsfilen installerar, uppgraderar och avinstallerar. Finns portalen redan på servern frågar den vad som ska göras – uppgradera (eller, med samma version, ändra inställningarna), avinstallera eller avbryta. `--avinstallera` går direkt till avinstallationen. Den separata `arkitekturportalen-avinstallation.run` byggs inte längre. Den är borttagen från releasen v0.4.0 (2026-10-27).
 - Installationsmanualen: den valfria Graph-behörigheten `Files.Read.All` för portalens PDF-visare.
 - En installationsfil som är äldre än den installerade versionen avslutas inte längre direkt, utan kan användas för att avinstallera.
+- Installationsmanualen och broschyren: version 0.5.0.
 
 ## 0.4.0, tillägg – 2026-10-26
 
