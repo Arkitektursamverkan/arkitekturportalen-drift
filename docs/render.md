@@ -68,15 +68,14 @@ senare. Tidigare versioner går inte att köra på Render.
 ## Efter första starten
 
 `render/efter-start.py` gör det som installationsguiden annars gör efter
-starten. Kör det från vilken dator som helst med Python 3:
+starten. Kör det från vilken dator som helst med Python 3, i repots katalog:
 
 ```sh
-python3 render/efter-start.py \
-    --plattform https://plattform.example.org --plattform-nyckel <ADMIN_API_KEY> \
-    --arkitekten-intern <arkitektens interna namn> \
-    --portal https://arkitektur.example.org --portal-nyckel <API_KEY> \
-    --admin-epost anna@example.org --admin-namn "Anna Admin"
+python3 render/efter-start.py
 ```
+
+Det frågar efter adresserna och nycklarna (nycklarna syns inte när de klistras
+in). Samma värden går också att ge som flaggor, se `--help`.
 
 - `ADMIN_API_KEY` finns under plattform-api → *Environment*, `API_KEY` under
   portal-api → *Environment*.
