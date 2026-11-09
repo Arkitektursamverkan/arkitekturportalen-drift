@@ -7,8 +7,9 @@ funktioner, en ny korrigering för rättelser.
 
 ## Ej släppt
 
-- **Render**: `render.yaml` (Blueprint) installerar portalen, Integrationsplattformen och Arkitekten på Render med samma avbilder – Render Postgres, diskar och Renders TLS i stället för Caddy. Inget steg efter starten: plattformen skapar Arkitektens källa själv, portalen läser med plattformens admin-nyckel och första besöket skapar administratören. En gemensam Entra-registrering för alla tre (frågas per tjänst; tomt = egna konton). Guide: `docs/render.md`. Kräver portalen 0.11.0, plattformen 0.5.0 och Arkitekten 0.6.0.
+- **Render**: `render.yaml` (Blueprint) installerar portalen, Integrationsplattformen och Arkitekten på Render med samma avbilder – Render Postgres, diskar och Renders TLS i stället för Caddy. Inget steg efter starten: plattformen skapar Arkitektens källa själv, portalen läser med plattformens admin-nyckel och första besöket skapar administratören. En gemensam Entra-registrering för alla tre (frågas per tjänst; tomt = egna konton). Guide: `docs/render.md`. Kräver portalen 0.12.0, plattformen 0.6.0 och Arkitekten 0.7.0.
 - **Engångskod för första administratören** (`SETUP_CODE`): installationsguiden skapar den och skriver ut den, och compose ger den till portalen, plattformen och Arkitekten. På Render skapar Render den på portal-api och de andra hämtar den därifrån. Utan den går inget första konto att skapa i en ny installation.
+- **Nyckel mellan Arkitektens flödestjänst och plattformen** (`ARK_FLODESTJANST_NYCKEL`): installationsguiden skapar den, compose ger den till båda; på Render skapas den på arkitekten och plattformen hämtar den. Render-blueprinten sätter också `ARK_BETRODD_PROXY` och `TRUST_PROXY_HEADERS`, så spärrarna mot lösenordsgissning ser klientens adress.
 - Arkitektens exempelprocesser läggs in som användaren `node` (`exec -u node`), så att filerna ägs av den som Arkitekten kör som.
 
 ## 0.6.0 – 2026-11-02

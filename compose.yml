@@ -154,6 +154,7 @@ services:
       #   http://api:8000/api/v1/sync/webhook
       POST_EXEC_WEBHOOK_SECRET: ${SYNC_WEBHOOK_SECRET:-}
       SETUP_CODE: ${SETUP_CODE:-}
+      ARK_FLODESTJANST_NYCKEL: ${ARKITEKTEN_FLODESTJANST_NYCKEL:-}
     depends_on:
       plattform-db:
         condition: service_healthy
@@ -208,6 +209,8 @@ services:
     command: ["node_modules/.bin/tsx", "server/flodestjanst.mts"]
     environment:
       PORT: "8200"
+      # Plattformen skickar samma nyckel (X-Arkitekten-Nyckel).
+      ARK_FLODESTJANST_NYCKEL: ${ARKITEKTEN_FLODESTJANST_NYCKEL:-}
       ARK_PORTALBANA: ${ARKITEKTEN_PORTALBANA:-}
       ARK_SYSTEMPROCESS_KATEGORI: ${ARKITEKTEN_SYSTEMPROCESS_KATEGORI:-}
     # Tjänsten kan inte skriva – volymen monteras bara för läsning.
