@@ -15,6 +15,9 @@ avbilder; inget byggs på servern.
 Bara Caddy publicerar portar (80 och 443). Databaserna och API:erna nås bara
 inne i Docker-nätet.
 
+**Render** och liknande plattformar: se [docs/render.md](docs/render.md) och
+`render.yaml` (en Blueprint med samma avbilder, utan Docker på egen server).
+
 ## Krav
 
 - Linux-server med Docker Engine 24+ och Compose v2 (`docker compose`).
@@ -97,7 +100,7 @@ Med Arkitekten: `COMPOSE_PROFILES=plattform,arkitekten`, `arkitekten` i
 `cp caddy/mallar/arkitekten.caddy caddy/sites/`. I plattformen en källa av
 typen *Arkitekten* mot `http://arkitekten-flodestjanst:8200` (familj `alla`,
 bara publicerade) med ett schema, t.ex. `0 */2 * * *`. Arkitektens
-exempelprocesser: `docker compose exec arkitekten node_modules/.bin/tsx server/innehallspaket.mts import exempel`.
+exempelprocesser: `docker compose exec -u node arkitekten node_modules/.bin/tsx server/innehallspaket.mts import exempel`.
 
 Exempelinnehåll:
 
