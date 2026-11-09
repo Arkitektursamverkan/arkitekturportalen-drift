@@ -195,6 +195,8 @@ elif ja_nej "Installera Arkitekten?" "$ark_nu"; then
     [ -n "$(env_get ARKITEKTEN_VERSION)" ] \
         || env_set ARKITEKTEN_VERSION "$(fraga_maste "Arkitektens version (se $RELEASES_ARKITEKTEN)")"
     env_set ARKITEKTEN_SESSION_SECRET "$(hemlighet ARKITEKTEN_SESSION_SECRET)"
+    # Nyckeln mellan Arkitektens flödestjänst och plattformen.
+    env_set ARKITEKTEN_FLODESTJANST_NYCKEL "$(hemlighet ARKITEKTEN_FLODESTJANST_NYCKEL)"
 
     ark_entra=n; [ "$(env_get ARKITEKTEN_AUTH)" = entra ] && ark_entra=j
     [ $ENTRA = 1 ] && [ $FORSTA = 1 ] && ark_entra=j

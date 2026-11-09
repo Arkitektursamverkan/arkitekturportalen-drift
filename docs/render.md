@@ -18,7 +18,7 @@ Caddy behövs inte (Render sköter TLS), och inte heller plattformens Redis.
 Arkitektens flödestjänst kör i samma tjänst som Arkitekten
 (`ARK_FLODESTJANST_PORT=8200`), eftersom en disk bara kan höra till en tjänst.
 
-Versioner: portalen 0.11.0, plattformen 0.5.0 och Arkitekten 0.6.0 eller
+Versioner: portalen 0.12.0, plattformen 0.6.0 och Arkitekten 0.7.0 eller
 senare. Med dem behövs inget steg efter starten: plattformen skapar själv
 källan som hämtar Arkitektens processbilder, och portalen läser från
 plattformen med plattformens admin-nyckel.
@@ -63,7 +63,7 @@ plattformen med plattformens admin-nyckel.
    | portal-api | `MODULES` | t.ex. `all`, eller `calendar,governance,arkitekten` |
    | portal-web | `ARKITEKTEN_URL` | Arkitektens adress, `https://…` |
    | plattform-api | `CORS_ORIGINS` | plattformens adress, `https://…` |
-   | arkitekten | `ARK_BAS_URL` | Arkitektens adress, `https://…` |
+   | arkitekten | `ARK_BAS_URL` | Arkitektens adress, `https://…` (tomt = onrender.com-adressen) |
    | arkitekten | `EA_WEBB_URL` | portalens adress, `https://…` |
 
    Entra – **samma värden på varje rad**, eller tomt överallt för egna konton:
