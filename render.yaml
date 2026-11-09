@@ -4,10 +4,13 @@
 # tjänst: Render sköter TLS och domäner (ingen Caddy), databaserna är Render
 # Postgres och diskarna Render Disks. Plattformens Redis behövs inte.
 #
-# Värden med "sync: false" frågar Render efter när blueprinten skapas. Lämna
-# Entra-fälten tomma för lokala konton. Bara värden som alltid finns (de som
-# Render skapar och de interna adresserna) hämtas från en annan tjänst – ett
-# tomt fält går inte att hämta, så samma värde kan behöva skrivas på två ställen. Byt versionerna nedan vid en uppgradering.
+# Värden med "sync: false" frågar Render efter när blueprinten skapas – bara
+# då. Entra-uppgifterna (en och samma app-registrering för alla tre) frågas
+# efter på varje tjänst som behöver dem: klistra in samma värden. Lämna dem
+# tomma för egna konton; första besöket skapar då administratören. Bara värden
+# som alltid finns (de som Render skapar och de interna adresserna) hämtas från
+# en annan tjänst – ett tomt fält går inte att hämta. Byt versionerna nedan vid
+# en uppgradering.
 #
 # Avbilderna är privata: lägg först in en registerinloggning för ghcr.io i
 # Render (Workspace Settings → Registry Credentials) med namnet "ghcr".
@@ -35,7 +38,7 @@ services:
     name: portal-api
     runtime: image
     image:
-      url: ghcr.io/arkitektursamverkan/arkitekturportalen-api:0.9.1
+      url: ghcr.io/arkitektursamverkan/arkitekturportalen-api:0.10.0
       creds:
         fromRegistryCreds:
           name: ghcr
@@ -90,13 +93,12 @@ services:
           type: pserv
           name: plattform-api
           property: hostport
+      # Både läsning och "Hämta nu" – ingen separat läsnyckel behövs.
       - key: INTEGRATION_PLATFORM_ADMIN_KEY
         fromService:
           type: pserv
           name: plattform-api
           envVarKey: ADMIN_API_KEY
-      # INTEGRATION_PLATFORM_API_KEY läggs till efter första starten
-      # (render/efter-start.py skapar den i plattformen).
       - key: ARKITEKTEN_URL
         sync: false
 
@@ -104,7 +106,7 @@ services:
     name: portal-web
     runtime: image
     image:
-      url: ghcr.io/arkitektursamverkan/arkitekturportalen-web:0.9.1
+      url: ghcr.io/arkitektursamverkan/arkitekturportalen-web:0.10.0
       creds:
         fromRegistryCreds:
           name: ghcr
@@ -131,7 +133,7 @@ services:
     name: plattform-api
     runtime: image
     image:
-      url: ghcr.io/arkitektursamverkan/integrationsplattformen-api:0.3.1
+      url: ghcr.io/arkitektursamverkan/integrationsplattformen-api:0.4.0
       creds:
         fromRegistryCreds:
           name: ghcr
@@ -154,6 +156,19 @@ services:
       # Plattformens adress, t.ex. https://plattform.example.org
       - key: CORS_ORIGINS
         sync: false
+      # Samma app-registrering som portalen (tomt = bara egna konton).
+      - key: ENTRA_TENANT_ID
+        sync: false
+      - key: ENTRA_CLIENT_ID
+        sync: false
+      - key: BOOTSTRAP_ADMIN_EMAILS
+        sync: false
+      # Arkitektens flödestjänst (port 8200) – källan skapas vid starten.
+      - key: ARKITEKTEN_URL
+        fromService:
+          type: web
+          name: arkitekten
+          property: host
       - key: POST_EXEC_WEBHOOK_SECRET
         fromService:
           type: pserv
@@ -164,7 +179,7 @@ services:
     name: plattform-web
     runtime: image
     image:
-      url: ghcr.io/arkitektursamverkan/integrationsplattformen-web:0.3.1
+      url: ghcr.io/arkitektursamverkan/integrationsplattformen-web:0.4.0
       creds:
         fromRegistryCreds:
           name: ghcr
@@ -185,7 +200,7 @@ services:
     name: arkitekten
     runtime: image
     image:
-      url: ghcr.io/arkitektursamverkan/arkitekten:0.4.0
+      url: ghcr.io/arkitektursamverkan/arkitekten:0.5.0
       creds:
         fromRegistryCreds:
           name: ghcr
@@ -204,9 +219,16 @@ services:
         sync: false
       - key: ARK_SESSION_SECRET
         generateValue: true
-      # lokal (egna konton – första besöket skapar administratören) eller entra
+      # Entra när de tre Entra-fälten nedan är ifyllda, annars egna konton
+      # (första besöket skapar administratören).
       - key: ARK_AUTH
-        value: lokal
+        value: auto
+      - key: ENTRA_TENANT_ID
+        sync: false
+      - key: ENTRA_CLIENT_ID
+        sync: false
+      - key: ENTRA_CLIENT_SECRET
+        sync: false
       # Publiceringen till portalen, över Renders interna nät.
       - key: EA_API_URL
         fromService:
@@ -221,6 +243,6 @@ services:
       # Portalens adress (som PDF_APP_BASE_URL på portal-api).
       - key: EA_WEBB_URL
         sync: false
-      # Administratörer i Arkitekten med Entra (som BOOTSTRAP_ADMIN_EMAILS).
-      - key: ARK_ADMINS
+      # Administratörer med Entra – samma som på portal-api.
+      - key: BOOTSTRAP_ADMIN_EMAILS
         sync: false

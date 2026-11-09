@@ -7,7 +7,7 @@ funktioner, en ny korrigering för rättelser.
 
 ## Ej släppt
 
-- **Render**: `render.yaml` (Blueprint) installerar portalen, Integrationsplattformen och Arkitekten på Render med samma avbilder – Render Postgres, diskar och Renders TLS i stället för Caddy. `render/efter-start.py` gör det guiden annars gör efter starten (plattformens läsnyckel, Arkitektens källa, lokal administratör). Guide: `docs/render.md`. Kräver portalen 0.9.1, plattformen 0.3.1 och Arkitekten 0.4.0.
+- **Render**: `render.yaml` (Blueprint) installerar portalen, Integrationsplattformen och Arkitekten på Render med samma avbilder – Render Postgres, diskar och Renders TLS i stället för Caddy. Inget steg efter starten: plattformen skapar Arkitektens källa själv, portalen läser med plattformens admin-nyckel och första besöket skapar administratören. En gemensam Entra-registrering för alla tre (frågas per tjänst; tomt = egna konton). Guide: `docs/render.md`. Kräver portalen 0.10.0, plattformen 0.4.0 och Arkitekten 0.5.0.
 - Arkitektens exempelprocesser läggs in som användaren `node` (`exec -u node`), så att filerna ägs av den som Arkitekten kör som.
 
 ## 0.6.0 – 2026-11-02
