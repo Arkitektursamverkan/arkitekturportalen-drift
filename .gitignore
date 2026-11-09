@@ -5,3 +5,4 @@ certs/*
 caddy/sites/plattform.caddy
 backups/
 dist/
+__pycache__/
