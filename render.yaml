@@ -5,7 +5,9 @@
 # Postgres och diskarna Render Disks. Plattformens Redis behövs inte.
 #
 # Värden med "sync: false" frågar Render efter när blueprinten skapas. Lämna
-# Entra-fälten tomma för lokala konton. Byt versionerna nedan vid en uppgradering.
+# Entra-fälten tomma för lokala konton. Bara värden som alltid finns (de som
+# Render skapar och de interna adresserna) hämtas från en annan tjänst – ett
+# tomt fält går inte att hämta, så samma värde kan behöva skrivas på två ställen. Byt versionerna nedan vid en uppgradering.
 #
 # Avbilderna är privata: lägg först in en registerinloggning för ghcr.io i
 # Render (Workspace Settings → Registry Credentials) med namnet "ghcr".
@@ -115,21 +117,14 @@ services:
           type: pserv
           name: portal-api
           property: hostport
+      # Samma värden som på portal-api. Render kan bara hämta ett värde från en
+      # annan tjänst när det redan finns, och de här får vara tomma.
       - key: ENTRA_TENANT_ID
-        fromService:
-          type: pserv
-          name: portal-api
-          envVarKey: ENTRA_TENANT_ID
+        sync: false
       - key: ENTRA_CLIENT_ID
-        fromService:
-          type: pserv
-          name: portal-api
-          envVarKey: ENTRA_CLIENT_ID
+        sync: false
       - key: ARKITEKTEN_URL
-        fromService:
-          type: pserv
-          name: portal-api
-          envVarKey: ARKITEKTEN_URL
+        sync: false
 
   # ── Integrationsplattformen ───────────────────────────────────────────────
   - type: pserv
@@ -223,13 +218,9 @@ services:
           type: pserv
           name: portal-api
           envVarKey: API_KEY
+      # Portalens adress (som PDF_APP_BASE_URL på portal-api).
       - key: EA_WEBB_URL
-        fromService:
-          type: pserv
-          name: portal-api
-          envVarKey: PDF_APP_BASE_URL
+        sync: false
+      # Administratörer i Arkitekten med Entra (som BOOTSTRAP_ADMIN_EMAILS).
       - key: ARK_ADMINS
-        fromService:
-          type: pserv
-          name: portal-api
-          envVarKey: BOOTSTRAP_ADMIN_EMAILS
+        sync: false
