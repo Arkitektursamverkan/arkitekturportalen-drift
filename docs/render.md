@@ -48,8 +48,15 @@ senare. Tidigare versioner går inte att köra på Render.
    | portal-api | `BOOTSTRAP_ADMIN_EMAILS` | de som blir administratörer (Entra) |
    | portal-api | `MODULES` | t.ex. `all`, eller `calendar,governance,arkitekten` |
    | portal-api | `ARKITEKTEN_URL` | Arkitektens adress, `https://…` |
+   | portal-web | `ENTRA_TENANT_ID`, `ENTRA_CLIENT_ID` | samma som på portal-api |
+   | portal-web | `ARKITEKTEN_URL` | Arkitektens adress, `https://…` |
    | plattform-api | `CORS_ORIGINS` | plattformens adress, `https://…` |
    | arkitekten | `ARK_BAS_URL` | Arkitektens adress, `https://…` |
+   | arkitekten | `EA_WEBB_URL` | portalens adress, `https://…` |
+   | arkitekten | `ARK_ADMINS` | samma som `BOOTSTRAP_ADMIN_EMAILS` |
+
+   Adresserna får tjänsterna först när de skapats. Lämna dem tomma första
+   gången och fyll i dem under respektive tjänst → *Environment* efteråt.
 
    Hemligheterna (`API_KEY`, `LOCAL_AUTH_SECRET`, plattformens nycklar,
    `ARK_SESSION_SECRET`) skapar Render själv. De tjänster som behöver samma
