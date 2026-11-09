@@ -381,7 +381,7 @@ else:
     esac
     if ja_nej "Lägga in Arkitektens exempelprocesser?" "$([ $FORSTA = 1 ] && echo j || echo n)"; then
         # Skriver aldrig över – det som finns står kvar.
-        dc exec -T arkitekten node_modules/.bin/tsx server/innehallspaket.mts import exempel </dev/null >&2 || true
+        dc exec -T -u node arkitekten node_modules/.bin/tsx server/innehallspaket.mts import exempel </dev/null >&2 || true
     fi
 fi
 

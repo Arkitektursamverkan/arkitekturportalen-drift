@@ -1,0 +1,235 @@
+# Arkitekturportalen på Render (Blueprint). Se docs/render.md.
+#
+# Samma avbilder som docker compose-installationen, men varje del är en egen
+# tjänst: Render sköter TLS och domäner (ingen Caddy), databaserna är Render
+# Postgres och diskarna Render Disks. Plattformens Redis behövs inte.
+#
+# Värden med "sync: false" frågar Render efter när blueprinten skapas. Lämna
+# Entra-fälten tomma för lokala konton. Byt versionerna nedan vid en uppgradering.
+#
+# Avbilderna är privata: lägg först in en registerinloggning för ghcr.io i
+# Render (Workspace Settings → Registry Credentials) med namnet "ghcr".
+
+databases:
+  - name: portal-db
+    databaseName: ea_db
+    user: ea_user
+    plan: basic-256mb
+    region: frankfurt
+    postgresMajorVersion: "16"
+    ipAllowList: [] # bara Renders interna nät
+
+  - name: plattform-db
+    databaseName: integration_db
+    user: integration_user
+    plan: basic-256mb
+    region: frankfurt
+    postgresMajorVersion: "16"
+    ipAllowList: []
+
+services:
+  # ── Portalen ──────────────────────────────────────────────────────────────
+  - type: pserv
+    name: portal-api
+    runtime: image
+    image:
+      url: ghcr.io/arkitektursamverkan/arkitekturportalen-api:0.9.0
+      creds:
+        fromRegistryCreds:
+          name: ghcr
+    plan: starter
+    region: frankfurt
+    # Ögonblicksbilder och synkprofiler – på en och samma disk.
+    disk:
+      name: portal-data
+      mountPath: /var/data
+      sizeGB: 1
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: portal-db
+          property: connectionString
+      - key: EA_DB_ENGINE
+        value: postgres
+      - key: APP_ENV
+        value: production
+      - key: SNAPSHOT_DIR
+        value: /var/data/snapshots
+      - key: SYNC_PROFILES_PATH
+        value: /var/data/sync/sync_profiles.json
+      - key: API_KEY
+        generateValue: true
+      - key: LOCAL_AUTH_SECRET
+        generateValue: true
+      - key: SYNC_WEBHOOK_SECRET
+        generateValue: true
+      # Portalens adress, t.ex. https://arkitektur.example.org
+      - key: CORS_ORIGINS
+        sync: false
+      - key: PDF_APP_BASE_URL
+        sync: false
+      - key: ENTRA_TENANT_ID
+        sync: false
+      - key: ENTRA_CLIENT_ID
+        sync: false
+      - key: ALLOWED_EMAIL_DOMAINS
+        sync: false
+      - key: BOOTSTRAP_ADMIN_EMAILS
+        sync: false
+      # Moduler, kommaseparerade (calendar,collaboration,governance,glossary,
+      # surveys,changes,arkitekten) eller "all".
+      - key: MODULES
+        sync: false
+      - key: ANONYMOUS_READ
+        value: "false"
+      # Plattformen, över Renders interna nät (host:port räcker).
+      - key: INTEGRATION_PLATFORM_URL
+        fromService:
+          type: pserv
+          name: plattform-api
+          property: hostport
+      - key: INTEGRATION_PLATFORM_ADMIN_KEY
+        fromService:
+          type: pserv
+          name: plattform-api
+          envVarKey: ADMIN_API_KEY
+      # INTEGRATION_PLATFORM_API_KEY läggs till efter första starten
+      # (render/efter-start.py skapar den i plattformen).
+      - key: ARKITEKTEN_URL
+        sync: false
+
+  - type: web
+    name: portal-web
+    runtime: image
+    image:
+      url: ghcr.io/arkitektursamverkan/arkitekturportalen-web:0.9.0
+      creds:
+        fromRegistryCreds:
+          name: ghcr
+    plan: starter
+    region: frankfurt
+    healthCheckPath: /
+    envVars:
+      - key: API_UPSTREAM
+        fromService:
+          type: pserv
+          name: portal-api
+          property: hostport
+      - key: ENTRA_TENANT_ID
+        fromService:
+          type: pserv
+          name: portal-api
+          envVarKey: ENTRA_TENANT_ID
+      - key: ENTRA_CLIENT_ID
+        fromService:
+          type: pserv
+          name: portal-api
+          envVarKey: ENTRA_CLIENT_ID
+      - key: ARKITEKTEN_URL
+        fromService:
+          type: pserv
+          name: portal-api
+          envVarKey: ARKITEKTEN_URL
+
+  # ── Integrationsplattformen ───────────────────────────────────────────────
+  - type: pserv
+    name: plattform-api
+    runtime: image
+    image:
+      url: ghcr.io/arkitektursamverkan/integrationsplattformen-api:0.3.0
+      creds:
+        fromRegistryCreds:
+          name: ghcr
+    plan: starter
+    region: frankfurt
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: plattform-db
+          property: connectionString
+      - key: APP_ENV
+        value: production
+      # Byts den blir sparade inloggningar till källsystemen oläsbara.
+      - key: ENCRYPTION_KEY
+        generateValue: true
+      - key: ADMIN_API_KEY
+        generateValue: true
+      - key: JWT_SECRET
+        generateValue: true
+      # Plattformens adress, t.ex. https://plattform.example.org
+      - key: CORS_ORIGINS
+        sync: false
+      - key: POST_EXEC_WEBHOOK_SECRET
+        fromService:
+          type: pserv
+          name: portal-api
+          envVarKey: SYNC_WEBHOOK_SECRET
+
+  - type: web
+    name: plattform-web
+    runtime: image
+    image:
+      url: ghcr.io/arkitektursamverkan/integrationsplattformen-web:0.3.0
+      creds:
+        fromRegistryCreds:
+          name: ghcr
+    plan: starter
+    region: frankfurt
+    healthCheckPath: /
+    envVars:
+      - key: API_UPSTREAM
+        fromService:
+          type: pserv
+          name: plattform-api
+          property: hostport
+
+  # ── Arkitekten (processritaren) ───────────────────────────────────────────
+  # Webben och flödestjänsten i samma tjänst – de delar disken. Plattformen
+  # hämtar processbilderna från flödestjänsten på port 8200 (internt).
+  - type: web
+    name: arkitekten
+    runtime: image
+    image:
+      url: ghcr.io/arkitektursamverkan/arkitekten:0.4.0
+      creds:
+        fromRegistryCreds:
+          name: ghcr
+    plan: starter
+    region: frankfurt
+    healthCheckPath: /health
+    disk:
+      name: arkitekten-data
+      mountPath: /data
+      sizeGB: 1
+    envVars:
+      - key: ARK_FLODESTJANST_PORT
+        value: "8200"
+      # Arkitektens adress, t.ex. https://arkitekten.example.org
+      - key: ARK_BAS_URL
+        sync: false
+      - key: ARK_SESSION_SECRET
+        generateValue: true
+      # lokal (egna konton – första besöket skapar administratören) eller entra
+      - key: ARK_AUTH
+        value: lokal
+      # Publiceringen till portalen, över Renders interna nät.
+      - key: EA_API_URL
+        fromService:
+          type: pserv
+          name: portal-api
+          property: hostport
+      - key: EA_API_KEY
+        fromService:
+          type: pserv
+          name: portal-api
+          envVarKey: API_KEY
+      - key: EA_WEBB_URL
+        fromService:
+          type: pserv
+          name: portal-api
+          envVarKey: PDF_APP_BASE_URL
+      - key: ARK_ADMINS
+        fromService:
+          type: pserv
+          name: portal-api
+          envVarKey: BOOTSTRAP_ADMIN_EMAILS
