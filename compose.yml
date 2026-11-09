@@ -45,6 +45,7 @@ services:
       ENTRA_CLIENT_ID: ${ENTRA_CLIENT_ID:-}
       ALLOWED_EMAIL_DOMAINS: ${ALLOWED_EMAIL_DOMAINS:-}
       BOOTSTRAP_ADMIN_EMAILS: ${BOOTSTRAP_ADMIN_EMAILS:-}
+      SETUP_CODE: ${SETUP_CODE:-}
       CHANGE_LOG_DEPARTMENTS: ${CHANGE_LOG_DEPARTMENTS:-}
       ANONYMOUS_READ: ${ANONYMOUS_READ:-false}
       MODULES: ${MODULES:-}
@@ -152,6 +153,7 @@ services:
       # Ett flödes webhook "efter körning" till portalen:
       #   http://api:8000/api/v1/sync/webhook
       POST_EXEC_WEBHOOK_SECRET: ${SYNC_WEBHOOK_SECRET:-}
+      SETUP_CODE: ${SETUP_CODE:-}
     depends_on:
       plattform-db:
         condition: service_healthy
@@ -179,6 +181,7 @@ services:
       ARK_SESSION_SECRET: ${ARKITEKTEN_SESSION_SECRET:-}
       # entra eller lokal (docs/inloggning.md i Arkitekten).
       ARK_AUTH: ${ARKITEKTEN_AUTH:-lokal}
+      SETUP_CODE: ${SETUP_CODE:-}
       ENTRA_TENANT_ID: ${ARKITEKTEN_ENTRA_TENANT_ID:-}
       ENTRA_CLIENT_ID: ${ARKITEKTEN_ENTRA_CLIENT_ID:-}
       ENTRA_CLIENT_SECRET: ${ARKITEKTEN_ENTRA_CLIENT_SECRET:-}

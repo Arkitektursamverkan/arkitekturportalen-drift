@@ -246,7 +246,9 @@ env_set MODULES "$MODULES"
 
 # ── Hemligheter ───────────────────────────────────────────────────────────────
 
-for k in API_KEY LOCAL_AUTH_SECRET POSTGRES_PASSWORD; do
+# SETUP_CODE: engångskoden för det första kontot i portalen, plattformen och
+# Arkitekten (utan den kan den som först hittar en ny installation ta den).
+for k in API_KEY LOCAL_AUTH_SECRET POSTGRES_PASSWORD SETUP_CODE; do
     env_set "$k" "$(hemlighet "$k")"
 done
 
@@ -413,9 +415,9 @@ done
 rubrik "Klart"
 info "Skriv hela adressen i webbläsaren, med https:// och namnet, inte IP-adressen."
 info "Portalen:      https://$PORTAL_HOST/"
-[ $PLATTFORM = 1 ] && info "Plattformen:   https://$(env_get PLATFORM_HOST)/  (första besöket skapar dess administratör)"
+[ $PLATTFORM = 1 ] && info "Plattformen:   https://$(env_get PLATFORM_HOST)/  (första besöket skapar dess administratör, med engångskoden)"
 if [ $ARKITEKTEN = 1 ]; then
-    info "Arkitekten:    https://$(env_get ARKITEKTEN_HOST)/$([ "$(env_get ARKITEKTEN_AUTH)" = lokal ] && echo "  (första besöket skapar dess administratör)")"
+    info "Arkitekten:    https://$(env_get ARKITEKTEN_HOST)/$([ "$(env_get ARKITEKTEN_AUTH)" = lokal ] && echo "  (första besöket skapar dess administratör, med engångskoden)")"
     [ "$(env_get ARKITEKTEN_AUTH)" = entra ] && info "               Entra ID: redirect-URI (Web) https://$(env_get ARKITEKTEN_HOST)/__ark/auth/callback"
 fi
 if [ $LOKAL_ADMIN = 1 ]; then
@@ -423,6 +425,7 @@ if [ $LOKAL_ADMIN = 1 ]; then
     [ "${ADMIN_LOSEN_GENERERAT:-0}" = 1 ] && info "Lösenord:      $ADMIN_LOSEN   (visas bara nu – byt det efter inloggningen)"
 fi
 [ $ENTRA = 1 ] && info "Entra ID:      appregistreringen behöver redirect-URI https://$PORTAL_HOST/"
+info "Engångskod:    $(env_get SETUP_CODE)   (för första administratörskontot; står också i .env som SETUP_CODE)"
 [ "$TLS_MODE" = intern ] && info "Webbläsaren varnar för certifikatet. Det är väntat i läget intern: välj Avancerat och fortsätt."
 [ "$TLS_MODE" = auto ] && info "Certifikatet hämtas från Let's Encrypt vid första besöket; det kräver port 80 och 443 från internet."
 [ $PLATTFORM = 1 ] && info "Synk efter körning: ge flödet webhooken http://api:8000/api/v1/sync/webhook"
