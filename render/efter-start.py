@@ -2,7 +2,11 @@
 """Det installationsguiden gör efter starten – för en installation på Render.
 
 Körs EN gång från vilken dator som helst, när tjänsterna i render.yaml är
-igång. Talar med tjänsterna via deras publika adresser (plattformens webb
+igång. Utan flaggor frågar skriptet efter allt det behöver:
+
+  python3 render/efter-start.py
+
+Med flaggor (t.ex. i ett eget skript): Talar med tjänsterna via deras publika adresser (plattformens webb
 skickar /api vidare till plattformens api). Bara Pythons standardbibliotek.
 
   python3 render/efter-start.py \\
@@ -92,6 +96,12 @@ def administratör(portal: str, nyckel: str, namn: str, epost: str) -> None:
         print(f"  Lösenord: {lösen}   (visas bara nu – byt det efter inloggningen)")
 
 
+def fråga(text: str, dold: bool = False) -> str:
+    svar = getpass.getpass(text) if dold else input(text)
+    # Bort med blanksteg och citattecken som följt med när värdet klistrats in.
+    return svar.strip().strip("'\"´`").strip()
+
+
 def main() -> None:
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("--plattform", help="plattformens publika adress (https://…)")
@@ -102,6 +112,22 @@ def main() -> None:
     p.add_argument("--admin-namn", default="Administratör")
     p.add_argument("--admin-epost", help="skapa ett lokalt administratörskonto med den här adressen")
     a = p.parse_args()
+
+    if len(sys.argv) == 1:
+        # Utan flaggor: fråga efter allt, så att inget behöver skrivas på
+        # kommandoraden (nycklarna visas inte när de skrivs in).
+        print("Svara på frågorna. Tomt svar = hoppa över den delen.\n")
+        a.plattform = fråga("Plattformens adress (https://…): ")
+        if a.plattform:
+            a.plattform_nyckel = fråga("Plattformens ADMIN_API_KEY (plattform-api → Environment): ", dold=True)
+            a.arkitekten_intern = fråga("Arkitektens interna namn (arkitekten → Connect → Internal, utan :port): ")
+        a.portal = fråga("Portalens adress (https://…): ")
+        if a.portal:
+            a.portal_nyckel = fråga("Portalens API_KEY (portal-api → Environment): ", dold=True)
+            a.admin_epost = fråga("E-post för ett lokalt administratörskonto (tomt = inget konto): ")
+            if a.admin_epost:
+                a.admin_namn = fråga("Administratörens namn: ") or "Administratör"
+        print()
 
     if not (a.plattform and a.plattform_nyckel) and not a.admin_epost:
         p.error("ange --plattform och --plattform-nyckel, och/eller --admin-epost")
