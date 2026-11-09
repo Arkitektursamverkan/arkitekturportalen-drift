@@ -38,7 +38,7 @@ services:
     name: portal-api
     runtime: image
     image:
-      url: ghcr.io/arkitektursamverkan/arkitekturportalen-api:0.10.0
+      url: ghcr.io/arkitektursamverkan/arkitekturportalen-api:0.11.0
       creds:
         fromRegistryCreds:
           name: ghcr
@@ -67,6 +67,11 @@ services:
       - key: LOCAL_AUTH_SECRET
         generateValue: true
       - key: SYNC_WEBHOOK_SECRET
+        generateValue: true
+      # Engångskoden för det första administratörskontot – i portalen,
+      # plattformen och Arkitekten (de hämtar den härifrån). Står under
+      # portal-api → Environment.
+      - key: SETUP_CODE
         generateValue: true
       # Portalens adress, t.ex. https://arkitektur.example.org
       - key: CORS_ORIGINS
@@ -106,7 +111,7 @@ services:
     name: portal-web
     runtime: image
     image:
-      url: ghcr.io/arkitektursamverkan/arkitekturportalen-web:0.10.0
+      url: ghcr.io/arkitektursamverkan/arkitekturportalen-web:0.11.0
       creds:
         fromRegistryCreds:
           name: ghcr
@@ -133,7 +138,7 @@ services:
     name: plattform-api
     runtime: image
     image:
-      url: ghcr.io/arkitektursamverkan/integrationsplattformen-api:0.4.0
+      url: ghcr.io/arkitektursamverkan/integrationsplattformen-api:0.5.0
       creds:
         fromRegistryCreds:
           name: ghcr
@@ -174,12 +179,17 @@ services:
           type: pserv
           name: portal-api
           envVarKey: SYNC_WEBHOOK_SECRET
+      - key: SETUP_CODE
+        fromService:
+          type: pserv
+          name: portal-api
+          envVarKey: SETUP_CODE
 
   - type: web
     name: plattform-web
     runtime: image
     image:
-      url: ghcr.io/arkitektursamverkan/integrationsplattformen-web:0.4.0
+      url: ghcr.io/arkitektursamverkan/integrationsplattformen-web:0.5.0
       creds:
         fromRegistryCreds:
           name: ghcr
@@ -200,7 +210,7 @@ services:
     name: arkitekten
     runtime: image
     image:
-      url: ghcr.io/arkitektursamverkan/arkitekten:0.5.0
+      url: ghcr.io/arkitektursamverkan/arkitekten:0.6.0
       creds:
         fromRegistryCreds:
           name: ghcr
@@ -240,6 +250,11 @@ services:
           type: pserv
           name: portal-api
           envVarKey: API_KEY
+      - key: SETUP_CODE
+        fromService:
+          type: pserv
+          name: portal-api
+          envVarKey: SETUP_CODE
       # Portalens adress (som PDF_APP_BASE_URL på portal-api).
       - key: EA_WEBB_URL
         sync: false

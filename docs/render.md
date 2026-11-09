@@ -18,7 +18,7 @@ Caddy behövs inte (Render sköter TLS), och inte heller plattformens Redis.
 Arkitektens flödestjänst kör i samma tjänst som Arkitekten
 (`ARK_FLODESTJANST_PORT=8200`), eftersom en disk bara kan höra till en tjänst.
 
-Versioner: portalen 0.10.0, plattformen 0.4.0 och Arkitekten 0.5.0 eller
+Versioner: portalen 0.11.0, plattformen 0.5.0 och Arkitekten 0.6.0 eller
 senare. Med dem behövs inget steg efter starten: plattformen skapar själv
 källan som hämtar Arkitektens processbilder, och portalen läser från
 plattformen med plattformens admin-nyckel.
@@ -75,7 +75,7 @@ plattformen med plattformens admin-nyckel.
    | `BOOTSTRAP_ADMIN_EMAILS` – de som blir administratörer | portal-api, plattform-api, arkitekten |
 
    Hemligheterna (`API_KEY`, `LOCAL_AUTH_SECRET`, plattformens nycklar,
-   `ARK_SESSION_SECRET`) skapar Render själv. De tjänster som behöver samma
+   `ARK_SESSION_SECRET`, engångskoden `SETUP_CODE`) skapar Render själv. De tjänster som behöver samma
    nyckel läser den från varandra.
 3. **Apply.** Den första starten skapar databaserna och tar några minuter.
 4. **Domäner.** Lägg till de egna domänerna under varje webbtjänst →
@@ -84,7 +84,8 @@ plattformen med plattformens admin-nyckel.
    respektive tjänst → *Environment* (Render startar om tjänsten).
 5. **Logga in.** Med Entra: *Logga in med Microsoft* i varje tjänst. Utan
    Entra: första besöket i portalen, plattformen och Arkitekten skapar
-   administratörskontot – gör det direkt, innan någon annan hittar adressen.
+   administratörskontot. Det kräver **engångskoden** `SETUP_CODE`, som Render
+   har skapat – den står under portal-api → *Environment* och gäller alla tre.
    (Med `BOOTSTRAP_ADMIN_EMAILS` satt får bara de adresserna skapa portalens.)
 
 Exempelinnehåll:
