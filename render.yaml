@@ -37,7 +37,7 @@ services:
     name: portal-api
     runtime: image
     image:
-      url: ghcr.io/arkitektursamverkan/arkitekturportalen-api:0.15.1
+      url: ghcr.io/arkitektursamverkan/arkitekturportalen-api:0.16.0
       creds:
         fromRegistryCreds:
           name: ghcr
@@ -93,18 +93,13 @@ services:
         value: all
       - key: ANONYMOUS_READ
         value: "false"
-      # Plattformen, över Renders interna nät (host:port räcker).
-      - key: INTEGRATION_PLATFORM_URL
-        fromService:
-          type: pserv
-          name: plattform-api
-          property: hostport
+      # Plattformens administratörsnyckel skapas här och läses av plattform-api
+      # (ADMIN_API_KEY). Plattformens adress anmäler plattformen själv.
+      # portal-api pekar alltså inte på någon annan tjänst: med referenser åt
+      # båda hållen (portal-api ↔ plattform-api) slutade varje synk med fel.
       # Både läsning och "Hämta nu" – ingen separat läsnyckel behövs.
       - key: INTEGRATION_PLATFORM_ADMIN_KEY
-        fromService:
-          type: pserv
-          name: plattform-api
-          envVarKey: ADMIN_API_KEY
+        generateValue: true
       # Portalens egen adress lärs ur förfrågningarna, och Arkitekten anmäler
       # sin – inga adresser att fylla i.
 
@@ -112,7 +107,7 @@ services:
     name: portal-web
     runtime: image
     image:
-      url: ghcr.io/arkitektursamverkan/arkitekturportalen-web:0.15.1
+      url: ghcr.io/arkitektursamverkan/arkitekturportalen-web:0.16.0
       creds:
         fromRegistryCreds:
           name: ghcr
@@ -135,7 +130,7 @@ services:
     name: plattform-api
     runtime: image
     image:
-      url: ghcr.io/arkitektursamverkan/integrationsplattformen-api:0.9.0
+      url: ghcr.io/arkitektursamverkan/integrationsplattformen-api:0.10.0
       creds:
         fromRegistryCreds:
           name: ghcr
@@ -156,11 +151,16 @@ services:
       # Byts den blir sparade inloggningar till källsystemen oläsbara.
       - key: ENCRYPTION_KEY
         generateValue: true
+      # Samma nyckel som portalen använder mot plattformen (skapas där).
       - key: ADMIN_API_KEY
-        generateValue: true
+        fromService:
+          type: pserv
+          name: portal-api
+          envVarKey: INTEGRATION_PLATFORM_ADMIN_KEY
       - key: JWT_SECRET
         generateValue: true
-      # Entra-uppgifterna hämtas från portalen (med webhookhemligheten nedan).
+      # Entra-uppgifterna hämtas från portalen (med webhookhemligheten nedan),
+      # och plattformen anmäler där sin egen adress.
       - key: PORTAL_URL
         fromService:
           type: pserv
@@ -194,7 +194,7 @@ services:
     name: plattform-web
     runtime: image
     image:
-      url: ghcr.io/arkitektursamverkan/integrationsplattformen-web:0.9.0
+      url: ghcr.io/arkitektursamverkan/integrationsplattformen-web:0.10.0
       creds:
         fromRegistryCreds:
           name: ghcr
