@@ -4,13 +4,11 @@
 # tjänst: Render sköter TLS och domäner (ingen Caddy), databaserna är Render
 # Postgres och diskarna Render Disks. Plattformens Redis behövs inte.
 #
-# Värden med "sync: false" frågar Render efter när blueprinten skapas – bara
-# då. Entra-uppgifterna (en och samma app-registrering för alla tre) frågas
-# efter på varje tjänst som behöver dem: klistra in samma värden. Lämna dem
-# tomma för egna konton; första besöket skapar då administratören. Bara värden
-# som alltid finns (de som Render skapar och de interna adresserna) hämtas från
-# en annan tjänst – ett tomt fält går inte att hämta. Byt versionerna nedan vid
-# en uppgradering.
+# Inget behöver fyllas i. Render frågar bara efter Entra-uppgifterna, på
+# portal-api och bara när blueprinten skapas: lämna dem tomma för egna konton
+# (första besöket skapar administratören). Med Entra fylls de i där och ingen
+# annanstans – plattformen och Arkitekten hämtar dem från portalen. Adresserna
+# lär sig tjänsterna själva. Byt versionerna nedan vid en uppgradering.
 #
 # Avbilderna är privata: lägg först in en registerinloggning för ghcr.io i
 # Render (Workspace Settings → Registry Credentials) med namnet "ghcr".
@@ -38,7 +36,7 @@ services:
     name: portal-api
     runtime: image
     image:
-      url: ghcr.io/arkitektursamverkan/arkitekturportalen-api:0.14.0
+      url: ghcr.io/arkitektursamverkan/arkitekturportalen-api:0.15.0
       creds:
         fromRegistryCreds:
           name: ghcr
@@ -72,11 +70,15 @@ services:
       # portal-api → Environment. Plattformen och Arkitekten har var sin.
       - key: SETUP_CODE
         generateValue: true
-      - key: PDF_APP_BASE_URL
-        sync: false
+      # Entra – en app-registrering för hela installationen, ifylld HÄR och
+      # ingen annanstans: plattformen och Arkitekten hämtar uppgifterna från
+      # portalen (GET /api/v1/installation). Tomt = egna konton överallt.
+      # Klienthemligheten används av Arkitekten, inte av portalen själv.
       - key: ENTRA_TENANT_ID
         sync: false
       - key: ENTRA_CLIENT_ID
+        sync: false
+      - key: ENTRA_CLIENT_SECRET
         sync: false
       - key: BOOTSTRAP_ADMIN_EMAILS
         sync: false
@@ -97,14 +99,14 @@ services:
           type: pserv
           name: plattform-api
           envVarKey: ADMIN_API_KEY
-      - key: ARKITEKTEN_URL
-        sync: false
+      # Portalens egen adress lärs ur förfrågningarna, och Arkitekten anmäler
+      # sin – inga adresser att fylla i.
 
   - type: web
     name: portal-web
     runtime: image
     image:
-      url: ghcr.io/arkitektursamverkan/arkitekturportalen-web:0.14.0
+      url: ghcr.io/arkitektursamverkan/arkitekturportalen-web:0.15.0
       creds:
         fromRegistryCreds:
           name: ghcr
@@ -121,21 +123,13 @@ services:
       # (gränsen för inloggningsförsök). Renders interna nät.
       - key: TRUSTED_PROXY
         value: 10.0.0.0/8
-      # Samma värden som på portal-api. Render kan bara hämta ett värde från en
-      # annan tjänst när det redan finns, och de här får vara tomma.
-      - key: ENTRA_TENANT_ID
-        sync: false
-      - key: ENTRA_CLIENT_ID
-        sync: false
-      - key: ARKITEKTEN_URL
-        sync: false
 
   # ── Integrationsplattformen ───────────────────────────────────────────────
   - type: pserv
     name: plattform-api
     runtime: image
     image:
-      url: ghcr.io/arkitektursamverkan/integrationsplattformen-api:0.8.0
+      url: ghcr.io/arkitektursamverkan/integrationsplattformen-api:0.9.0
       creds:
         fromRegistryCreds:
           name: ghcr
@@ -155,13 +149,12 @@ services:
         generateValue: true
       - key: JWT_SECRET
         generateValue: true
-      # Samma app-registrering som portalen (tomt = bara egna konton).
-      - key: ENTRA_TENANT_ID
-        sync: false
-      - key: ENTRA_CLIENT_ID
-        sync: false
-      - key: BOOTSTRAP_ADMIN_EMAILS
-        sync: false
+      # Entra-uppgifterna hämtas från portalen (med webhookhemligheten nedan).
+      - key: PORTAL_URL
+        fromService:
+          type: pserv
+          name: portal-api
+          property: hostport
       # Arkitektens flödestjänst (port 8200) – källan skapas vid starten.
       - key: ARKITEKTEN_URL
         fromService:
@@ -190,7 +183,7 @@ services:
     name: plattform-web
     runtime: image
     image:
-      url: ghcr.io/arkitektursamverkan/integrationsplattformen-web:0.8.0
+      url: ghcr.io/arkitektursamverkan/integrationsplattformen-web:0.9.0
       creds:
         fromRegistryCreds:
           name: ghcr
@@ -215,7 +208,7 @@ services:
     name: arkitekten
     runtime: image
     image:
-      url: ghcr.io/arkitektursamverkan/arkitekten:0.9.0
+      url: ghcr.io/arkitektursamverkan/arkitekten:0.10.0
       creds:
         fromRegistryCreds:
           name: ghcr
@@ -240,17 +233,13 @@ services:
       # utan den används onrender.com-adressen. Läggs till under Environment.
       - key: ARK_SESSION_SECRET
         generateValue: true
-      # Entra när de tre Entra-fälten nedan är ifyllda, annars egna konton
-      # (första besöket skapar administratören).
+      # Entra när portalen har Entra-uppgifterna (hämtas vid start),
+      # annars egna konton – första besöket skapar administratören. Ändras
+      # Entra på portal-api: starta om arkitekten.
       - key: ARK_AUTH
         value: auto
-      - key: ENTRA_TENANT_ID
-        sync: false
-      - key: ENTRA_CLIENT_ID
-        sync: false
-      - key: ENTRA_CLIENT_SECRET
-        sync: false
-      # Publiceringen till portalen, över Renders interna nät.
+      # Publiceringen till portalen, över Renders interna nät. Arkitekten
+      # anmäler också sin adress där och hämtar portalens adress och Entra.
       - key: EA_API_URL
         fromService:
           type: pserv
@@ -265,9 +254,3 @@ services:
       # (arkitekten → Environment).
       - key: SETUP_CODE
         generateValue: true
-      # Portalens adress (som PDF_APP_BASE_URL på portal-api).
-      - key: EA_WEBB_URL
-        sync: false
-      # Administratörer med Entra – samma som på portal-api.
-      - key: BOOTSTRAP_ADMIN_EMAILS
-        sync: false

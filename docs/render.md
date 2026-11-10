@@ -18,7 +18,7 @@ Caddy behövs inte (Render sköter TLS), och inte heller plattformens Redis.
 Arkitektens flödestjänst kör i samma tjänst som Arkitekten
 (`ARK_FLODESTJANST_PORT=8200`), eftersom en disk bara kan höra till en tjänst.
 
-Versioner: portalen 0.14.0, plattformen 0.8.0 och Arkitekten 0.9.0 eller
+Versioner: portalen 0.15.0, plattformen 0.9.0 och Arkitekten 0.10.0 eller
 senare. Med dem behövs inget steg efter starten: plattformen skapar själv
 källan som hämtar Arkitektens processbilder, och portalen läser från
 plattformen med plattformens admin-nyckel.
@@ -43,8 +43,9 @@ plattformen med plattformens admin-nyckel.
      `access_as_user`
    - *Certificates & secrets*: en klienthemlighet (Arkitekten använder den)
 
-   Notera tenant-id, client-id och hemligheten. Utan Entra används egna konton
-   överallt, och första besöket i varje tjänst skapar administratören.
+   Notera tenant-id, client-id och hemligheten – de fylls i på ett ställe,
+   portal-api. Utan Entra används egna konton överallt, och första besöket i
+   varje tjänst skapar administratören.
 
 ## Skapa
 
@@ -52,39 +53,37 @@ plattformen med plattformens admin-nyckel.
    **`Arkitektursamverkan/arkitekturportalen-drift`** (det här repot – det är
    `render.yaml` i dess rot som Render läser). *Blueprint Path* lämnas som
    `render.yaml`.
-2. **Frågorna.** Render frågar efter några värden, och bara nu.
-   - **Egna konton (enklast för ett prov):** lämna ALLA fält tomma.
-   - **Med Entra:** fyll i samma tenant-id och client-id på varje rad där de
-     frågas efter, `ENTRA_CLIENT_SECRET` på arkitekten och din e-post i
-     `BOOTSTRAP_ADMIN_EMAILS` (de som blir administratörer).
-   - Adressfälten (`PDF_APP_BASE_URL`, `ARKITEKTEN_URL`, `EA_WEBB_URL`) lämnas
-     tomma – de fylls i i punkt 4, när adresserna finns.
+2. **Frågorna.** Render frågar bara efter Entra-uppgifterna, på **portal-api**,
+   och bara nu.
+   - **Egna konton:** lämna fälten tomma.
+   - **Med Entra:** fyll i tenant-id, client-id, klienthemligheten
+     (`ENTRA_CLIENT_SECRET`) och din e-post i `BOOTSTRAP_ADMIN_EMAILS` (de som
+     blir administratörer). Plattformen och Arkitekten hämtar uppgifterna från
+     portalen – de skrivs inte in någon annanstans.
 
-   Allt annat sköter Render: hemligheterna och engångskoderna skapas, de
-   interna adresserna mellan tjänsterna kopplas, och alla moduler är påslagna
-   (stängs av under Administration → Organisation).
+   Allt annat sköter Render och tjänsterna själva: hemligheterna och
+   engångskoderna skapas, de interna adresserna kopplas, portalen lär sig sin
+   adress vid första besöket och Arkitekten anmäler sin till portalen. Alla
+   moduler är påslagna (stängs av under Administration → Organisation).
 3. **Deploy Blueprint.** Den första starten skapar databaserna och tar några
    minuter.
-4. **Adresserna.** Öppna **portal-web** och **arkitekten** i Render och
-   kopiera deras adresser (överst på tjänstens sida, `https://….onrender.com`).
-   Fyll sedan i under respektive tjänst → *Environment* → *Save* (tjänsten
-   startar om):
+4. **Logga in.** Öppna **portal-web** (adressen står överst på tjänstens sida,
+   `https://….onrender.com`). Med Entra: *Logga in med Microsoft* i varje
+   tjänst. Utan Entra: första besöket i portalen, plattformen och Arkitekten
+   skapar administratörskontot med **engångskoden** – den står under
+   portal-api, plattform-api respektive arkitekten → *Environment* →
+   `SETUP_CODE`.
 
-   | Tjänst | Variabel | Värde |
-   |---|---|---|
-   | portal-api | `PDF_APP_BASE_URL` | portal-webs adress |
-   | portal-api | `ARKITEKTEN_URL` | arkitektens adress |
-   | portal-web | `ARKITEKTEN_URL` | arkitektens adress |
-   | arkitekten | `EA_WEBB_URL` | portal-webs adress |
+Länken till Arkitekten i portalens toppfält och länken tillbaka till portalen
+i Arkitektens publiceringsruta dyker upp av sig själva: Arkitekten anmäler sin
+adress när den startar, och portalens adress blir känd när någon öppnat
+portalen första gången.
 
-   Med egna domäner: lägg först till dem under varje webbtjänst → *Settings →
-   Custom Domains* (och CNAME-posterna i DNS som Render visar), använd dem i
-   tabellen och sätt dessutom `ARK_BAS_URL` (Arkitektens adress) på
-   arkitekten.
-5. **Logga in.** Med Entra: *Logga in med Microsoft* i varje tjänst. Utan
-   Entra: första besöket i portalen, plattformen och Arkitekten skapar
-   administratörskontot med **engångskoden** – den står under portal-api,
-   plattform-api respektive arkitekten → *Environment* → `SETUP_CODE`.
+**Egna domäner** läggs till under varje webbtjänst → *Settings → Custom
+Domains* (och CNAME-posterna i DNS som Render visar). Portalen byter själv
+till den egna domänen när den används. Arkitekten behöver sin i `ARK_BAS_URL`
+(arkitekten → *Environment*, t.ex. `https://arkitekten.example.org`) –
+inloggningen bygger sina adresser av den.
 
 Exempelinnehåll:
 
@@ -117,5 +116,7 @@ compose-installationen och används inte här.
   borta en kort stund.
 - Integrationsplattformen når bara källsystem som går att nå från Render, det
   vill säga över internet.
+- Ändras Entra-uppgifterna på portal-api hämtar plattformen dem inom fem
+  minuter; Arkitekten läser dem när den startar – starta om arkitekten.
 - Byts `ENCRYPTION_KEY` på plattform-api blir sparade inloggningar till
   källsystemen oläsbara.
