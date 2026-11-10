@@ -36,7 +36,7 @@ services:
     name: portal-api
     runtime: image
     image:
-      url: ghcr.io/arkitektursamverkan/arkitekturportalen-api:0.15.0
+      url: ghcr.io/arkitektursamverkan/arkitekturportalen-api:0.15.1
       creds:
         fromRegistryCreds:
           name: ghcr
@@ -111,7 +111,7 @@ services:
     name: portal-web
     runtime: image
     image:
-      url: ghcr.io/arkitektursamverkan/arkitekturportalen-web:0.15.0
+      url: ghcr.io/arkitektursamverkan/arkitekturportalen-web:0.15.1
       creds:
         fromRegistryCreds:
           name: ghcr
