@@ -18,7 +18,7 @@ Caddy behövs inte (Render sköter TLS), och inte heller plattformens Redis.
 Arkitektens flödestjänst kör i samma tjänst som Arkitekten
 (`ARK_FLODESTJANST_PORT=8200`), eftersom en disk bara kan höra till en tjänst.
 
-Versioner: portalen 0.15.0, plattformen 0.9.0 och Arkitekten 0.10.0 eller
+Versioner: portalen 0.15.1, plattformen 0.9.0 och Arkitekten 0.10.0 eller
 senare. Med dem behövs inget steg efter starten: plattformen skapar själv
 källan som hämtar Arkitektens processbilder, och portalen läser från
 plattformen med plattformens admin-nyckel.
