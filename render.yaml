@@ -48,6 +48,11 @@ services:
       mountPath: /var/data
       sizeGB: 1
     envVars:
+      # Api:t lyssnar på 8000. Utan PORT antar Render 10000, och de andra
+      # tjänsterna får då fel port i den interna adressen (hostport) – det
+      # märks när allt skapas på en gång, som i en ny Blueprint.
+      - key: PORT
+        value: "8000"
       - key: DATABASE_URL
         fromDatabase:
           name: portal-db
@@ -136,6 +141,11 @@ services:
     plan: starter
     region: frankfurt
     envVars:
+      # Api:t lyssnar på 8000. Utan PORT antar Render 10000, och de andra
+      # tjänsterna får då fel port i den interna adressen (hostport) – det
+      # märks när allt skapas på en gång, som i en ny Blueprint.
+      - key: PORT
+        value: "8000"
       - key: DATABASE_URL
         fromDatabase:
           name: plattform-db
