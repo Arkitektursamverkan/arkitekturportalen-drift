@@ -72,23 +72,17 @@ services:
       # portal-api → Environment. Plattformen och Arkitekten har var sin.
       - key: SETUP_CODE
         generateValue: true
-      # Portalens adress, t.ex. https://arkitektur.example.org
-      - key: CORS_ORIGINS
-        sync: false
       - key: PDF_APP_BASE_URL
         sync: false
       - key: ENTRA_TENANT_ID
         sync: false
       - key: ENTRA_CLIENT_ID
         sync: false
-      - key: ALLOWED_EMAIL_DOMAINS
-        sync: false
       - key: BOOTSTRAP_ADMIN_EMAILS
         sync: false
-      # Moduler, kommaseparerade (calendar,collaboration,governance,glossary,
-      # surveys,changes,arkitekten) eller "all".
+      # Alla moduler påslagna; de stängs av under Administration → Organisation.
       - key: MODULES
-        sync: false
+        value: all
       - key: ANONYMOUS_READ
         value: "false"
       # Plattformen, över Renders interna nät (host:port räcker).
@@ -161,9 +155,6 @@ services:
         generateValue: true
       - key: JWT_SECRET
         generateValue: true
-      # Plattformens adress, t.ex. https://plattform.example.org
-      - key: CORS_ORIGINS
-        sync: false
       # Samma app-registrering som portalen (tomt = bara egna konton).
       - key: ENTRA_TENANT_ID
         sync: false
@@ -245,10 +236,8 @@ services:
       # (spärren mot lösenordsgissning).
       - key: ARK_BETRODD_PROXY
         value: "1"
-      # Arkitektens adress med egen domän, t.ex. https://arkitekten.example.org.
-      # Tomt = onrender.com-adressen (RENDER_EXTERNAL_URL).
-      - key: ARK_BAS_URL
-        sync: false
+      # ARK_BAS_URL behövs bara med egen domän (https://arkitekten.example.org);
+      # utan den används onrender.com-adressen. Läggs till under Environment.
       - key: ARK_SESSION_SECRET
         generateValue: true
       # Entra när de tre Entra-fälten nedan är ifyllda, annars egna konton

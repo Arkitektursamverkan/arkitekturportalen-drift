@@ -18,7 +18,7 @@ Caddy behövs inte (Render sköter TLS), och inte heller plattformens Redis.
 Arkitektens flödestjänst kör i samma tjänst som Arkitekten
 (`ARK_FLODESTJANST_PORT=8200`), eftersom en disk bara kan höra till en tjänst.
 
-Versioner: portalen 0.12.0, plattformen 0.6.0 och Arkitekten 0.7.0 eller
+Versioner: portalen 0.13.0, plattformen 0.7.0 och Arkitekten 0.8.0 eller
 senare. Med dem behövs inget steg efter starten: plattformen skapar själv
 källan som hämtar Arkitektens processbilder, och portalen läser från
 plattformen med plattformens admin-nyckel.
@@ -32,11 +32,8 @@ plattformen med plattformens admin-nyckel.
 2. **Åtkomst till repot.** Installera Renders GitHub-app för organisationen
    (*Account Settings → GitHub*) med åtkomst till det här repot, eller lägg
    `render.yaml` i ett eget repo som Render når.
-3. **Adresser.** Bestäm adresserna för portalen, plattformen och Arkitekten,
-   t.ex. `arkitektur.example.org`, `plattform.example.org` och
-   `arkitekten.example.org`. Då kan de fyllas i direkt när blueprinten skapas.
-   Renders egna `*.onrender.com` duger för prov, men de syns först när
-   tjänsterna finns (se *Skapa*, punkt 4).
+3. **Adresser.** Renders egna `*.onrender.com`-adresser duger för prov. Egna
+   domäner (t.ex. `arkitektur.example.org`) läggs till efter skapandet.
 4. **Entra ID (valfritt) – en app-registrering för alla tre.** Samma konto
    loggar då in i portalen, plattformen och Arkitekten. I registreringen:
    - *Authentication → Single-page application*: `https://<portalen>/` och
@@ -51,43 +48,43 @@ plattformen med plattformens admin-nyckel.
 
 ## Skapa
 
-1. I Render: **New → Blueprint**, välj repot. Render läser `render.yaml`.
-2. Fyll i värdena som Render frågar efter. Render frågar **bara nu** – det som
-   lämnas tomt måste läggas till för hand under tjänsten → *Environment*.
+1. **Blueprint.** I Render: **New → Blueprint** och välj repot
+   **`Arkitektursamverkan/arkitekturportalen-drift`** (det här repot – det är
+   `render.yaml` i dess rot som Render läser). *Blueprint Path* lämnas som
+   `render.yaml`.
+2. **Frågorna.** Render frågar efter några värden, och bara nu.
+   - **Egna konton (enklast för ett prov):** lämna ALLA fält tomma.
+   - **Med Entra:** fyll i samma tenant-id och client-id på varje rad där de
+     frågas efter, `ENTRA_CLIENT_SECRET` på arkitekten och din e-post i
+     `BOOTSTRAP_ADMIN_EMAILS` (de som blir administratörer).
+   - Adressfälten (`PDF_APP_BASE_URL`, `ARKITEKTEN_URL`, `EA_WEBB_URL`) lämnas
+     tomma – de fylls i i punkt 4, när adresserna finns.
+
+   Allt annat sköter Render: hemligheterna och engångskoderna skapas, de
+   interna adresserna mellan tjänsterna kopplas, och alla moduler är påslagna
+   (stängs av under Administration → Organisation).
+3. **Deploy Blueprint.** Den första starten skapar databaserna och tar några
+   minuter.
+4. **Adresserna.** Öppna **portal-web** och **arkitekten** i Render och
+   kopiera deras adresser (överst på tjänstens sida, `https://….onrender.com`).
+   Fyll sedan i under respektive tjänst → *Environment* → *Save* (tjänsten
+   startar om):
 
    | Tjänst | Variabel | Värde |
    |---|---|---|
-   | portal-api | `CORS_ORIGINS`, `PDF_APP_BASE_URL` | portalens adress, `https://…` |
-   | portal-api | `ARKITEKTEN_URL` | Arkitektens adress, `https://…` |
-   | portal-api | `ALLOWED_EMAIL_DOMAINS` | e-postdomäner som får logga in |
-   | portal-api | `MODULES` | t.ex. `all`, eller `calendar,governance,arkitekten` |
-   | portal-web | `ARKITEKTEN_URL` | Arkitektens adress, `https://…` |
-   | plattform-api | `CORS_ORIGINS` | plattformens adress, `https://…` |
-   | arkitekten | `ARK_BAS_URL` | Arkitektens adress, `https://…` (tomt = onrender.com-adressen) |
-   | arkitekten | `EA_WEBB_URL` | portalens adress, `https://…` |
+   | portal-api | `PDF_APP_BASE_URL` | portal-webs adress |
+   | portal-api | `ARKITEKTEN_URL` | arkitektens adress |
+   | portal-web | `ARKITEKTEN_URL` | arkitektens adress |
+   | arkitekten | `EA_WEBB_URL` | portal-webs adress |
 
-   Entra – **samma värden på varje rad**, eller tomt överallt för egna konton:
-
-   | Variabel | Tjänster |
-   |---|---|
-   | `ENTRA_TENANT_ID`, `ENTRA_CLIENT_ID` | portal-api, portal-web, plattform-api, arkitekten |
-   | `ENTRA_CLIENT_SECRET` | arkitekten |
-   | `BOOTSTRAP_ADMIN_EMAILS` – de som blir administratörer | portal-api, plattform-api, arkitekten |
-
-   Hemligheterna (`API_KEY`, `LOCAL_AUTH_SECRET`, plattformens nycklar,
-   `ARK_SESSION_SECRET`, engångskoden `SETUP_CODE`) skapar Render själv. De tjänster som behöver samma
-   nyckel läser den från varandra.
-3. **Apply.** Den första starten skapar databaserna och tar några minuter.
-4. **Domäner.** Lägg till de egna domänerna under varje webbtjänst →
-   *Settings → Custom Domains*, och CNAME-posterna i DNS som Render visar.
-   Provar du med `*.onrender.com`: fyll nu i adresserna från punkt 2 under
-   respektive tjänst → *Environment* (Render startar om tjänsten).
+   Med egna domäner: lägg först till dem under varje webbtjänst → *Settings →
+   Custom Domains* (och CNAME-posterna i DNS som Render visar), använd dem i
+   tabellen och sätt dessutom `ARK_BAS_URL` (Arkitektens adress) på
+   arkitekten.
 5. **Logga in.** Med Entra: *Logga in med Microsoft* i varje tjänst. Utan
    Entra: första besöket i portalen, plattformen och Arkitekten skapar
-   administratörskontot. Det kräver **engångskoden** `SETUP_CODE`, som Render
-   har skapat – en per tjänst, under portal-api, plattform-api respektive
-   arkitekten → *Environment*.
-   (Med `BOOTSTRAP_ADMIN_EMAILS` satt får bara de adresserna skapa portalens.)
+   administratörskontot med **engångskoden** – den står under portal-api,
+   plattform-api respektive arkitekten → *Environment* → `SETUP_CODE`.
 
 Exempelinnehåll:
 
