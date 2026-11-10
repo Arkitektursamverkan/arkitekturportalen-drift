@@ -233,6 +233,13 @@ else
     info "Arkitekten installeras inte."
 fi
 [ $ARKITEKTEN = 1 ] || { env_set ARKITEKTEN_URL ""; rm -f caddy/sites/arkitekten.caddy; }
+# Plattformen hämtar processbilderna från flödestjänsten och skapar själv
+# källan, flödet och schemat första gången.
+if [ $PLATTFORM = 1 ] && [ $ARKITEKTEN = 1 ]; then
+    env_set PLATFORM_ARKITEKTEN_URL "http://arkitekten-flodestjanst:8200"
+else
+    env_set PLATFORM_ARKITEKTEN_URL ""
+fi
 
 # Profilerna och modulen följer valen.
 profiler=()

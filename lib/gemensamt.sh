@@ -145,9 +145,10 @@ kontrollera_namn() {
     return 0
 }
 
-# Versionen Arkitekten rapporterar i /health.
+# Arkitektens version, ur avbildens package.json (/health visar den inte
+# längre för vem som helst).
 arkitekten_version() {
-    dc exec -T arkitekten node -e "fetch('http://localhost:5173/health').then(r=>r.json()).then(j=>console.log(j.version))" </dev/null 2>/dev/null
+    dc exec -T arkitekten node -p "require('/app/package.json').version" </dev/null 2>/dev/null
 }
 
 # Versionen som TJÄNSTEN rapporterar i /api/v1/health.

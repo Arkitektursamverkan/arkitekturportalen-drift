@@ -60,6 +60,8 @@ services:
       INTEGRATION_PLATFORM_URL: ${INTEGRATION_PLATFORM_URL:-}
       INTEGRATION_PLATFORM_API_KEY: ${INTEGRATION_PLATFORM_API_KEY:-}
       INTEGRATION_PLATFORM_ADMIN_KEY: ${PLATFORM_ADMIN_API_KEY:-}
+      # Fler plattformsadresser som synkprofiler får peka på (kommaseparerade).
+      INTEGRATION_PLATFORM_ALLOWED_URLS: ${INTEGRATION_PLATFORM_ALLOWED_URLS:-}
       SYNC_WEBHOOK_SECRET: ${SYNC_WEBHOOK_SECRET:-}
       # Arkitekten (modulen "arkitekten"): länken i toppfältet.
       ARKITEKTEN_URL: ${ARKITEKTEN_URL:-}
@@ -78,6 +80,9 @@ services:
       ENTRA_CLIENT_ID: ${ENTRA_CLIENT_ID:-}
       ENTRA_API_SCOPE: ${ENTRA_API_SCOPE:-}
       ARKITEKTEN_URL: ${ARKITEKTEN_URL:-}
+      # Caddy står framför: klientens adress ur X-Forwarded-For (spärren mot
+      # lösenordsgissning). Docker-näten; webben nås bara via Caddy.
+      TRUSTED_PROXY: ${TRUSTED_PROXY:-172.16.0.0/12 192.168.0.0/16 10.0.0.0/8}
     depends_on:
       - api
 
@@ -155,6 +160,15 @@ services:
       POST_EXEC_WEBHOOK_SECRET: ${SYNC_WEBHOOK_SECRET:-}
       SETUP_CODE: ${SETUP_CODE:-}
       ARK_FLODESTJANST_NYCKEL: ${ARKITEKTEN_FLODESTJANST_NYCKEL:-}
+      # Flödestjänstens interna adress (http://arkitekten-flodestjanst:8200).
+      # Nyckeln skickas bara dit, och värden är alltid tillåten för kopplingar.
+      ARKITEKTEN_URL: ${PLATFORM_ARKITEKTEN_URL:-}
+      # Kopplingar når inte interna adresser utom de som står här (värdnamn,
+      # *.domän, IP eller CIDR, kommaseparerade) – t.ex. interna system på 10.x.
+      CONNECTOR_ALLOWED_HOSTS: ${CONNECTOR_ALLOWED_HOSTS:-}
+      CONNECTOR_BLOCK_INTERNAL: ${CONNECTOR_BLOCK_INTERNAL:-auto}
+      # Plattformens webb (nginx) skriver klientens adress i X-Forwarded-For.
+      TRUST_PROXY_HEADERS: "true"
     depends_on:
       plattform-db:
         condition: service_healthy
@@ -167,6 +181,7 @@ services:
     profiles: ["plattform"]
     environment:
       API_UPSTREAM: plattform-api:8000
+      TRUSTED_PROXY: ${TRUSTED_PROXY:-172.16.0.0/12 192.168.0.0/16 10.0.0.0/8}
     depends_on:
       - plattform-api
 
@@ -183,6 +198,8 @@ services:
       # entra eller lokal (docs/inloggning.md i Arkitekten).
       ARK_AUTH: ${ARKITEKTEN_AUTH:-lokal}
       SETUP_CODE: ${SETUP_CODE:-}
+      # Caddy står framför: klientens adress är sista ledet i X-Forwarded-For.
+      ARK_BETRODD_PROXY: "1"
       ENTRA_TENANT_ID: ${ARKITEKTEN_ENTRA_TENANT_ID:-}
       ENTRA_CLIENT_ID: ${ARKITEKTEN_ENTRA_CLIENT_ID:-}
       ENTRA_CLIENT_SECRET: ${ARKITEKTEN_ENTRA_CLIENT_SECRET:-}
