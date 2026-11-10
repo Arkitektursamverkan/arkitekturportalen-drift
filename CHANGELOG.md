@@ -15,6 +15,8 @@ funktioner, en ny korrigering för rättelser.
 - **Klientens adress bakom Caddy**: compose sätter `TRUSTED_PROXY` på båda webbarna (Docker-näten), `TRUST_PROXY_HEADERS` på plattformens API och `ARK_BETRODD_PROXY=1` på Arkitekten, så att gränserna för inloggningsförsök gäller per klient och inte för alla på en gång. På Render sätts `TRUSTED_PROXY` (Renders interna nät) på portal-web och plattform-web.
 - **Render: egen engångskod per tjänst** (`SETUP_CODE` på portal-api, plattform-api och arkitekten).
 - Nya valfria inställningar: `INTEGRATION_PLATFORM_ALLOWED_URLS` (portalen), `CONNECTOR_BLOCK_INTERNAL` (plattformen).
+- **Säkerhetsomgång 4**: compose och `render.yaml` på portalen 0.14.0, Integrationsplattformen 0.8.0 och Arkitekten 0.9.0 – återkallbara inloggningar, spärrade konton, Entra-gäster nekas, inga standardlösenord för databaserna. Installationer gjorda med guiden har redan egna lösenord.
+- **Arkitektens ärendetyper** (`ARKITEKTEN_ARENDETYPER`): Arkitekten 0.9.0 har ingen inbyggd indelning av processmenyn längre. Sätt listan i `.env` för att dela in menyn efter ärendetyp.
 - `uppgradera.sh` läser Arkitektens version ur avbildens `package.json` i stället för `/health`.
 - Arkitektens exempelprocesser läggs in som användaren `node` (`exec -u node`), så att filerna ägs av den som Arkitekten kör som.
 

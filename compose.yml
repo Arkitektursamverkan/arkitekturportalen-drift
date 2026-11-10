@@ -213,6 +213,7 @@ services:
       EA_API_KEY: ${API_KEY:-}
       EA_WEBB_URL: https://${PORTAL_HOST:-}
       ARK_PORTALBANA: ${ARKITEKTEN_PORTALBANA:-}
+      ARK_ARENDETYPER: ${ARKITEKTEN_ARENDETYPER:-}
       ARK_SYSTEMPROCESS_KATEGORI: ${ARKITEKTEN_SYSTEMPROCESS_KATEGORI:-}
     volumes:
       - arkitekten_data:/data
@@ -229,6 +230,7 @@ services:
       # Plattformen skickar samma nyckel (X-Arkitekten-Nyckel).
       ARK_FLODESTJANST_NYCKEL: ${ARKITEKTEN_FLODESTJANST_NYCKEL:-}
       ARK_PORTALBANA: ${ARKITEKTEN_PORTALBANA:-}
+      ARK_ARENDETYPER: ${ARKITEKTEN_ARENDETYPER:-}
       ARK_SYSTEMPROCESS_KATEGORI: ${ARKITEKTEN_SYSTEMPROCESS_KATEGORI:-}
     # Tjänsten kan inte skriva – volymen monteras bara för läsning.
     volumes:
