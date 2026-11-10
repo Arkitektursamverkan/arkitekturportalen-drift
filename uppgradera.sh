@@ -85,6 +85,10 @@ backup=$(./backup.sh "fore-$portal_ny$([ $PLATTFORM = 1 ] && echo "_$plattform_n
 
 env_set PORTAL_VERSION "$portal_ny"
 env_set PLATFORM_VERSION "$plattform_ny"
+# Plattformen 0.7.0 skickar Arkitektens nyckel bara till PLATFORM_ARKITEKTEN_URL.
+if [ $PLATTFORM = 1 ] && [ $ARK = 1 ] && [ -z "$(env_get PLATFORM_ARKITEKTEN_URL)" ]; then
+    env_set PLATFORM_ARKITEKTEN_URL "http://arkitekten-flodestjanst:8200"
+fi
 [ $ARK = 1 ] && env_set ARKITEKTEN_VERSION "$ark_ny"
 info "Startar de nya versionerna (portalen migrerar databasen)…"
 misslyckat() {

@@ -85,7 +85,8 @@ plattformen med plattformens admin-nyckel.
 5. **Logga in.** Med Entra: *Logga in med Microsoft* i varje tjänst. Utan
    Entra: första besöket i portalen, plattformen och Arkitekten skapar
    administratörskontot. Det kräver **engångskoden** `SETUP_CODE`, som Render
-   har skapat – den står under portal-api → *Environment* och gäller alla tre.
+   har skapat – en per tjänst, under portal-api, plattform-api respektive
+   arkitekten → *Environment*.
    (Med `BOOTSTRAP_ADMIN_EMAILS` satt får bara de adresserna skapa portalens.)
 
 Exempelinnehåll:

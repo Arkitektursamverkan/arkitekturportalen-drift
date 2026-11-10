@@ -38,7 +38,7 @@ services:
     name: portal-api
     runtime: image
     image:
-      url: ghcr.io/arkitektursamverkan/arkitekturportalen-api:0.12.0
+      url: ghcr.io/arkitektursamverkan/arkitekturportalen-api:0.13.0
       creds:
         fromRegistryCreds:
           name: ghcr
@@ -68,9 +68,8 @@ services:
         generateValue: true
       - key: SYNC_WEBHOOK_SECRET
         generateValue: true
-      # Engångskoden för det första administratörskontot – i portalen,
-      # plattformen och Arkitekten (de hämtar den härifrån). Står under
-      # portal-api → Environment.
+      # Engångskoden för portalens första administratörskonto. Står under
+      # portal-api → Environment. Plattformen och Arkitekten har var sin.
       - key: SETUP_CODE
         generateValue: true
       # Portalens adress, t.ex. https://arkitektur.example.org
@@ -111,7 +110,7 @@ services:
     name: portal-web
     runtime: image
     image:
-      url: ghcr.io/arkitektursamverkan/arkitekturportalen-web:0.12.0
+      url: ghcr.io/arkitektursamverkan/arkitekturportalen-web:0.13.0
       creds:
         fromRegistryCreds:
           name: ghcr
@@ -124,6 +123,10 @@ services:
           type: pserv
           name: portal-api
           property: hostport
+      # Renders proxy står framför: klientens adress ur X-Forwarded-For
+      # (gränsen för inloggningsförsök). Renders interna nät.
+      - key: TRUSTED_PROXY
+        value: 10.0.0.0/8
       # Samma värden som på portal-api. Render kan bara hämta ett värde från en
       # annan tjänst när det redan finns, och de här får vara tomma.
       - key: ENTRA_TENANT_ID
@@ -138,7 +141,7 @@ services:
     name: plattform-api
     runtime: image
     image:
-      url: ghcr.io/arkitektursamverkan/integrationsplattformen-api:0.6.0
+      url: ghcr.io/arkitektursamverkan/integrationsplattformen-api:0.7.0
       creds:
         fromRegistryCreds:
           name: ghcr
@@ -187,17 +190,16 @@ services:
           type: pserv
           name: portal-api
           envVarKey: SYNC_WEBHOOK_SECRET
+      # Engångskoden för plattformens första administratörskonto
+      # (plattform-api → Environment).
       - key: SETUP_CODE
-        fromService:
-          type: pserv
-          name: portal-api
-          envVarKey: SETUP_CODE
+        generateValue: true
 
   - type: web
     name: plattform-web
     runtime: image
     image:
-      url: ghcr.io/arkitektursamverkan/integrationsplattformen-web:0.6.0
+      url: ghcr.io/arkitektursamverkan/integrationsplattformen-web:0.7.0
       creds:
         fromRegistryCreds:
           name: ghcr
@@ -210,6 +212,10 @@ services:
           type: pserv
           name: plattform-api
           property: hostport
+      # Renders proxy står framför: klientens adress ur X-Forwarded-For
+      # (gränsen för inloggningsförsök). Renders interna nät.
+      - key: TRUSTED_PROXY
+        value: 10.0.0.0/8
 
   # ── Arkitekten (processritaren) ───────────────────────────────────────────
   # Webben och flödestjänsten i samma tjänst – de delar disken. Plattformen
@@ -218,7 +224,7 @@ services:
     name: arkitekten
     runtime: image
     image:
-      url: ghcr.io/arkitektursamverkan/arkitekten:0.7.0
+      url: ghcr.io/arkitektursamverkan/arkitekten:0.8.0
       creds:
         fromRegistryCreds:
           name: ghcr
@@ -266,11 +272,10 @@ services:
           type: pserv
           name: portal-api
           envVarKey: API_KEY
+      # Engångskoden för Arkitektens första administratörskonto
+      # (arkitekten → Environment).
       - key: SETUP_CODE
-        fromService:
-          type: pserv
-          name: portal-api
-          envVarKey: SETUP_CODE
+        generateValue: true
       # Portalens adress (som PDF_APP_BASE_URL på portal-api).
       - key: EA_WEBB_URL
         sync: false
