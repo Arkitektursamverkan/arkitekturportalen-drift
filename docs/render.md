@@ -36,9 +36,17 @@ plattformen med plattformens admin-nyckel.
    domäner (t.ex. `arkitektur.example.org`) läggs till efter skapandet.
 4. **Entra ID (valfritt) – en app-registrering för alla tre.** Samma konto
    loggar då in i portalen, plattformen och Arkitekten. I registreringen:
-   - *Authentication → Single-page application*: `https://<portalen>/` och
-     `https://<plattformen>/login`
-   - *Authentication → Web*: `https://<Arkitekten>/__ark/auth/callback`
+   - *Authentication* – tre redirect-adresser, exakt så här (adresserna står
+     överst på respektive tjänsts sida i Render när de skapats; lägg till dem
+     då om du inte vet dem i förväg):
+
+     | Tjänst | Typ i Entra | Redirect-URI |
+     |---|---|---|
+     | portal-web | Single-page application | `https://<portal-web>/` |
+     | plattform-web | Single-page application | `https://<plattform-web>/login` – med **`/login`** |
+     | arkitekten | **Web** | `https://<arkitekten>/__ark/auth/callback` |
+
+     Saknas en ger Microsoft felet AADSTS50011 med den adress som saknas.
    - *Expose an API*: Application ID URI `api://<client-id>` och scopet
      `access_as_user`
    - *Certificates & secrets*: en klienthemlighet (Arkitekten använder den)

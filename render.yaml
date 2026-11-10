@@ -14,17 +14,18 @@
 # Render (Workspace Settings → Registry Credentials) med namnet "ghcr".
 
 databases:
+  # Inget databaseName eller user: Render lägger till ett eget suffix på
+  # databasens namn (ea_db → ea_db_46gd), och namnet går inte att ändra efter
+  # skapandet – med namnet utskrivet slutade varje synk med fel (troligen
+  # för att den försökte ändra namnet). Tjänsterna får hela adressen ur connectionString, så namnen
+  # behövs inte.
   - name: portal-db
-    databaseName: ea_db
-    user: ea_user
     plan: basic-256mb
     region: frankfurt
     postgresMajorVersion: "16"
     ipAllowList: [] # bara Renders interna nät
 
   - name: plattform-db
-    databaseName: integration_db
-    user: integration_user
     plan: basic-256mb
     region: frankfurt
     postgresMajorVersion: "16"
