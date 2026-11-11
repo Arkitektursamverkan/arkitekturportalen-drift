@@ -76,7 +76,7 @@ ja_nej "Fortsätta?" j || fel "Avbrutet."
 if [ $PULL = 1 ]; then
     info "Hämtar avbilderna…"
     PORTAL_VERSION=$portal_ny PLATFORM_VERSION=$plattform_ny ARKITEKTEN_VERSION=$ark_ny dc pull --quiet \
-        || fel "Avbilderna gick inte att hämta – finns versionen, och är du inloggad (docker login ghcr.io)? Inget är ändrat."
+        || fel "Avbilderna gick inte att hämta – finns versionen, och når servern ghcr.io? Inget är ändrat."
 fi
 
 # Backupens namn har versionerna det uppgraderas till, t.ex. fore-0.2.0 eller

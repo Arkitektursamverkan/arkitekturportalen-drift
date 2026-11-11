@@ -10,8 +10,7 @@
 # annanstans – plattformen och Arkitekten hämtar dem från portalen. Adresserna
 # lär sig tjänsterna själva. Byt versionerna nedan vid en uppgradering.
 #
-# Avbilderna är privata: lägg först in en registerinloggning för ghcr.io i
-# Render (Workspace Settings → Registry Credentials) med namnet "ghcr".
+# Avbilderna i ghcr.io/arkitektursamverkan är publika – ingen registerinloggning behövs.
 
 databases:
   # Inget databaseName eller user: Render lägger till ett eget suffix på
@@ -38,9 +37,6 @@ services:
     runtime: image
     image:
       url: ghcr.io/arkitektursamverkan/arkitekturportalen-api:0.16.1
-      creds:
-        fromRegistryCreds:
-          name: ghcr
     plan: starter
     region: frankfurt
     # Ögonblicksbilder och synkprofiler – på en och samma disk.
@@ -108,9 +104,6 @@ services:
     runtime: image
     image:
       url: ghcr.io/arkitektursamverkan/arkitekturportalen-web:0.16.1
-      creds:
-        fromRegistryCreds:
-          name: ghcr
     plan: starter
     region: frankfurt
     healthCheckPath: /
@@ -131,9 +124,6 @@ services:
     runtime: image
     image:
       url: ghcr.io/arkitektursamverkan/integrationsplattformen-api:0.10.0
-      creds:
-        fromRegistryCreds:
-          name: ghcr
     plan: starter
     region: frankfurt
     envVars:
@@ -195,9 +185,6 @@ services:
     runtime: image
     image:
       url: ghcr.io/arkitektursamverkan/integrationsplattformen-web:0.10.0
-      creds:
-        fromRegistryCreds:
-          name: ghcr
     plan: starter
     region: frankfurt
     healthCheckPath: /
@@ -220,9 +207,6 @@ services:
     runtime: image
     image:
       url: ghcr.io/arkitektursamverkan/arkitekten:0.10.0
-      creds:
-        fromRegistryCreds:
-          name: ghcr
     plan: starter
     region: frankfurt
     healthCheckPath: /health
