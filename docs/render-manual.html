@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<title>Arkitekturportalen – installation på Render</title>
+<style>
+@page {
+  size: A4;
+  margin: 20mm 18mm 22mm 18mm;
+  @bottom-left { content: "Arkitekturportalen 0.16.1 – installation på Render"; font: 8pt Inter, sans-serif; color: #6b7280; }
+  @bottom-right { content: counter(page) " / " counter(pages); font: 8pt Inter, sans-serif; color: #6b7280; }
+}
+@page :first { margin: 0; @bottom-left { content: none; } @bottom-right { content: none; } }
+
+:root {
+  --ink: #1f2933;
+  --muted: #5b6673;
+  --line: #d9dee4;
+  --accent: #1d5c8c;
+  --accent-soft: #e8f1f8;
+  --deep-soft: #f6f7f9;
+  --warn: #8a5a00;
+  --warn-soft: #fdf4e3;
+}
+* { box-sizing: border-box; }
+html { font-family: Inter, "Liberation Sans", sans-serif; font-size: 9.6pt; line-height: 1.5; color: var(--ink); }
+body { margin: 0; }
+h1, h2, h3, h4 { line-height: 1.25; margin: 0; }
+h2 { font-size: 17pt; color: var(--accent); margin-bottom: 4mm; page-break-before: always; padding-bottom: 2mm; border-bottom: 1.5pt solid var(--accent); }
+h3 { font-size: 11.5pt; margin: 6mm 0 2mm; }
+p { margin: 0 0 2.4mm; }
+ul, ol { margin: 0 0 2.4mm; padding-left: 5mm; }
+li { margin-bottom: 1mm; }
+code, .mono { font-family: "DejaVu Sans Mono", "Liberation Mono", monospace; font-size: 8.4pt; }
+code { background: #eef1f4; padding: 0 1mm; border-radius: 1mm; }
+pre { font-family: "DejaVu Sans Mono", monospace; font-size: 8.2pt; background: #1f2933; color: #f1f5f9; padding: 3mm 4mm; border-radius: 1.5mm; margin: 0 0 3mm; white-space: pre-wrap; }
+table { width: 100%; border-collapse: collapse; margin: 0 0 3mm; font-size: 9pt; }
+th, td { text-align: left; vertical-align: top; padding: 1.2mm 2mm; border-bottom: 0.5pt solid var(--line); }
+th { font-weight: 600; color: var(--muted); font-size: 8.4pt; text-transform: uppercase; letter-spacing: 0.03em; }
+.lead { font-size: 10.6pt; color: var(--muted); margin-bottom: 5mm; }
+
+/* Omslag */
+.cover { height: 297mm; padding: 38mm 22mm 24mm; background: var(--accent); color: #fff; display: flex; flex-direction: column; page-break-after: always; }
+.cover .kicker { font-size: 10pt; letter-spacing: 0.14em; text-transform: uppercase; opacity: 0.8; }
+.cover h1 { font-size: 34pt; margin: 6mm 0 4mm; font-weight: 700; }
+.cover .sub { font-size: 14pt; opacity: 0.92; max-width: 140mm; }
+.cover { position: relative; }
+.cover .meta { position: absolute; left: 22mm; right: 22mm; bottom: 24mm; font-size: 9.5pt; opacity: 0.85; border-top: 0.6pt solid rgba(255,255,255,0.45); padding-top: 4mm; }
+
+/* Innehåll */
+.toc { list-style: none; padding: 0; }
+.toc li { display: flex; border-bottom: 0.5pt dotted var(--line); padding: 1.6mm 0; margin: 0; }
+.toc li a { color: var(--ink); text-decoration: none; flex: 1; }
+.toc li a::after { content: target-counter(attr(href), page); float: right; color: var(--muted); }
+
+/* Frågorna */
+.fraga { page-break-inside: avoid; margin: 0 0 6mm; }
+.fraga-huvud { display: flex; align-items: baseline; gap: 3mm; margin-bottom: 2mm; }
+.nr { flex: none; width: 7mm; height: 7mm; border-radius: 50%; background: var(--accent); color: #fff; font-weight: 700; font-size: 9pt; text-align: center; line-height: 7mm; }
+.fraga h3 { margin: 0; font-size: 11.5pt; }
+.prompt { font-family: "DejaVu Sans Mono", monospace; font-size: 8.2pt; background: #1f2933; color: #f1f5f9; padding: 1.6mm 3mm; border-radius: 1.2mm; margin: 0 0 2.4mm; }
+.rutor { display: flex; gap: 3mm; }
+.ruta { border-radius: 1.6mm; padding: 3mm 3.6mm; }
+.ruta .etikett { font-size: 7.6pt; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 1.4mm; }
+.ruta p:last-child, .ruta ul:last-child { margin-bottom: 0; }
+.kort { flex: 0 0 38%; background: var(--accent-soft); border: 0.6pt solid #bcd5e8; }
+.kort .etikett { color: var(--accent); }
+.djup { flex: 1; background: var(--deep-soft); border: 0.6pt solid var(--line); }
+.djup .etikett { color: var(--muted); }
+.svar { margin-top: 1.6mm; font-size: 8.8pt; }
+.svar b { color: var(--accent); }
+
+.not { background: var(--warn-soft); border-left: 2pt solid #d89a2b; padding: 2.4mm 3.6mm; margin: 0 0 3.6mm; border-radius: 0 1.4mm 1.4mm 0; page-break-inside: avoid; }
+.not b:first-child { color: var(--warn); }
+
+/* Moduler */
+.modul { page-break-inside: avoid; border: 0.6pt solid var(--line); border-radius: 1.6mm; padding: 3.2mm 4mm; margin: 0 0 3.2mm; }
+.modul h3 { margin: 0 0 1mm; }
+.modul .typ { font-size: 8pt; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 2mm; }
+.modul .kolumner { display: flex; gap: 5mm; }
+.modul .kolumner > div { flex: 1; }
+.modul h4 { font-size: 8.4pt; color: var(--accent); text-transform: uppercase; letter-spacing: 0.05em; margin: 1mm 0 1.2mm; }
+.alltid { border-color: #bcd5e8; background: var(--accent-soft); }
+.kommande { border: 0.8pt dashed #d89a2b; background: var(--warn-soft); }
+.stampel { display: inline-block; font-size: 7.6pt; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--warn); border: 1pt solid #d89a2b; border-radius: 1mm; padding: 0.4mm 2mm; margin-left: 2mm; vertical-align: middle; }
+.om { background: var(--accent-soft); border-radius: 1.6mm; padding: 5mm 6mm; margin-top: 3mm; }
+.om p { margin-bottom: 3mm; }
+.om p:last-child { margin-bottom: 0; }
+
+.steg { counter-reset: steg; list-style: none; padding: 0; }
+.steg > li { counter-increment: steg; position: relative; padding-left: 9mm; margin-bottom: 2.6mm; }
+.steg > li::before { content: counter(steg); position: absolute; left: 0; top: 0; width: 6mm; height: 6mm; border-radius: 50%; border: 0.8pt solid var(--accent); color: var(--accent); font-weight: 700; font-size: 8.4pt; text-align: center; line-height: 6mm; }
+.tva { display: flex; gap: 5mm; }
+.tva > div { flex: 1; }
+.kortlada { border: 0.6pt solid var(--line); border-radius: 1.6mm; padding: 3.4mm 4mm; page-break-inside: avoid; }
+.kortlada h3 { margin-top: 0; }
+.check td { height: 11mm; }
+</style>
+</head>
+<body>
+
+<section class="cover">
+  <div class="kicker">Arkitektursamverkan</div>
+  <h1>Arkitekturportalen på Render</h1>
+  <div class="sub">Installationsmanual för molntjänsten Render – portalen, Integrationsplattformen och Arkitekten utan egen server</div>
+  <div class="meta">
+    <b>Version 0.16.1</b> · november 2026<br>
+    Gäller <code style="background:none;color:#fff;padding:0">render.yaml</code> i repot Arkitektursamverkan/arkitekturportalen-drift (portalen 0.16.1, Integrationsplattformen 0.10.0, Arkitekten 0.10.0).<br>
+    Kontakt: Arkitektursamverkan, hfab_code@outlook.com
+  </div>
+</section>
+
+<h2 style="page-break-before: avoid">Innehåll</h2>
+<ul class="toc">
+  <li><a href="#om">Om manualen och Render</a></li>
+  <li><a href="#fore">Före installationen</a></li>
+  <li><a href="#entra">Entra ID – inloggning med Microsoft</a></li>
+  <li><a href="#skapa">Installationen steg för steg</a></li>
+  <li><a href="#efter">Efter installationen</a></li>
+  <li><a href="#drift">Uppgradering, backup och att känna till</a></li>
+  <li><a href="#checklista">Checklista att fylla i</a></li>
+</ul>
+
+<h3 id="om" style="margin-top:10mm">Om manualen och Render</h3>
+<p><a href="https://render.com">Render</a> är en molntjänst som kör färdiga programpaket (avbilder) som hanterade tjänster. Ni behöver ingen egen server, ingen Docker och inga certifikat: Render sköter maskinerna, databaserna, säkerhetskopiorna och adresserna med https.</p>
+<p>Hela installationen beskrivs i en fil, <code>render.yaml</code>, som ligger i det publika repot <b>Arkitektursamverkan/arkitekturportalen-drift</b> på GitHub. Render läser filen som en <i>Blueprint</i> och skapar allt i ett svep. Det enda som skrivs in för hand är – om ni vill logga in med Microsoft-konton – uppgifterna om er Entra-registrering, och de skrivs in på <b>ett</b> ställe.</p>
+<div class="rutor" style="margin-bottom:4mm">
+  <div class="ruta kort"><div class="etikett">I korthet</div><p>Skapa ett Render-konto, (valfritt) en Entra-registrering, välj repot som Blueprint och tryck på Deploy. Efter 5–10 minuter är allt igång.</p></div>
+  <div class="ruta djup"><div class="etikett">Vad Render skapar</div>
+    <table style="margin:0">
+      <tr><td><b>portal-web</b>, <b>plattform-web</b>, <b>arkitekten</b></td><td>Webbtjänster med publik adress och https</td></tr>
+      <tr><td><b>portal-api</b>, <b>plattform-api</b></td><td>Privata tjänster, nås bara inom Render</td></tr>
+      <tr><td><b>portal-db</b>, <b>plattform-db</b></td><td>Databaser (Render Postgres 16)</td></tr>
+      <tr><td>Två diskar</td><td>Portalens filer och Arkitektens innehåll</td></tr>
+    </table>
+  </div>
+</div>
+<div class="not"><b>Kostnad.</b> Render tar betalt per tjänst och databas och per sekund de finns. Med de storlekar <code>render.yaml</code> väljer blev det i vårt prov ungefär 45–50 USD i månaden (november 2026). Kontrollera aktuella priser på render.com/pricing. Ett prov som tas bort efter några timmar kostar bara några kronor.</div>
+
+<h2 id="fore">Före installationen</h2>
+<ol class="steg">
+  <li><b>Ett Render-konto.</b> Skapa ett på render.com och lägg in ett betalkort (Workspace Settings → Billing). Gratisnivån räcker inte: tjänsterna behöver diskar och privata tjänster.</li>
+  <li><b>Åtkomst till repot.</b> Render behöver kunna läsa <code>render.yaml</code>. Repot är publikt, så det räcker att koppla Render till GitHub (Account Settings → GitHub). Vill ni ändra i filen själva – andra storlekar, region eller versioner – gör en kopia (fork) av repot och välj den i stället.</li>
+  <li><b>Adresser.</b> Render ger varje webbtjänst en adress som <code>https://portal-web-xxxx.onrender.com</code>. Den duger för prov och för drift. Egna adresser, som <code>arkitektur.example.org</code>, läggs till efter installationen (se <a href="#efter">Efter installationen</a>).</li>
+  <li><b>Inloggning.</b> Bestäm om ni ska logga in med Microsoft-konton (Entra ID, nästa avsnitt) eller med egna konton i varje tjänst. Entra kan inte läggas till i efterhand utan att skriva in uppgifterna för hand på portal-api, så bestäm gärna före.</li>
+</ol>
+
+<h2 id="entra">Entra ID – inloggning med Microsoft</h2>
+<p class="lead">Valfritt. En enda appregistrering räcker för alla tre tjänsterna: samma konto loggar in i portalen, plattformen och Arkitekten. Registreringen görs i Microsoft Entra admin center (eller Azure-portalen) av någon med rätt att skapa appregistreringar.</p>
+
+<h3>1. Skapa registreringen</h3>
+<p><i>App registrations → New registration.</i> Namn till exempel <i>Arkitekturportalen</i>, kontotyp <i>Accounts in this organizational directory only</i>. Redirect-adresser kan lämnas tomma nu. Notera <b>Application (client) ID</b> och <b>Directory (tenant) ID</b> från översiktssidan.</p>
+
+<h3>2. Redirect-adresserna (Authentication)</h3>
+<p>Tre adresser, en per webbtjänst. Adresserna finns överst på varje tjänsts sida i Render när tjänsterna skapats – det vanliga är därför att lägga in dem <b>efter</b> installationen.</p>
+<table>
+  <tr><th>Tjänst</th><th>Plattform i Entra</th><th>Redirect-URI</th></tr>
+  <tr><td>portal-web</td><td>Single-page application</td><td><code>https://&lt;portal-web&gt;/</code></td></tr>
+  <tr><td>plattform-web</td><td>Single-page application</td><td><code>https://&lt;plattform-web&gt;/login</code> – med <b>/login</b></td></tr>
+  <tr><td>arkitekten</td><td><b>Web</b></td><td><code>https://&lt;arkitekten&gt;/__ark/auth/callback</code></td></tr>
+</table>
+<div class="not"><b>Två plattformar.</b> Under <i>Authentication → Add a platform</i> blir det två poster: <b>Single-page application</b> med portalens och plattformens adresser, och <b>Web</b> med Arkitektens. Arkitekten loggar in med en klienthemlighet och fungerar inte om dess adress hamnar under Single-page application. Saknas en adress visar Microsoft felet <b>AADSTS50011</b> tillsammans med adressen som saknas.</div>
+
+<h3>3. Exponera ett API (Expose an API)</h3>
+<p>Sätt <i>Application ID URI</i> till <code>api://&lt;client-id&gt;</code> (förslaget Entra ger) och lägg till ett scope med namnet <code>access_as_user</code>, som administratörer och användare får godkänna.</p>
+
+<h3>4. Klienthemlighet (Certificates &amp; secrets)</h3>
+<p><i>New client secret.</i> Kopiera <b>värdet</b> (inte id:t) direkt – det visas bara en gång. Arkitekten använder hemligheten. Notera när den går ut och lägg in en ny på portal-api innan dess.</p>
+
+<div class="kortlada" style="margin-top:4mm">
+  <h3>Det här behöver ni ha till hands vid installationen</h3>
+  <table style="margin:0">
+    <tr><td style="width:45%"><code>ENTRA_TENANT_ID</code></td><td>Directory (tenant) ID</td></tr>
+    <tr><td><code>ENTRA_CLIENT_ID</code></td><td>Application (client) ID</td></tr>
+    <tr><td><code>ENTRA_CLIENT_SECRET</code></td><td>Klienthemlighetens värde</td></tr>
+    <tr><td><code>BOOTSTRAP_ADMIN_EMAILS</code></td><td>E-postadresserna (kommaseparerade) till de som blir administratörer</td></tr>
+  </table>
+</div>
+
+<h2 id="skapa">Installationen steg för steg</h2>
+<ol class="steg">
+  <li><b>Ny Blueprint.</b> I Render: <i>New → Blueprint</i>. Välj repot <b>Arkitektursamverkan/arkitekturportalen-drift</b> (eller er kopia) och grenen <code>main</code>. <i>Blueprint Path</i> lämnas som <code>render.yaml</code>. Ge den ett namn, till exempel <i>Arkitekturportalen</i>.</li>
+  <li><b>Frågorna.</b> Render visar allt som ska skapas och frågar efter fyra värden på <b>portal-api</b> – bara den här gången.
+    <ul>
+      <li><b>Med Entra:</b> fyll i de fyra värdena från föregående avsnitt.</li>
+      <li><b>Med egna konton:</b> lämna alla fyra tomma.</li>
+    </ul>
+    Allt annat sköter Render och tjänsterna själva: lösenord, nycklar och engångskoder skapas, tjänsterna hittar varandra på Renders interna nät, plattformen och Arkitekten hämtar Entra-uppgifterna från portalen och anmäler sina adresser dit.</li>
+  <li><b>Deploy Blueprint.</b> Databaserna skapas först, sedan de fem tjänsterna. Det tar 5–10 minuter. Blueprintens sida visar <i>in sync</i> när allt är klart, och varje tjänst <i>Live</i>.</li>
+  <li><b>Redirect-adresserna.</b> Med Entra: lägg nu in de tre adresserna i registreringen (se <a href="#entra">Entra ID</a>).</li>
+  <li><b>Logga in.</b> Öppna portal-web (adressen överst på tjänstens sida).
+    <ul>
+      <li><b>Med Entra:</b> <i>Logga in med Microsoft</i>, i portalen, plattformen och Arkitekten. Adresserna i <code>BOOTSTRAP_ADMIN_EMAILS</code> blir administratörer.</li>
+      <li><b>Med egna konton:</b> det första besöket i varje tjänst skapar administratörskontot och kräver en <b>engångskod</b>. Den står i Render under respektive tjänst – portal-api, plattform-api och arkitekten – <i>→ Environment → SETUP_CODE</i>. Koden gäller bara det första kontot.</li>
+    </ul></li>
+</ol>
+<div class="not"><b>Om en synk slutar med fel.</b> Öppna Blueprintens sida och läs felet under <i>Syncs</i>. Tjänster som redan skapats ligger kvar; <i>Manual Sync</i> försöker igen med resten.</div>
+
+<h2 id="efter">Efter installationen</h2>
+<h3>Länkarna mellan tjänsterna</h3>
+<p>Länken till Arkitekten i portalens toppfält och länken tillbaka till portalen i Arkitekten dyker upp av sig själva: Arkitekten anmäler sin adress när den startar, och portalen lär sig sin adress första gången någon öppnar den.</p>
+
+<h3>Egna adresser</h3>
+<p>Under varje webbtjänst: <i>Settings → Custom Domains</i>, och CNAME-posterna i er DNS som Render visar. Render ordnar certifikatet. Portalen byter själv till den egna adressen när den används. Arkitekten behöver sin i <code>ARK_BAS_URL</code> (arkitekten → <i>Environment</i>, till exempel <code>https://arkitekten.example.org</code>), eftersom inloggningen bygger sina adresser av den. Med Entra: lägg till de nya adresserna som redirect-adresser.</p>
+
+<h3>Exempelinnehåll</h3>
+<ul>
+  <li><b>Arkitekten:</b> <i>Inställningar → Exempelinnehåll</i> i Arkitekten.</li>
+  <li><b>Portalen:</b> i Render, portal-api → <i>Shell</i>: <code>python -m app.services.content_pack list</code> och <code>python -m app.services.content_pack import &lt;paket&gt;</code>.</li>
+</ul>
+
+<h3>Moduler</h3>
+<p>Alla moduler är påslagna. De stängs av i portalen under <i>Administration → Organisation</i>.</p>
+
+<h3>Synk från plattformen efter en körning</h3>
+<p>Ett flöde i plattformen kan meddela portalen när det körts (webhook "efter körning"). Adressen är portal-api:s interna: <code>http://&lt;intern host:port&gt;/api/v1/sync/webhook</code>, som står under portal-api → <i>Connect → Internal</i>.</p>
+
+<h2 id="drift">Uppgradering, backup och att känna till</h2>
+<h3>Uppgradera</h3>
+<p>Nya versioner kommer som nya rader i <code>render.yaml</code> i repot. Följer er Blueprint repot direkt (<i>Auto Sync</i>) uppgraderas installationen när filen ändras; annars <i>Manual Sync</i>. Med en egen kopia: hämta ändringarna från originalet, eller byt avbildens version under respektive tjänst → <i>Settings → Image</i>. Tjänsterna uppdaterar sina databaser själva när de startar. Läs ändringsloggen i repot före en uppgradering.</p>
+
+<h3>Backup</h3>
+<p>Render Postgres har egna säkerhetskopior (hur länge de sparas beror på plan), och diskarna får dagliga ögonblicksbilder. Skripten <code>backup.sh</code> och <code>aterstall.sh</code> i repot hör till installationen på egen server och används inte på Render.</p>
+
+<h3>Att känna till</h3>
+<ul>
+  <li>En tjänst med disk kör i en instans och är borta en kort stund vid varje ny driftsättning.</li>
+  <li>Integrationsplattformen når bara källsystem som går att nå från Render, alltså över internet. Källsystem i ert interna nät kräver installationen på egen server.</li>
+  <li>Ändras Entra-uppgifterna på portal-api hämtar plattformen dem inom fem minuter. Arkitekten läser dem när den startar – starta om arkitekten.</li>
+  <li>Byts <code>ENCRYPTION_KEY</code> på plattform-api blir sparade inloggningar till källsystemen oläsbara.</li>
+  <li>Ta bort en installation: Blueprintens sida → <i>Delete Blueprint</i>, och sedan tjänsterna, databaserna och diskarna – de tas inte bort automatiskt.</li>
+</ul>
+
+<h2 id="checklista">Checklista att fylla i</h2>
+<table class="check">
+  <tr><th style="width:45%">Uppgift</th><th>Svar</th></tr>
+  <tr><td>Render-konto och betalkort</td><td></td></tr>
+  <tr><td>Region (render.yaml: Frankfurt)</td><td></td></tr>
+  <tr><td>Inloggning: Entra ID eller egna konton</td><td></td></tr>
+  <tr><td>Entra: tenant-id</td><td></td></tr>
+  <tr><td>Entra: client-id</td><td></td></tr>
+  <tr><td>Entra: klienthemlighet skapad (går ut)</td><td></td></tr>
+  <tr><td>Administratörernas e-post</td><td></td></tr>
+  <tr><td>Adress portal-web</td><td></td></tr>
+  <tr><td>Adress plattform-web</td><td></td></tr>
+  <tr><td>Adress arkitekten</td><td></td></tr>
+  <tr><td>Redirect-adresserna inlagda (SPA ×2, Web ×1)</td><td></td></tr>
+  <tr><td>Egna adresser och DNS (valfritt)</td><td></td></tr>
+</table>
+
+</body>
+</html>

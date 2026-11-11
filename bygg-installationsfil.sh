@@ -10,9 +10,13 @@
 #   ./bygg-installationsfil.sh … --publicera      och skapar releasen v<portal>
 #                                                 på GitHub med filen bifogad
 #
-# För underhållarna, inte för installationen. Kräver docker (inloggad mot
-# ghcr.io med read:packages) och för --publicera gh. Versionerna skrivs in i
-# .env.example; checka in den ändringen innan du publicerar.
+# Bygger också PDF:erna av broschyren och manualerna (docs/) med Chromium i
+# Playwrights avbild; de bifogas releasen med fasta namn, så att länkarna i
+# README (releases/latest/download/…) alltid ger den senaste.
+#
+# För underhållarna, inte för installationen. Kräver docker och för
+# --publicera gh. Versionerna skrivs in i .env.example; checka in den
+# ändringen innan du publicerar.
 set -euo pipefail
 cd "$(dirname "$0")"
 # shellcheck source=lib/gemensamt.sh
@@ -78,6 +82,25 @@ tar -c -C "$tmp" filer avbilder.tar.gz >> "$ut"
 chmod +x "$ut"
 info "Klar: $ut ($(du -h "$ut" | cut -f1))"
 
+# ── PDF:erna ─────────────────────────────────────────────────────────────────
+PDF_AVBILD=mcr.microsoft.com/playwright/python:v1.49.0-noble
+PDF_FILER=(
+    "broschyr/broschyr.html:Arkitekturportalen-broschyr.pdf"
+    "installationsmanual.html:Arkitekturportalen-installationsmanual.pdf"
+    "render-manual.html:Arkitekturportalen-render.pdf"
+)
+pdfer=()
+for par in "${PDF_FILER[@]}"; do
+    kalla=${par%%:*}; namn=${par#*:}
+    info "PDF: $namn"
+    # Utan nätverk: sidorna ska inte hämta något utifrån.
+    docker run --rm --network none --user "$(id -u):$(id -g)" -e HOME=/tmp -v "$PWD/docs:/docs:ro" -v "$PWD/dist:/ut" "$PDF_AVBILD" sh -c \
+        'C=$(ls -d /ms-playwright/chromium-*/chrome-linux/chrome | head -1) && "$C" --headless --no-sandbox --disable-gpu --no-pdf-header-footer --print-to-pdf="/ut/$2" "file:///docs/$1" >/dev/null 2>&1' \
+        sh "$kalla" "$namn" || fel "PDF:en $namn gick inte att bygga."
+    [ -s "dist/$namn" ] || fel "PDF:en $namn blev tom."
+    pdfer+=("dist/$namn")
+done
+
 if [ $PUBLICERA = 1 ]; then
     anteckningar=$(cat <<EOF
 Arkitekturportalen $PORTAL med Integrationsplattformen $PLATTFORM och Arkitekten $ARKITEKTEN.
@@ -91,8 +114,10 @@ Arkitekturportalen $PORTAL med Integrationsplattformen $PLATTFORM och Arkitekten
 
 Filen innehåller allt som behövs. Första gången ställer den några frågor och installerar portalen i /opt/arkitekturportalen. På en server där portalen redan finns frågar den vad som ska göras: uppgradera (med en backup först) eller avinstallera (med frågor och en sista backup först).
 
+Dokumentation (PDF nedan): broschyren, installationsmanualen för egen server och installationsmanualen för Render.
+
 Nyheter: [portalen]($RELEASES_PORTAL/tag/v$PORTAL), [plattformen]($RELEASES_PLATTFORM/tag/v$PLATTFORM), [Arkitekten]($RELEASES_ARKITEKTEN/tag/v$ARKITEKTEN).
 EOF
 )
-    gh release create "v$PORTAL" "$ut" --title "Arkitekturportalen $PORTAL" --notes "$anteckningar"
+    gh release create "v$PORTAL" "$ut" "${pdfer[@]}" --title "Arkitekturportalen $PORTAL" --notes "$anteckningar"
 fi

@@ -1,5 +1,17 @@
 # Arkitekturportalen – drift
 
+## Dokumentation
+
+| | PDF (senaste versionen) | Källa |
+|---|---|---|
+| Broschyr – vad portalen är och gör | [Arkitekturportalen-broschyr.pdf](https://github.com/Arkitektursamverkan/arkitekturportalen-drift/releases/latest/download/Arkitekturportalen-broschyr.pdf) | [docs/broschyr/](docs/broschyr/broschyr.html) |
+| Installationsmanual – egen server | [Arkitekturportalen-installationsmanual.pdf](https://github.com/Arkitektursamverkan/arkitekturportalen-drift/releases/latest/download/Arkitekturportalen-installationsmanual.pdf) | [docs/installationsmanual.html](docs/installationsmanual.html) |
+| Installationsmanual – Render (molntjänst) | [Arkitekturportalen-render.pdf](https://github.com/Arkitektursamverkan/arkitekturportalen-drift/releases/latest/download/Arkitekturportalen-render.pdf) | [docs/render-manual.html](docs/render-manual.html), kortversion [docs/render.md](docs/render.md) |
+
+PDF:erna och installationsfilen ligger under [Releases](https://github.com/Arkitektursamverkan/arkitekturportalen-drift/releases/latest).
+
+## Om repot
+
 Installera och drifta Arkitekturportalen (och, om du vill,
 Integrationsplattformen och Arkitekten) på en egen server med Docker. Allt körs från färdiga
 avbilder; inget byggs på servern.
@@ -15,7 +27,7 @@ avbilder; inget byggs på servern.
 Bara Caddy publicerar portar (80 och 443). Databaserna och API:erna nås bara
 inne i Docker-nätet.
 
-**Render** och liknande plattformar: se [docs/render.md](docs/render.md) och
+**Render** och liknande plattformar: se Render-manualen ovan och
 `render.yaml` (en Blueprint med samma avbilder, utan Docker på egen server).
 
 ## Krav
@@ -203,6 +215,7 @@ Tillbaka igen: installera med installationsfilen och kör
 | `avinstallera.sh` | Avinstallation; installationsfilen kör det när man väljer att avinstallera. |
 | `bygg-installationsfil.sh` | För underhållarna: bygger `.run`-filen och releasen. |
 | `docs/installationsmanual.html` | Installationsmanualen; görs om till PDF och bifogas releasen. |
+| `docs/render-manual.html` | Installationsmanualen för Render; görs om till PDF och bifogas releasen. |
 | `docs/broschyr/` | Broschyren med skärmbilder av en demoinstallation; görs om till PDF och bifogas releasen. |
 | `lib/installationsfil.sh` | Början av `.run`-filen: packar upp och startar guiden. |
 | `compose.yml` | Alla tjänster. Ändras inte per installation. |

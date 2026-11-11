@@ -90,6 +90,11 @@ if [ $PLATTFORM = 1 ] && [ $ARK = 1 ] && [ -z "$(env_get PLATFORM_ARKITEKTEN_URL
     env_set PLATFORM_ARKITEKTEN_URL "http://arkitekten-flodestjanst:8200"
 fi
 [ $ARK = 1 ] && env_set ARKITEKTEN_VERSION "$ark_ny"
+# Nycklar som tillkommit sedan installationen (0.13.0): engångskoden för det
+# första kontot och nyckeln mellan Arkitektens flödestjänst och plattformen.
+# Befintliga värden behålls.
+env_set SETUP_CODE "$(hemlighet SETUP_CODE)"
+[ $ARK = 1 ] && env_set ARKITEKTEN_FLODESTJANST_NYCKEL "$(hemlighet ARKITEKTEN_FLODESTJANST_NYCKEL)"
 info "Startar de nya versionerna (portalen migrerar databasen)…"
 misslyckat() {
     info ""

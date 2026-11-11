@@ -7,6 +7,8 @@ funktioner, en ny korrigering för rättelser.
 
 ## Ej släppt
 
+- **Manualerna**: ny installationsmanual för Render (`docs/render-manual.html`), och installationsmanualen och broschyren uppdaterade till 0.16.1 (engångskoden, hur den första administratören blir till, `CONNECTOR_ALLOWED_HOSTS`, sex moduler). `bygg-installationsfil.sh` bygger PDF:erna och bifogar dem releasen med fasta namn; README länkar till dem under *Dokumentation*.
+- `uppgradera.sh` skapar `SETUP_CODE` och (med Arkitekten) `ARKITEKTEN_FLODESTJANST_NYCKEL` när de saknas i en äldre installation.
 - **Avbilderna är publika**: ingen registerinloggning behövs längre. `render.yaml` har inte längre `fromRegistryCreds: ghcr` (Renders *Registry Credential* kan tas bort), och `docs/render.md`, `installera.sh` och `uppgradera.sh` ber inte längre om `docker login ghcr.io`.
 - **Render**: `render.yaml` (Blueprint) installerar portalen, Integrationsplattformen och Arkitekten på Render med samma avbilder – Render Postgres, diskar och Renders TLS i stället för Caddy. Inget steg efter starten: plattformen skapar Arkitektens källa själv, portalen läser med plattformens admin-nyckel och första besöket skapar administratören. En gemensam Entra-registrering för alla tre (frågas per tjänst; tomt = egna konton). Guide: `docs/render.md`. Kräver portalen 0.12.0, plattformen 0.6.0 och Arkitekten 0.7.0.
 - **Engångskod för första administratören** (`SETUP_CODE`): installationsguiden skapar den och skriver ut den, och compose ger den till portalen, plattformen och Arkitekten. På Render skapar Render den på portal-api och de andra hämtar den därifrån. Utan den går inget första konto att skapa i en ny installation.
