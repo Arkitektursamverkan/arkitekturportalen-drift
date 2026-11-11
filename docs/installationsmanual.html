@@ -7,7 +7,7 @@
 @page {
   size: A4;
   margin: 20mm 18mm 22mm 18mm;
-  @bottom-left { content: "Arkitekturportalen 0.6.0 – installationsmanual"; font: 8pt Inter, sans-serif; color: #6b7280; }
+  @bottom-left { content: "Arkitekturportalen 0.16.1 – installationsmanual"; font: 8pt Inter, sans-serif; color: #6b7280; }
   @bottom-right { content: counter(page) " / " counter(pages); font: 8pt Inter, sans-serif; color: #6b7280; }
 }
 @page :first { margin: 0; @bottom-left { content: none; } @bottom-right { content: none; } }
@@ -104,8 +104,8 @@ th { font-weight: 600; color: var(--muted); font-size: 8.4pt; text-transform: up
   <h1>Arkitekturportalen</h1>
   <div class="sub">Installationsmanual – det här behöver ni veta och bestämma innan installationen</div>
   <div class="meta">
-    <b>Version 0.6.0</b> · november 2026<br>
-    Gäller installationsfilen <b>arkitekturportalen-0.6.0.run</b> (portalen 0.6.0, Integrationsplattformen 0.2.3, Arkitekten 0.3.2).<br>
+    <b>Version 0.16.1</b> · november 2026<br>
+    Gäller installationsfilen <b>arkitekturportalen-0.16.1.run</b> (portalen 0.16.1, Integrationsplattformen 0.10.0, Arkitekten 0.10.0).<br>
     Kontakt: Arkitektursamverkan, hfab_code@outlook.com
   </div>
 </section>
@@ -124,7 +124,7 @@ th { font-weight: 600; color: var(--muted); font-size: 8.4pt; text-transform: up
 
 <h3 id="om" style="margin-top:10mm">Om manualen och installationen</h3>
 <p>Arkitekturportalen är ett verktyg för verksamhetsarkitektur: processer, applikationer, information och teknik i ett gemensamt landskap med vyer, rapporter och analyser. Den installeras på organisationens egen server och körs där.</p>
-<p>Installationen är <b>en enda fil</b>, <code>arkitekturportalen-0.6.0.run</code>, som laddas ner från GitHub. Filen innehåller allt som behövs. När den körs ställer den ett antal frågor, och sedan installerar och startar den portalen. Det tar normalt 5–15 minuter.</p>
+<p>Installationen är <b>en enda fil</b>, <code>arkitekturportalen-0.16.1.run</code>, som laddas ner från GitHub. Filen innehåller allt som behövs. När den körs ställer den ett antal frågor, och sedan installerar och startar den portalen. Det tar normalt 5–15 minuter.</p>
 <p>Manualen är till för att ni ska kunna förbereda svaren i förväg. Varje fråga förklaras i två rutor:</p>
 <div class="rutor" style="margin-bottom:4mm">
   <div class="ruta kort"><div class="etikett">I korthet</div><p>Vad frågan gäller och vad de flesta svarar. Räcker för att komma igång.</p></div>
@@ -135,8 +135,8 @@ th { font-weight: 600; color: var(--muted); font-size: 8.4pt; text-transform: up
   <li>Den kontrollerar att Docker finns, och erbjuder att installera det annars.</li>
   <li>Den packar upp sig och läser in programmet i Docker.</li>
   <li>Den ställer frågorna i nästa avsnitt.</li>
-  <li>Den skapar alla lösenord och nycklar som systemet behöver internt, startar portalen, skapar administratören och läser in exempelinnehållet.</li>
-  <li>Den visar adressen till portalen och hur ni loggar in.</li>
+  <li>Den skapar alla lösenord och nycklar som systemet behöver internt, startar portalen, skapar det lokala administratörskontot (om ni valt det) och läser in exempelinnehållet.</li>
+  <li>Den visar adressen till portalen, hur ni loggar in och en <b>engångskod</b> som behövs för att skapa det första administratörskontot i en tjänst som ännu saknar konton.</li>
 </ol>
 <div class="not"><b>Allt går att ändra.</b> Körs installationsfilen igen på samma server startar frågorna om med era tidigare svar ifyllda. Organisationens namn, e-postdomäner, moduler och läsning utan inloggning kan dessutom ändras i portalen under <i>Administration → Organisation</i>.</div>
 
@@ -174,7 +174,8 @@ th { font-weight: 600; color: var(--muted); font-size: 8.4pt; text-transform: up
 
 
 <h3 style="margin-top:4mm">Installationsfilen</h3>
-<p>Filen laddas ner från <b>github.com/Arkitektursamverkan/arkitekturportalen-drift</b> under <i>Releases</i>. Den är ca 420 MB.</p>
+<p>Filen laddas ner från <b>github.com/Arkitektursamverkan/arkitekturportalen-drift</b> under <i>Releases</i>. Den är ca 450 MB.</p>
+<div class="not"><b>Molntjänsten Render i stället för egen server?</b> Det finns en egen manual för det: <i>Arkitekturportalen på Render</i>, bredvid den här under Releases på GitHub.</div>
 <p><b>Kontakt:</b> Arkitektursamverkan, <a href="mailto:hfab_code@outlook.com">hfab_code@outlook.com</a> – för frågor om installationen. Fel och förslag tas gärna emot som ärenden på GitHub.</p>
 
 <!-- ───────────────────────────── UBUNTU ───────────────────────────── -->
@@ -191,10 +192,10 @@ th { font-weight: 600; color: var(--muted); font-size: 8.4pt; text-transform: up
     <li><b>Be om DNS-namn</b> som pekar på serverns adress, och öppna port 80 och 443 i brandväggen.</li>
     <li><b>Ladda ner filen</b> från GitHub på din egen dator.</li>
     <li><b>Kopiera den till servern</b>, t.ex. med WinSCP (Windows) eller:
-      <pre>scp arkitekturportalen-0.6.0.run anvandare@server:</pre></li>
+      <pre>scp arkitekturportalen-0.16.1.run anvandare@server:</pre></li>
     <li><b>Logga in på servern</b> och kör filen:
       <pre>ssh anvandare@server
-sudo sh arkitekturportalen-0.6.0.run</pre></li>
+sudo sh arkitekturportalen-0.16.1.run</pre></li>
     <li><b>Svara på frågorna</b> (nästa avsnitt). Välj certifikat <code>auto</code> eller <code>egen</code>.</li>
   </ol>
   <p>Har servern Ubuntus brandvägg påslagen släpper du igenom webbtrafiken med <code>sudo ufw allow 80,443/tcp</code>.</p>
@@ -207,7 +208,7 @@ sudo sh arkitekturportalen-0.6.0.run</pre></li>
     <li><b>Ladda ner filen</b> från GitHub i webbläsaren på den datorn. Den hamnar i mappen <i>Hämtningar</i>.</li>
     <li><b>Öppna Terminal</b> (sök på "Terminal" i programmenyn) och skriv:
       <pre>cd ~/Hämtningar
-sudo sh arkitekturportalen-0.6.0.run</pre>
+sudo sh arkitekturportalen-0.16.1.run</pre>
       Heter mappen <i>Downloads</i> skriver du det i stället.</li>
     <li><b>Svara på frågorna.</b> Värdnamn: <code>localhost</code>. Certifikat: <code>intern</code>. Inget Entra ID; skapa ett lokalt administratörskonto.</li>
     <li><b>Öppna <code>https://localhost</code></b> i webbläsaren. Den varnar för certifikatet; välj <i>Avancerat → Fortsätt</i>. Det är väntat med ett internt certifikat.</li>
@@ -244,7 +245,7 @@ sudo sh arkitekturportalen-0.6.0.run</pre>
 
 <div class="fraga">
   <div class="fraga-huvud"><span class="nr">2</span><h3>TLS-läge (certifikat)</h3></div>
-  <div class="prompt">TLS-läge: &nbsp;&nbsp;auto · egen · intern</div>
+  <div class="prompt">TLS-läge [auto]: &nbsp;&nbsp;(auto · egen · intern)</div>
   <div class="rutor">
     <div class="ruta kort"><div class="etikett">I korthet</div>
       <p>Hur portalen får sitt certifikat, så att anslutningen är krypterad (hänglåset i webbläsaren).</p>
@@ -282,7 +283,7 @@ sudo sh arkitekturportalen-0.6.0.run</pre>
       <div class="svar"><b>Exempel:</b> <code>kommunen.se</code><br><b>Flera:</b> <code>kommunen.se,bolaget.se</code></div>
     </div>
     <div class="ruta djup"><div class="etikett">Fördjupning</div>
-      <p>Med Entra ID släpps bara personer in vars inloggningsnamn slutar på någon av domänerna. Det skyddar mot att konton från andra organisationer i samma Microsoft-miljö (t.ex. gäster) kommer in.</p>
+      <p>Med Entra ID släpps bara personer in vars inloggningsnamn slutar på någon av domänerna. Det skyddar mot att konton från andra organisationer i samma Microsoft-miljö kommer in. Gästkonton i er Entra-katalog släpps aldrig in, oavsett domän.</p>
       <p>Den första domänen används också när portalen föreslår e-postadresser till personer den hittar i arkitekturobjekten, t.ex. systemägare, så att de kan få konton i förväg.</p>
       <p>Ange alla domäner era medarbetare kan ha, även för bolag eller förvaltningar med egna domäner. Ändras senare under <i>Administration → Organisation</i>.</p>
     </div>
@@ -302,7 +303,7 @@ sudo sh arkitekturportalen-0.6.0.run</pre>
       <p>Följdfrågor vid ja:</p>
       <ul>
         <li><b>Katalog-ID (tenant ID)</b> och <b>Program-ID (client ID)</b> – finns på appregistreringens översiktssida.</li>
-        <li><b>Vem blir administratör?</b> – e-postadresser till de personer som ska bli administratörer i portalen första gången de loggar in. Övriga blir vanliga användare.</li>
+        <li><b>Vem blir administratör?</b> – e-postadresserna till de personer som får bli portalens <b>första</b> administratör. Den första av dem som loggar in blir administratör; därefter ger listan ingenting, och fler administratörer utses under <i>Administration → Användare</i>. Övriga blir vanliga användare.</li>
       </ul>
       <p>Konton skapas automatiskt första gången någon loggar in. Inga lösenord lagras i portalen.</p>
       <p>Valfritt: ska PDF:er som länkas från SharePoint kunna visas direkt i portalen, lägg till den delegerade Microsoft Graph-behörigheten <code>Files.Read.All</code> under <i>API-behörigheter</i> och ge administratörsmedgivande. Portalen läser då bara filer som den inloggade användaren redan har behörighet till.</p>
@@ -312,15 +313,17 @@ sudo sh arkitekturportalen-0.6.0.run</pre>
 
 <div class="fraga">
   <div class="fraga-huvud"><span class="nr">6</span><h3>Skapa ett lokalt administratörskonto?</h3></div>
-  <div class="prompt">Skapa ett lokalt administratörskonto? (J/n)</div>
+  <div class="prompt">Skapa ett lokalt administratörskonto? (J/n) &nbsp;&nbsp;– med Entra ID: (j/N)</div>
   <div class="rutor">
     <div class="ruta kort"><div class="etikett">I korthet</div>
       <p>Ett konto med e-post och lösenord som kan logga in och administrera portalen direkt.</p>
-      <div class="svar"><b>Utan Entra ID:</b> ja (annars kan ingen logga in)<br><b>Med Entra ID:</b> valfritt, bra som reserv</div>
+      <div class="svar"><b>Utan Entra ID:</b> ja, enklast<br><b>Med Entra ID:</b> nej</div>
     </div>
     <div class="ruta djup"><div class="etikett">Fördjupning</div>
+      <p>Svarar ni nej utan Entra ID skapas administratören i stället vid första besöket i portalen, med engångskoden som visas i slutet av installationen.</p>
+      <p><b>Med Entra ID, svara nej:</b> finns det redan en administratör blir ingen av adresserna i fråga 5 administratör när de loggar in. Ett reservkonto skapas bättre i efterhand, under <i>Administration → Användare</i>.</p>
       <p>Följdfrågor: <b>namn</b>, <b>e-post</b> (används som inloggning) och <b>lösenord</b> (minst 8 tecken). Lämnas lösenordet tomt skapas ett slumpat som visas en gång i slutet av installationen – skriv upp det och byt det efter första inloggningen.</p>
-      <p>Administratören kan sedan skapa fler lokala konton i portalen. Lokala konton fungerar även när Entra ID inte går att nå, och är därför ett bra reservkonto.</p>
+      <p>Administratören kan sedan skapa fler lokala konton i portalen. Lokala konton fungerar även när Entra ID inte går att nå.</p>
       <p>Körs filen igen och kontot redan finns lämnas det orört.</p>
     </div>
   </div>
@@ -347,7 +350,7 @@ sudo sh arkitekturportalen-0.6.0.run</pre>
   <div class="prompt">Verksamhetskalender med förändringslogg? (j/N)<br>Samarbeten: uppdrag och arbetsgrupper? (j/N)<br>Arkitekturstyrning: principer, nuläge, målarkitektur, GAP-analys? (j/N)<br>Ordlista? (j/N)<br>Enkäter? (j/N)<br>Förändringsstatistik: tillagda, ändrade och borttagna objekt över tid? (j/N)</div>
   <div class="rutor">
     <div class="ruta kort"><div class="etikett">I korthet</div>
-      <p>Fem tillägg utöver grundfunktionerna. Svara ja på dem ni vill använda från början.</p>
+      <p>Sex tillägg utöver grundfunktionerna. Svara ja på dem ni vill använda från början.</p>
       <div class="svar"><b>Osäker?</b> Svara nej – de kan slås på senare.</div>
     </div>
     <div class="ruta djup"><div class="etikett">Fördjupning</div>
@@ -368,7 +371,7 @@ sudo sh arkitekturportalen-0.6.0.run</pre>
     </div>
     <div class="ruta djup"><div class="etikett">Fördjupning</div>
       <p>Följdfråga: <b>plattformens värdnamn</b>, ett eget DNS-namn som pekar på samma server, t.ex. <code>integration.kommunen.se</code>. Plattformen har ett eget webbgränssnitt på den adressen. Certifikatet ordnas på samma sätt som för portalen.</p>
-      <p>Installationen kopplar ihop plattformen och portalen automatiskt. Plattformen behöver mer minne och processor (se kraven). Första besöket på plattformens adress skapar dess administratör.</p>
+      <p>Installationen kopplar ihop plattformen och portalen automatiskt. Plattformen behöver mer minne och processor (se kraven). Första besöket på plattformens adress skapar dess administratör, med engångskoden som visas i slutet av installationen.</p>
       <p>Väljs plattformen bort vid en senare körning stoppas den, men dess data ligger kvar. Mer i avsnittet om modulerna.</p>
     </div>
   </div>
@@ -386,11 +389,11 @@ sudo sh arkitekturportalen-0.6.0.run</pre>
       <p>Följdfrågor vid ja:</p>
       <ul>
         <li><b>Arkitektens värdnamn</b>, ett eget DNS-namn som pekar på samma server, t.ex. <code>processer.kommunen.se</code>. Certifikatet ordnas som för portalen.</li>
-        <li><b>Inloggning:</b> Entra ID eller egna konton. Med Entra ID kan portalens appregistrering användas (lägg då till <code>https://&lt;Arkitektens värdnamn&gt;/__ark/auth/callback</code> som omdirigerings-URI, plattform Web), eller en egen; klienthemligheten och de approller som ger administratör efterfrågas. Med egna konton skapar första besöket administratören.</li>
+        <li><b>Inloggning:</b> Entra ID eller egna konton. Med Entra ID kan portalens appregistrering användas (lägg då till <code>https://&lt;Arkitektens värdnamn&gt;/__ark/auth/callback</code> som omdirigerings-URI, plattform Web), eller en egen; klienthemligheten och de approller som ger administratör efterfrågas. Med egna konton skapar första besöket administratören, med samma engångskod som plattformen.</li>
         <li><b>Nyckel för AI-stödet</b> (Anthropic), valfri. Tom = AI-stödet är av.</li>
         <li><b>Arkitektens exempelprocesser</b> i slutet av installationen – ja första gången.</li>
       </ul>
-      <p>Installationen slår på modulen Arkitekten i portalen och skapar källan i Integrationsplattformen, som hämtar de publicerade processerna varannan timme. Väljs Arkitekten bort vid en senare körning stoppas den och källan stängs av, men processerna ligger kvar.</p>
+      <p>Installationen slår på modulen Arkitekten i portalen och skapar källan i Integrationsplattformen, med en egen nyckel mellan dem, som hämtar de publicerade processerna varannan timme. Väljs Arkitekten bort vid en senare körning stoppas den och källan stängs av, men processerna ligger kvar.</p>
     </div>
   </div>
 </div>
@@ -415,7 +418,7 @@ sudo sh arkitekturportalen-0.6.0.run</pre>
   </div>
 </div>
 
-<div class="not"><b>Sista steget</b> sker utan frågor: installationen skapar systemets interna lösenord och nycklar, startar allt och visar till sist portalens adress och hur ni loggar in. Inställningarna sparas i filen <code>/opt/arkitekturportalen/.env</code>. Den innehåller nycklarna som behövs för att läsa databasen – <b>spara en kopia på ett säkert ställe</b>.</div>
+<div class="not"><b>Sista steget</b> sker utan frågor: installationen skapar systemets interna lösenord och nycklar, startar allt och visar till sist adresserna, hur ni loggar in och <b>engångskoden</b> för det första administratörskontot. Inställningarna sparas i filen <code>/opt/arkitekturportalen/.env</code>. Den innehåller nycklarna som behövs för att läsa databasen – <b>spara en kopia på ett säkert ställe</b>.</div>
 
 <!-- ───────────────────────────── MODULER ───────────────────────────── -->
 
@@ -511,7 +514,7 @@ sudo sh arkitekturportalen-0.6.0.run</pre>
         <li><b>Mindre handpåläggning:</b> applikationslistan och processerna hålls i takt med källsystemen.</li>
         <li><b>Eget DNS-namn</b> och mer minne och processor på servern.</li>
         <li><b>Inloggningsuppgifter till källsystemen</b> lagras i plattformen, krypterade. Nyckeln finns i <code>.env</code> – utan den blir de oläsbara, ytterligare ett skäl att spara filen säkert.</li>
-        <li><b>Nätverk:</b> servern måste nå de system som ska läsas.</li>
+        <li><b>Nätverk:</b> servern måste nå de system som ska läsas. Av säkerhetsskäl når plattformen bara adresser på internet; källsystem i ert interna nät (t.ex. <code>2c8.kommunen.local</code> eller <code>10.0.0.0/8</code>) läggs in i <code>CONNECTOR_ALLOWED_HOSTS</code> i <code>.env</code>, kommaseparerade.</li>
         <li>Kan läggas till senare genom att köra installationsfilen igen.</li>
       </ul></div>
   </div>
@@ -540,7 +543,13 @@ sudo sh arkitekturportalen-0.6.0.run</pre>
 <h2 id="efter" style="page-break-before: auto; margin-top: 8mm">Efter installationen</h2>
 
 <h3>Logga in</h3>
-<p>Öppna portalens adress. Med Entra ID loggar de administratörer ni angav in med sina jobbkonton; annars loggar ni in med det lokala administratörskontot. Gå sedan till <i>Administration</i> för att bjuda in fler och justera inställningarna.</p>
+<p>Öppna portalens adress.</p>
+<ul>
+  <li><b>Med Entra ID:</b> logga in med jobbkontot. Den första av adresserna i fråga 5 som loggar in blir administratör.</li>
+  <li><b>Med lokalt administratörskonto:</b> logga in med det.</li>
+  <li><b>Inget av dem:</b> första besöket skapar administratörskontot och kräver engångskoden från installationens slut. Den står också i <code>.env</code> som <code>SETUP_CODE</code>.</li>
+</ul>
+<p>Integrationsplattformen, och Arkitekten med egna konton, skapar sin administratör på samma sätt vid första besöket, med samma engångskod. Gå sedan till <i>Administration</i> för att bjuda in fler och justera inställningarna.</p>
 
 <h3>Backup</h3>
 <p>Installationen tar inga backuper av sig själv. Lägg in en nattlig backup – IT-avdelningen kan göra det med kommandot <code>sudo crontab -e</code> och raden:</p>
@@ -562,7 +571,7 @@ sudo sh arkitekturportalen-0.6.0.run</pre>
 <table>
   <tr><th style="width:42%">Sökväg på servern</th><th>Innehåll</th></tr>
   <tr><td><code>/opt/arkitekturportalen/</code></td><td>Installationen</td></tr>
-  <tr><td><code>/opt/arkitekturportalen/.env</code></td><td>Svaren och de interna nycklarna – spara en kopia säkert</td></tr>
+  <tr><td><code>/opt/arkitekturportalen/.env</code></td><td>Svaren, de interna nycklarna och engångskoden – spara en kopia säkert</td></tr>
   <tr><td><code>/opt/arkitekturportalen/certs/</code></td><td>Eget certifikat (TLS-läge <code>egen</code>)</td></tr>
   <tr><td><code>/opt/arkitekturportalen/backups/</code></td><td>Backuper</td></tr>
   <tr><td><code>/opt/arkitekturportalen/README.md</code></td><td>Teknisk beskrivning för IT-avdelningen</td></tr>
@@ -591,10 +600,11 @@ sudo sh arkitekturportalen-0.6.0.run</pre>
   <tr><td>5</td><td>Entra ID: ja / nej<br><span style="color:#5b6673;font-size:8.4pt">tenant ID · client ID · administratörernas e-post</span></td><td style="height:16mm"></td></tr>
   <tr><td>6</td><td>Lokalt administratörskonto: namn och e-post</td><td style="height:9mm"></td></tr>
   <tr><td>7</td><td>Läsa utan inloggning: ja / nej</td><td style="height:9mm"></td></tr>
-  <tr><td>8</td><td>Moduler: kalender · samarbeten · arkitekturstyrning · ordlista · enkäter</td><td style="height:9mm"></td></tr>
-  <tr><td>9</td><td>Integrationsplattformen: ja / nej · värdnamn</td><td style="height:9mm"></td></tr>
+  <tr><td>8</td><td>Moduler: kalender · samarbeten · arkitekturstyrning · ordlista · enkäter · förändringsstatistik</td><td style="height:9mm"></td></tr>
+  <tr><td>9</td><td>Integrationsplattformen: ja / nej · värdnamn<br><span style="color:#5b6673;font-size:8.4pt">interna källsystem (CONNECTOR_ALLOWED_HOSTS)</span></td><td style="height:9mm"></td></tr>
   <tr><td>10</td><td>Arkitekten: ja / nej · värdnamn · inloggning (Entra ID / egna konton) · AI-nyckel</td><td style="height:9mm"></td></tr>
   <tr><td>11</td><td>Exempelinnehåll: ja / nej</td><td style="height:9mm"></td></tr>
+  <tr><td>–</td><td>Engångskoden sparad tills administratörerna finns</td><td style="height:9mm"></td></tr>
   <tr><td>–</td><td>Vem ansvarar för backup och kopian av <code>.env</code>?</td><td style="height:9mm"></td></tr>
 </table>
 
@@ -604,7 +614,7 @@ sudo sh arkitekturportalen-0.6.0.run</pre>
 <div class="om">
   <p><b>Bakgrunden.</b> Arkitekturportalen började som ett eget behov hos Halmstads Fastighets AB (HFAB). Vi gjorde en kartläggning av vår IT-arkitektur – processer, system, information och teknik – med TOGAF som ramverk i bakhuvudet. Kartläggningen behövde ett hem där den kunde hållas levande och användas, inte bara ett dokument som blir inaktuellt.</p>
   <p><b>Valet.</b> Vi utvärderade olika systemstöd för arkitekturarbetet. Slutsatsen blev att det var värt att pröva att utveckla ett eget, med hjälp av AI-agenter. Resultatet är Arkitekturportalen och Integrationsplattformen.</p>
-  <p><b>Delningen.</b> Vår vision är att släppa portalen som öppen källkod – den är redan licensierad under EUPL-1.2, EU:s licens för fri programvara. Eftersom vi inte har arbetat så här tidigare börjar vi försiktigt: de som är intresserade bjuds in att ta del av koden via GitHub under namnet Arkitektursamverkan. Vi hoppas kunna dela den fullt ut publikt framöver, och att fler organisationer vill vara med och utveckla den.</p>
+  <p><b>Delningen.</b> Portalen, Integrationsplattformen och Arkitekten är öppen källkod under EUPL-1.2, EU:s licens för fri programvara. Koden och programpaketen ligger publikt på GitHub under namnet Arkitektursamverkan. Vi hoppas att fler organisationer vill använda dem och vara med och utveckla dem.</p>
   <p><b>Vill ni vara med?</b> Kontakta Arkitektursamverkan, <a href="mailto:hfab_code@outlook.com">hfab_code@outlook.com</a>.</p>
 </div>
 
