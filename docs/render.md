@@ -47,6 +47,12 @@ med fel, och tjänsterna efter den skapades inte.
      | plattform-web | Single-page application | `https://<plattform-web>/login` – med **`/login`** |
      | arkitekten | **Web** | `https://<arkitekten>/__ark/auth/callback` |
 
+     Det blir **två plattformar** i registreringen: *Add a platform →
+     Single-page application* med portalens och plattformens adresser, och
+     *Add a platform → Web* med Arkitektens. Arkitekten loggar in med
+     klienthemligheten och fungerar inte om dess adress hamnar under
+     Single-page application.
+
      Saknas en ger Microsoft felet AADSTS50011 med den adress som saknas.
    - *Expose an API*: Application ID URI `api://<client-id>` och scopet
      `access_as_user`
