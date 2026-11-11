@@ -266,8 +266,7 @@ done
 rubrik "Avbilder"
 if [ $PULL = 1 ]; then
     if ! dc pull --quiet; then
-        info "Avbilderna gick inte att hämta. Är de privata behövs först:"
-        info "  docker login ghcr.io   (användarnamn + GitHub-token med read:packages)"
+        info "Avbilderna gick inte att hämta. Når servern ghcr.io (brandvägg, proxy)?"
         fel "docker compose pull misslyckades."
     fi
 fi

@@ -30,16 +30,12 @@ med fel, och tjänsterna efter den skapades inte.
 
 ## Före
 
-1. **Registerinloggning.** Avbilderna i `ghcr.io/arkitektursamverkan` är
-   privata. Skapa en GitHub-token (classic) med `read:packages`, och lägg in den
-   i Render under *Workspace Settings → Registry Credentials*: registret
-   *GitHub*, användarnamnet för token och namnet **`ghcr`**.
-2. **Åtkomst till repot.** Installera Renders GitHub-app för organisationen
+1. **Åtkomst till repot.** Installera Renders GitHub-app för organisationen
    (*Account Settings → GitHub*) med åtkomst till det här repot, eller lägg
    `render.yaml` i ett eget repo som Render når.
-3. **Adresser.** Renders egna `*.onrender.com`-adresser duger för prov. Egna
+2. **Adresser.** Renders egna `*.onrender.com`-adresser duger för prov. Egna
    domäner (t.ex. `arkitektur.example.org`) läggs till efter skapandet.
-4. **Entra ID (valfritt) – en app-registrering för alla tre.** Samma konto
+3. **Entra ID (valfritt) – en app-registrering för alla tre.** Samma konto
    loggar då in i portalen, plattformen och Arkitekten. I registreringen:
    - *Authentication* – tre redirect-adresser, exakt så här (adresserna står
      överst på respektive tjänsts sida i Render när de skapats; lägg till dem
