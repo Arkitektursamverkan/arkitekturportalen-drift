@@ -7,6 +7,12 @@ funktioner, en ny korrigering för rättelser.
 
 ## Ej släppt
 
+- (inget än)
+
+## 0.16.1 – 2026-11-11
+
+Portalen 0.16.1, Integrationsplattformen 0.10.0 och Arkitekten 0.10.0 – de första versionerna sedan koden blev publik. Uppgradera portalen före plattformen.
+
 - **Manualerna**: ny installationsmanual för Render (`docs/render-manual.html`), och installationsmanualen och broschyren uppdaterade till 0.16.1 (engångskoden, hur den första administratören blir till, `CONNECTOR_ALLOWED_HOSTS`, sex moduler). `bygg-installationsfil.sh` bygger PDF:erna och bifogar dem releasen med fasta namn; README länkar till dem under *Dokumentation*.
 - `uppgradera.sh` skapar `SETUP_CODE` och (med Arkitekten) `ARKITEKTEN_FLODESTJANST_NYCKEL` när de saknas i en äldre installation.
 - **Avbilderna är publika**: ingen registerinloggning behövs längre. `render.yaml` har inte längre `fromRegistryCreds: ghcr` (Renders *Registry Credential* kan tas bort), och `docs/render.md`, `installera.sh` och `uppgradera.sh` ber inte längre om `docker login ghcr.io`.
