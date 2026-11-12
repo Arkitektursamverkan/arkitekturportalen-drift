@@ -9,6 +9,14 @@ funktioner, en ny korrigering för rättelser.
 
 - (inget än)
 
+## 0.16.2 – 2026-11-12
+
+Portalen 0.16.2, Integrationsplattformen 0.10.0 och Arkitekten 0.12.0. Inga databasändringar; uppgradera som vanligt.
+
+- **Portalen 0.16.2**: förändringsstatistiken räknar inte längre systemfälten (till exempel tidsstämplar) som ändringar.
+- **Arkitekten 0.11.0–0.12.0**: avståndet mellan markerade objekt kan ändras (→← och ←→), som ett inskrivet procenttal (30–200 %) och med ↺ för att återställa; markeringen står kvar när diagrammet ritas om.
+- `render.yaml`, `.env.example`, manualerna och broschyren på de nya versionerna.
+
 ## 0.16.1 – 2026-11-11
 
 Portalen 0.16.1, Integrationsplattformen 0.10.0 och Arkitekten 0.10.0 – de första versionerna sedan koden blev publik. Uppgradera portalen före plattformen.
