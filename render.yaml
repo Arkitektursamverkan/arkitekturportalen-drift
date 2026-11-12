@@ -123,7 +123,7 @@ services:
     name: plattform-api
     runtime: image
     image:
-      url: ghcr.io/arkitektursamverkan/integrationsplattformen-api:0.10.0
+      url: ghcr.io/arkitektursamverkan/integrationsplattformen-api:0.11.0
     plan: starter
     region: frankfurt
     envVars:
@@ -184,7 +184,7 @@ services:
     name: plattform-web
     runtime: image
     image:
-      url: ghcr.io/arkitektursamverkan/integrationsplattformen-web:0.10.0
+      url: ghcr.io/arkitektursamverkan/integrationsplattformen-web:0.11.0
     plan: starter
     region: frankfurt
     healthCheckPath: /

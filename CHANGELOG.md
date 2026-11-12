@@ -7,7 +7,7 @@ funktioner, en ny korrigering för rättelser.
 
 ## Ej släppt
 
-- (inget än)
+- `render.yaml` på Integrationsplattformen **0.11.0**: ny koppling *Excel i SharePoint* (blad eller tabell i en .xlsx i SharePoint/OneDrive via Microsoft Graph). `.env.example` och manualerna följer med i nästa drift-release.
 
 ## 0.16.2 – 2026-11-12
 
