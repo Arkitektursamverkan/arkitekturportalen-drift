@@ -7,7 +7,7 @@
 @page {
   size: A4;
   margin: 20mm 18mm 22mm 18mm;
-  @bottom-left { content: "Arkitekturportalen 0.16.1 – installationsmanual"; font: 8pt Inter, sans-serif; color: #6b7280; }
+  @bottom-left { content: "Arkitekturportalen 0.16.2 – installationsmanual"; font: 8pt Inter, sans-serif; color: #6b7280; }
   @bottom-right { content: counter(page) " / " counter(pages); font: 8pt Inter, sans-serif; color: #6b7280; }
 }
 @page :first { margin: 0; @bottom-left { content: none; } @bottom-right { content: none; } }
@@ -104,8 +104,8 @@ th { font-weight: 600; color: var(--muted); font-size: 8.4pt; text-transform: up
   <h1>Arkitekturportalen</h1>
   <div class="sub">Installationsmanual – det här behöver ni veta och bestämma innan installationen</div>
   <div class="meta">
-    <b>Version 0.16.1</b> · november 2026<br>
-    Gäller installationsfilen <b>arkitekturportalen-0.16.1.run</b> (portalen 0.16.1, Integrationsplattformen 0.10.0, Arkitekten 0.10.0).<br>
+    <b>Version 0.16.2</b> · november 2026<br>
+    Gäller installationsfilen <b>arkitekturportalen-0.16.2.run</b> (portalen 0.16.2, Integrationsplattformen 0.10.0, Arkitekten 0.12.0).<br>
     Kontakt: Arkitektursamverkan, hfab_code@outlook.com
   </div>
 </section>
@@ -124,7 +124,7 @@ th { font-weight: 600; color: var(--muted); font-size: 8.4pt; text-transform: up
 
 <h3 id="om" style="margin-top:10mm">Om manualen och installationen</h3>
 <p>Arkitekturportalen är ett verktyg för verksamhetsarkitektur: processer, applikationer, information och teknik i ett gemensamt landskap med vyer, rapporter och analyser. Den installeras på organisationens egen server och körs där.</p>
-<p>Installationen är <b>en enda fil</b>, <code>arkitekturportalen-0.16.1.run</code>, som laddas ner från GitHub. Filen innehåller allt som behövs. När den körs ställer den ett antal frågor, och sedan installerar och startar den portalen. Det tar normalt 5–15 minuter.</p>
+<p>Installationen är <b>en enda fil</b>, <code>arkitekturportalen-0.16.2.run</code>, som laddas ner från GitHub. Filen innehåller allt som behövs. När den körs ställer den ett antal frågor, och sedan installerar och startar den portalen. Det tar normalt 5–15 minuter.</p>
 <p>Manualen är till för att ni ska kunna förbereda svaren i förväg. Varje fråga förklaras i två rutor:</p>
 <div class="rutor" style="margin-bottom:4mm">
   <div class="ruta kort"><div class="etikett">I korthet</div><p>Vad frågan gäller och vad de flesta svarar. Räcker för att komma igång.</p></div>
@@ -192,10 +192,10 @@ th { font-weight: 600; color: var(--muted); font-size: 8.4pt; text-transform: up
     <li><b>Be om DNS-namn</b> som pekar på serverns adress, och öppna port 80 och 443 i brandväggen.</li>
     <li><b>Ladda ner filen</b> från GitHub på din egen dator.</li>
     <li><b>Kopiera den till servern</b>, t.ex. med WinSCP (Windows) eller:
-      <pre>scp arkitekturportalen-0.16.1.run anvandare@server:</pre></li>
+      <pre>scp arkitekturportalen-0.16.2.run anvandare@server:</pre></li>
     <li><b>Logga in på servern</b> och kör filen:
       <pre>ssh anvandare@server
-sudo sh arkitekturportalen-0.16.1.run</pre></li>
+sudo sh arkitekturportalen-0.16.2.run</pre></li>
     <li><b>Svara på frågorna</b> (nästa avsnitt). Välj certifikat <code>auto</code> eller <code>egen</code>.</li>
   </ol>
   <p>Har servern Ubuntus brandvägg påslagen släpper du igenom webbtrafiken med <code>sudo ufw allow 80,443/tcp</code>.</p>
@@ -208,7 +208,7 @@ sudo sh arkitekturportalen-0.16.1.run</pre></li>
     <li><b>Ladda ner filen</b> från GitHub i webbläsaren på den datorn. Den hamnar i mappen <i>Hämtningar</i>.</li>
     <li><b>Öppna Terminal</b> (sök på "Terminal" i programmenyn) och skriv:
       <pre>cd ~/Hämtningar
-sudo sh arkitekturportalen-0.16.1.run</pre>
+sudo sh arkitekturportalen-0.16.2.run</pre>
       Heter mappen <i>Downloads</i> skriver du det i stället.</li>
     <li><b>Svara på frågorna.</b> Värdnamn: <code>localhost</code>. Certifikat: <code>intern</code>. Inget Entra ID; skapa ett lokalt administratörskonto.</li>
     <li><b>Öppna <code>https://localhost</code></b> i webbläsaren. Den varnar för certifikatet; välj <i>Avancerat → Fortsätt</i>. Det är väntat med ett internt certifikat.</li>
