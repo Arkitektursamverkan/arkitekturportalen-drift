@@ -206,7 +206,7 @@ services:
     name: arkitekten
     runtime: image
     image:
-      url: ghcr.io/arkitektursamverkan/arkitekten:0.13.0
+      url: ghcr.io/arkitektursamverkan/arkitekten:0.14.0
     plan: starter
     region: frankfurt
     healthCheckPath: /health
