@@ -7,10 +7,17 @@ funktioner, en ny korrigering för rättelser.
 
 ## Ej släppt
 
-- `render.yaml` på portalen **0.18.0**: egna fält på objekt och kopplingar (*Administration → Listor → Egna fält*), CSV-import av servrar och servertjänster, och detaljpanelen stängs när man byter sida. Inga databasändringar.
-- `render.yaml` på Integrationsplattformen **0.11.0**: ny koppling *Excel i SharePoint* (blad eller tabell i en .xlsx i SharePoint/OneDrive via Microsoft Graph). `.env.example` och manualerna följer med i nästa drift-release.
-- `render.yaml` på Arkitekten **0.13.0**: AI-stödet kan besvaras av Berget AI i stället för Claude – lägg `BERGET_API_KEY` i Arkitekten-tjänstens miljö (`ANTHROPIC_API_KEY` fungerar som förut; finns båda väljer `ARK_AI_LEVERANTOR`).
-- `render.yaml` på Arkitekten **0.14.0**: ny standardstil för affärsprocesser (omritade symboler och pilspetsar), och ett stilpaket kan ha egna symboler. Redan ritade processer får det nya utseendet.
+- (inget än)
+
+## 0.18.0 – 2026-11-13
+
+Portalen 0.18.0, Integrationsplattformen 0.11.0 och Arkitekten 0.14.0. Inga databasändringar; uppgradera som vanligt.
+
+- **Portalen 0.17.0–0.18.0**: egna fält på objekt och kopplingar (*Administration → Listor → Egna fält*) – en kort text eller ett av några val, till exempel *Integrationstyp* på *Integrerar med*; en synk skriver inte över dem. CSV-import av servrar och servertjänster. Detaljpanelen stängs när man byter sida.
+- **Integrationsplattformen 0.11.0**: ny koppling *Excel i SharePoint* (blad eller tabell i en .xlsx i SharePoint/OneDrive via Microsoft Graph).
+- **Arkitekten 0.13.0–0.14.0**: AI-stödet kan besvaras av Berget AI i stället för Claude, och affärsprocesserna har en ny standardstil med omritade symboler och pilspetsar – redan ritade processer får det nya utseendet. Ett stilpaket kan ha egna symboler.
+- **AI-nyckeln på egen server**: `ARKITEKTEN_BERGET_API_KEY`, `ARKITEKTEN_AI_LEVERANTOR` och `ARKITEKTEN_AI_MODELL` i `.env` (se `.env.example`); `ARKITEKTEN_ANTHROPIC_API_KEY` fungerar som förut.
+- `render.yaml`, `.env.example`, manualerna och broschyren på de nya versionerna; broschyrens bild av Arkitekten är ny.
 
 ## 0.16.2 – 2026-11-12
 

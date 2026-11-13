@@ -7,7 +7,7 @@
 @page {
   size: A4;
   margin: 20mm 18mm 22mm 18mm;
-  @bottom-left { content: "Arkitekturportalen 0.16.2 – installationsmanual"; font: 8pt Inter, sans-serif; color: #6b7280; }
+  @bottom-left { content: "Arkitekturportalen 0.18.0 – installationsmanual"; font: 8pt Inter, sans-serif; color: #6b7280; }
   @bottom-right { content: counter(page) " / " counter(pages); font: 8pt Inter, sans-serif; color: #6b7280; }
 }
 @page :first { margin: 0; @bottom-left { content: none; } @bottom-right { content: none; } }
@@ -104,8 +104,8 @@ th { font-weight: 600; color: var(--muted); font-size: 8.4pt; text-transform: up
   <h1>Arkitekturportalen</h1>
   <div class="sub">Installationsmanual – det här behöver ni veta och bestämma innan installationen</div>
   <div class="meta">
-    <b>Version 0.16.2</b> · november 2026<br>
-    Gäller installationsfilen <b>arkitekturportalen-0.16.2.run</b> (portalen 0.16.2, Integrationsplattformen 0.10.0, Arkitekten 0.12.0).<br>
+    <b>Version 0.18.0</b> · november 2026<br>
+    Gäller installationsfilen <b>arkitekturportalen-0.18.0.run</b> (portalen 0.18.0, Integrationsplattformen 0.11.0, Arkitekten 0.14.0).<br>
     Kontakt: Arkitektursamverkan, hfab_code@outlook.com
   </div>
 </section>
@@ -124,7 +124,7 @@ th { font-weight: 600; color: var(--muted); font-size: 8.4pt; text-transform: up
 
 <h3 id="om" style="margin-top:10mm">Om manualen och installationen</h3>
 <p>Arkitekturportalen är ett verktyg för verksamhetsarkitektur: processer, applikationer, information och teknik i ett gemensamt landskap med vyer, rapporter och analyser. Den installeras på organisationens egen server och körs där.</p>
-<p>Installationen är <b>en enda fil</b>, <code>arkitekturportalen-0.16.2.run</code>, som laddas ner från GitHub. Filen innehåller allt som behövs. När den körs ställer den ett antal frågor, och sedan installerar och startar den portalen. Det tar normalt 5–15 minuter.</p>
+<p>Installationen är <b>en enda fil</b>, <code>arkitekturportalen-0.18.0.run</code>, som laddas ner från GitHub. Filen innehåller allt som behövs. När den körs ställer den ett antal frågor, och sedan installerar och startar den portalen. Det tar normalt 5–15 minuter.</p>
 <p>Manualen är till för att ni ska kunna förbereda svaren i förväg. Varje fråga förklaras i två rutor:</p>
 <div class="rutor" style="margin-bottom:4mm">
   <div class="ruta kort"><div class="etikett">I korthet</div><p>Vad frågan gäller och vad de flesta svarar. Räcker för att komma igång.</p></div>
@@ -192,10 +192,10 @@ th { font-weight: 600; color: var(--muted); font-size: 8.4pt; text-transform: up
     <li><b>Be om DNS-namn</b> som pekar på serverns adress, och öppna port 80 och 443 i brandväggen.</li>
     <li><b>Ladda ner filen</b> från GitHub på din egen dator.</li>
     <li><b>Kopiera den till servern</b>, t.ex. med WinSCP (Windows) eller:
-      <pre>scp arkitekturportalen-0.16.2.run anvandare@server:</pre></li>
+      <pre>scp arkitekturportalen-0.18.0.run anvandare@server:</pre></li>
     <li><b>Logga in på servern</b> och kör filen:
       <pre>ssh anvandare@server
-sudo sh arkitekturportalen-0.16.2.run</pre></li>
+sudo sh arkitekturportalen-0.18.0.run</pre></li>
     <li><b>Svara på frågorna</b> (nästa avsnitt). Välj certifikat <code>auto</code> eller <code>egen</code>.</li>
   </ol>
   <p>Har servern Ubuntus brandvägg påslagen släpper du igenom webbtrafiken med <code>sudo ufw allow 80,443/tcp</code>.</p>
@@ -208,7 +208,7 @@ sudo sh arkitekturportalen-0.16.2.run</pre></li>
     <li><b>Ladda ner filen</b> från GitHub i webbläsaren på den datorn. Den hamnar i mappen <i>Hämtningar</i>.</li>
     <li><b>Öppna Terminal</b> (sök på "Terminal" i programmenyn) och skriv:
       <pre>cd ~/Hämtningar
-sudo sh arkitekturportalen-0.16.2.run</pre>
+sudo sh arkitekturportalen-0.18.0.run</pre>
       Heter mappen <i>Downloads</i> skriver du det i stället.</li>
     <li><b>Svara på frågorna.</b> Värdnamn: <code>localhost</code>. Certifikat: <code>intern</code>. Inget Entra ID; skapa ett lokalt administratörskonto.</li>
     <li><b>Öppna <code>https://localhost</code></b> i webbläsaren. Den varnar för certifikatet; välj <i>Avancerat → Fortsätt</i>. Det är väntat med ett internt certifikat.</li>
@@ -390,7 +390,7 @@ sudo sh arkitekturportalen-0.16.2.run</pre>
       <ul>
         <li><b>Arkitektens värdnamn</b>, ett eget DNS-namn som pekar på samma server, t.ex. <code>processer.kommunen.se</code>. Certifikatet ordnas som för portalen.</li>
         <li><b>Inloggning:</b> Entra ID eller egna konton. Med Entra ID kan portalens appregistrering användas (lägg då till <code>https://&lt;Arkitektens värdnamn&gt;/__ark/auth/callback</code> som omdirigerings-URI, plattform Web), eller en egen; klienthemligheten och de approller som ger administratör efterfrågas. Med egna konton skapar första besöket administratören, med samma engångskod som plattformen.</li>
-        <li><b>Nyckel för AI-stödet</b> (Anthropic), valfri. Tom = AI-stödet är av.</li>
+        <li><b>Nyckel för AI-stödet</b> (Anthropic), valfri. Tom = AI-stödet är av. Den som hellre använder Berget AI lämnar frågan tom och lägger efteråt <code>ARKITEKTEN_BERGET_API_KEY</code> i <code>.env</code> (se <code>.env.example</code>) och kör <code>docker compose up -d arkitekten</code>.</li>
         <li><b>Arkitektens exempelprocesser</b> i slutet av installationen – ja första gången.</li>
       </ul>
       <p>Installationen slår på modulen Arkitekten i portalen och skapar källan i Integrationsplattformen, med en egen nyckel mellan dem, som hämtar de publicerade processerna varannan timme. Väljs Arkitekten bort vid en senare körning stoppas den och källan stängs av, men processerna ligger kvar.</p>
@@ -507,7 +507,7 @@ sudo sh arkitekturportalen-0.16.2.run</pre>
   <div class="typ">Eget system bredvid portalen – fråga 9</div>
   <div class="kolumner">
     <div><h4>Vad den gör</h4>
-      <p>Hämtar uppgifter från andra system – SharePoint-listor, processmodeller i 2C8, REST-API:er och CSV-filer – bearbetar dem i flöden och lämnar dem till portalen. Flödena körs på schema, t.ex. varje natt, eller när någon trycker på <i>Hämta nu</i> i portalen.</p>
+      <p>Hämtar uppgifter från andra system – SharePoint-listor, Excel-filer i SharePoint, processmodeller i 2C8, REST-API:er och CSV-filer – bearbetar dem i flöden och lämnar dem till portalen. Flödena körs på schema, t.ex. varje natt, eller när någon trycker på <i>Hämta nu</i> i portalen.</p>
       <p>Har ett eget webbgränssnitt för anslutningar, flöden, scheman och körningsloggar.</p></div>
     <div><h4>Vad det innebär</h4>
       <ul>
@@ -531,7 +531,7 @@ sudo sh arkitekturportalen-0.16.2.run</pre>
       <ul>
         <li><b>Bilderna går via plattformen:</b> plattformen hämtar dem från Arkitekten varannan timme, eller när någon trycker på <i>Hämta nu</i>. Därför kräver Arkitekten plattformen.</li>
         <li><b>Eget DNS-namn</b> och egen inloggning (Entra ID eller egna konton).</li>
-        <li><b>AI-stödet är valfritt</b> och använder en egen nyckel till Anthropic.</li>
+        <li><b>AI-stödet är valfritt</b> och använder en egen nyckel, till Anthropic (Claude) eller till Berget AI (öppna modeller, drift i Sverige).</li>
         <li><b>Processerna</b> ligger i en egen volym och ingår i <code>backup.sh</code>.</li>
         <li>Kan läggas till senare genom att köra installationsfilen igen.</li>
       </ul></div>
@@ -585,6 +585,7 @@ sudo sh arkitekturportalen-0.16.2.run</pre>
   <li><b>Portalens namn</b> (<i>Administration → Organisation</i>): visas i stället för standardnamnet i sidhuvudet, på inloggningssidan, i webbläsarens flik och i texterna. Tomt fält ger standardnamnet.</li>
   <li><b>Stänga av listor</b> (<i>Administration → Listor</i>): Informationskällor, Teknikkomponenter, Servrar och Servertjänster går att stänga av var för sig. Listan och dess objekt döljs för alla, i menyer, sökning och grafer. Inget raderas: objekten kommer tillbaka när listan slås på, och synk till listan fortsätter under tiden. Applikationer, processer och informationsobjekt går inte att stänga av, eftersom rapporterna bygger på dem.</li>
   <li><b>Egna listor</b> (<i>Administration → Listor</i>): en lista med namn, domän och egna fält (text, tal, datum, val, länk). Objekten fylls i för hand eller synkas från Integrationsplattformen, till exempel från SharePoint: välj listan som mål i synkprofilen. Objekten kan kopplas till andra objekt och syns i sökning och grafer, men ingår inte i rapporterna eller Förändringsstatistik. Vem som får läsa och ändra styrs under <i>Administration → Behörigheter</i> med typen Egna listor, som gäller alla egna listor tillsammans.</li>
+  <li><b>Egna fält</b> (<i>Administration → Listor → Egna fält</i>): fält på de inbyggda objekttyperna och på kopplingarna, till exempel <i>Integrationstyp</i> på <i>Integrerar med</i> – en kort text eller ett av några val. Fälten fylls i i rutan som öppnas när man klickar på ett objekt eller en koppling, av den som får ändra det. En synk skriver inte över dem.</li>
 </ul>
 <div class="not"><b>Tillbaka till en äldre version.</b> När egna listor har börjat användas går det inte att byta till en version före 0.6.0 utan att återställa databasen från en backup.</div>
 
