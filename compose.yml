@@ -206,8 +206,12 @@ services:
       ENTRA_ADMIN_ROLLER: ${ARKITEKTEN_ENTRA_ADMIN_ROLLER:-Arkitekten.Admin,Admin}
       ENTRA_ADMIN_GRUPPER: ${ARKITEKTEN_ENTRA_ADMIN_GRUPPER:-}
       ARK_ADMINS: ${BOOTSTRAP_ADMIN_EMAILS:-}
-      # Valfritt – tomt = AI-stödet är av.
+      # Valfritt – tomt = AI-stödet är av. En nyckel räcker; finns båda väljer
+      # ARK_AI_LEVERANTOR (anthropic | berget).
       ANTHROPIC_API_KEY: ${ARKITEKTEN_ANTHROPIC_API_KEY:-}
+      BERGET_API_KEY: ${ARKITEKTEN_BERGET_API_KEY:-}
+      ARK_AI_LEVERANTOR: ${ARKITEKTEN_AI_LEVERANTOR:-}
+      ARK_AI_MODELL: ${ARKITEKTEN_AI_MODELL:-}
       # Publiceringen till portalen, med portalens tjänstenyckel över Docker-nätet.
       EA_API_URL: http://api:8000/api/v1
       EA_API_KEY: ${API_KEY:-}
