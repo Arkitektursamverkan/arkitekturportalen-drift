@@ -7,6 +7,7 @@ funktioner, en ny korrigering för rättelser.
 
 ## Ej släppt
 
+- `render.yaml` på portalen **0.18.0**: egna fält på objekt och kopplingar (*Administration → Listor → Egna fält*), CSV-import av servrar och servertjänster, och detaljpanelen stängs när man byter sida. Inga databasändringar.
 - `render.yaml` på Integrationsplattformen **0.11.0**: ny koppling *Excel i SharePoint* (blad eller tabell i en .xlsx i SharePoint/OneDrive via Microsoft Graph). `.env.example` och manualerna följer med i nästa drift-release.
 - `render.yaml` på Arkitekten **0.13.0**: AI-stödet kan besvaras av Berget AI i stället för Claude – lägg `BERGET_API_KEY` i Arkitekten-tjänstens miljö (`ANTHROPIC_API_KEY` fungerar som förut; finns båda väljer `ARK_AI_LEVERANTOR`).
 - `render.yaml` på Arkitekten **0.14.0**: ny standardstil för affärsprocesser (omritade symboler och pilspetsar), och ett stilpaket kan ha egna symboler. Redan ritade processer får det nya utseendet.

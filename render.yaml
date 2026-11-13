@@ -36,7 +36,7 @@ services:
     name: portal-api
     runtime: image
     image:
-      url: ghcr.io/arkitektursamverkan/arkitekturportalen-api:0.16.2
+      url: ghcr.io/arkitektursamverkan/arkitekturportalen-api:0.18.0
     plan: starter
     region: frankfurt
     # Ögonblicksbilder och synkprofiler – på en och samma disk.
@@ -103,7 +103,7 @@ services:
     name: portal-web
     runtime: image
     image:
-      url: ghcr.io/arkitektursamverkan/arkitekturportalen-web:0.16.2
+      url: ghcr.io/arkitektursamverkan/arkitekturportalen-web:0.18.0
     plan: starter
     region: frankfurt
     healthCheckPath: /
