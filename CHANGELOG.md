@@ -7,7 +7,7 @@ funktioner, en ny korrigering för rättelser.
 
 ## Ej släppt
 
-- (inget än)
+- **render.yaml: portalen 0.29.0.** Fältens namn går att byta under *Administration → Listor*, och CSV-mallarna och importen följer namnen. Med på köpet kommer allt i portalen sedan 0.18.0 (se portalens ändringslogg); databasen migreras när portalens api startar. Plattformen och Arkitekten står kvar på 0.11.0 och 0.14.0.
 
 ## 0.18.0 – 2026-11-13
 
