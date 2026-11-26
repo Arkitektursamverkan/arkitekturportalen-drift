@@ -7,6 +7,8 @@ funktioner, en ny korrigering för rättelser.
 
 ## Ej släppt
 
+- **render.yaml: Arkitekten 0.28.0.** Mallen för BMT-exporten laddas upp under *Inställningar* i Arkitekten – förut krävdes en fil på servern, vilket inte gick på Render. Med på köpet kommer allt i Arkitekten sedan 0.14.0 (se Arkitektens ändringslogg): systemskisser, informationsklassning, utskrift, kategoriregister och den nya menyn. Ytan *Demo* är borttagen – processer som ligger kvar i kategorin `Demo` utan ägare räknas till den gemensamma katalogen. Portalen och plattformen står kvar på 0.29.0 och 0.11.0; **skyddsklasserna** (vem som får se en klassad process) gäller därför bara i Arkitekten – portalen visar publicerade bilder för alla tills den och plattformen höjs till 0.31.0 och 0.14.0 eller senare.
+
 - **render.yaml: portalen 0.29.0.** Fältens namn går att byta under *Administration → Listor*, och CSV-mallarna och importen följer namnen. Med på köpet kommer allt i portalen sedan 0.18.0 (se portalens ändringslogg); databasen migreras när portalens api startar. Plattformen och Arkitekten står kvar på 0.11.0 och 0.14.0.
 
 ## 0.18.0 – 2026-11-13

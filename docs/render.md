@@ -18,7 +18,7 @@ Caddy behövs inte (Render sköter TLS), och inte heller plattformens Redis.
 Arkitektens flödestjänst kör i samma tjänst som Arkitekten
 (`ARK_FLODESTJANST_PORT=8200`), eftersom en disk bara kan höra till en tjänst.
 
-Versioner: portalen 0.29.0, plattformen 0.11.0 och Arkitekten 0.14.0 eller
+Versioner: portalen 0.29.0, plattformen 0.11.0 och Arkitekten 0.28.0 eller
 senare. Med dem behövs inget steg efter starten: plattformen skapar själv
 källan som hämtar Arkitektens processbilder, anmäler sin adress till portalen,
 och portalen läser från plattformen med plattformens admin-nyckel.
@@ -106,6 +106,11 @@ Exempelinnehåll:
 - **Portalen**: i portal-api → *Shell*:
   `python -m app.services.content_pack list` och
   `python -m app.services.content_pack import <paket>`.
+
+Exporten av affärsprocesser som modellarkiv (.bmt) slås på i Arkitekten under
+*Inställningar → Mall för BMT-exporten*: en administratör laddar upp en export
+av en enda modell – gärna tom – ur verktyget som ska läsa in filerna. Mallen
+sparas på Arkitektens disk.
 
 ## Synk till portalen efter körning
 
