@@ -103,14 +103,14 @@ inloggningen bygger sina adresser av den.
 Exempelinnehåll:
 
 - **Arkitekten**: *Inställningar → Exempelinnehåll* i Arkitekten.
+- **Portalen**: i portal-api → *Shell*:
+  `python -m app.services.content_pack list` och
+  `python -m app.services.content_pack import <paket>`.
 
 Exporten av affärsprocesser som modellarkiv (.bmt) slås på i Arkitekten under
 *Inställningar → Mall för BMT-exporten*: en administratör laddar upp en export
 av en enda modell – gärna tom – ur verktyget som ska läsa in filerna. Mallen
 sparas på Arkitektens disk.
-- **Portalen**: i portal-api → *Shell*:
-  `python -m app.services.content_pack list` och
-  `python -m app.services.content_pack import <paket>`.
 
 ## Synk till portalen efter körning
 
